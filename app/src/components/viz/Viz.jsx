@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { InlineLoading, Button, Search, Modal, Tooltip } from 'carbon-components-react';
 import { loadJSONData, abbreviateString } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
-
+import LineChart from "../linechart/LineChart"
 
 
 class Viz extends Component {
@@ -49,7 +49,7 @@ class Viz extends Component {
 
     clickDataPoint(e) {
         this.setState({ selectedData: e.target.getAttribute("indexvalue") })
-        console.log(this.state.testData[this.state.selectedData].data)
+        // console.log(this.state.testData[this.state.selectedData].data)
     }
 
     render() {
@@ -84,16 +84,16 @@ class Viz extends Component {
                 </div>
 
                 <div className="flex">
-                    <div className="flex4 p10  ">
+                    <div className="flex5 p10  ">
                         <div className="mb10 boldtext"> ECG {this.state.testData.length}</div>
                         <div className="ecgdatabox mb10">
                             {resultList}
                         </div>
                     </div>
-                    <div className="flex2 p10 ">
+                    <div className="flex1 p10 ">
                         <div className="mb10 boldtext"> Model </div>
                     </div>
-                    <div className="flex4 p10 ">
+                    <div className="flex4 p10  ">
                         <div className="mb10 boldtext"> Model Output
 
                         </div>
@@ -101,6 +101,7 @@ class Viz extends Component {
                             {this.state.testData.length > 0 &&
                                 <div>
                                     {this.state.testData[this.state.selectedData].index}
+                                    <LineChart> .. </LineChart>
                                 </div>
                             }
                             {/* {this.state.testData[0].index} */}
