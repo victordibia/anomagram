@@ -1,0 +1,19 @@
+
+.navbarlinks a.active, .selected {
+    border-bottom: 4px #0062FF solid; 
+    height: 100%;
+}
+.navbarlinks a{
+    text-decoration: none;
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    line-height: 3.4em;
+    display: block;
+    padding: 0px 12px 44px 12px;
+   
+}
+
+.navbarlinks a:hover{
+    background-color: #3D3D3D;
+} 

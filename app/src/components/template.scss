@@ -1,0 +1,28 @@
+$feature-flags: (
+  ui-shell: true,
+);
+@import 'carbon-components/scss/globals/scss/styles.scss';
+// @import './header/header.css'; 
+
+
+.bx--modal-content{
+    // margin: 0px; 
+}
+
+.fadeable{
+    opacity: 1;
+   transition: opacity 3.25s ease-in-out;
+   -moz-transition: opacity 3.25s ease-in-out;
+   -webkit-transition: opacity 3.25s ease-in-out;
+}
+
+.fadeable.opacity0{
+    opacity: 0
+}
+.fadeable.opacity1{
+    opacity: 1;
+}
+
+.h100{
+    height: 100%;
+}

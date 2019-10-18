@@ -1,0 +1,18 @@
+.mainecgbox{
+
+}
+
+.ecgdatabox{
+    max-height: 330px;
+    overflow: scroll;
+}
+
+.ecgdatapoint{
+    height: 50px;
+    width: 50px;
+    border: solid 1px #ccc; 
+}
+
+.ecgdatapoint:hover{
+   background: rgb(255, 185, 80);
+}

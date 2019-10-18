@@ -1,0 +1,491 @@
+
+.headericon{
+    height: 1.9em;
+    padding: 0em 0.6em 0em 0em;
+}
+
+/* Text Highlights */
+.textalignright{
+    text-align: right;
+}
+.textaligncenter{
+    text-align: center;
+}
+.textvalignmiddle{
+    vertical-align: middle;
+}
+.bluehightlight {
+    padding: 10px;
+    background: rgb(190, 213, 250);
+    margin: 0px 0px 0px 0px;
+}
+.greyhighlight {
+    background: rgba(209, 209, 209, 0.9);
+}
+.justifycenter{
+    justify-content: center;
+}
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.mediumdesc{
+    font-size: 0.9em;
+}
+
+.lightbluehightlight {
+    padding: 10px;
+    background: #EDF4FF;
+    margin: 0px 0px 0px 0px;
+}
+
+.orangehighlight {
+    padding: 10px;
+    background: rgb(240, 134, 3);
+    margin: 0px 0px 0px 0px;
+    color: white;
+}
+
+.topblueborder {
+    border-top: 3px solid #0062FF;
+}
+
+.bottomblueborder {
+    border-bottom: 3px solid #0062FF;
+}
+
+.lh10 {
+    line-height: 1.25rem;
+}
+
+.lhmedium {
+    line-height: 1.0rem;
+}
+
+
+.sectiontitle{
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.horrule {
+    height: 1px;
+    border-bottom: 1px solid rgba(145, 142, 142, 0.4);
+}
+
+.boldtext{
+    font-weight: bold;
+}
+.whitetext{
+    color: white;
+}
+.greentext{
+    color: green;
+}
+/*  Layout Spacing margin, etc */
+.iblock {
+    display: inline-block;
+}
+.redcolor {
+    color: red;
+}
+.border {
+    border: 1px solid green ;
+}
+.greyborder {
+    border: 1px solid rgba(105, 105, 105,0.8);
+}
+
+.floatleft {
+    float: left;
+}
+
+.floatright {
+    float: right;
+}
+
+.p10 {
+    padding: 10px;
+}
+.m10 {
+    margin: 10px;
+}
+
+.p20 {
+    padding: 20px;
+}
+.m20 {
+    margin: 20px;
+}
+
+.pb10 {
+    padding-bottom: 10px;
+}
+
+.pb20 {
+    padding-bottom: 20px;
+}
+
+.p5{
+    padding: 5px;
+}
+.pt10 {
+    padding-top: 10px;
+}
+.pt2 {
+    padding-top: 2px;
+}
+
+.pt3{
+    padding-top: 3px;
+}
+.pt4 {
+    padding-top: 4px;
+}
+.pt5 {
+    padding-top: 5px;
+}
+
+.pb5 {
+    padding-bottom: 5px;
+}
+
+.pb20 {
+    padding-bottom: 20px;
+}
+
+.pt20 {
+    padding-top: 20px;
+}
+
+.pr5 {
+    padding-right: 5px;
+}
+.pr10 {
+    padding-right: 10px;
+}
+.pr20 {
+    padding-right: 20px;
+}
+
+.pl5 {
+    padding-left: 5px;
+}
+.pl10 {
+    padding-left: 10px;
+}
+.pl20 {
+    padding-left: 20px;
+}
+
+
+
+.mt10 {
+    margin-top: 10px;
+}
+.mt5 {
+    margin-top: 5px;
+}
+
+.mt20 {
+    margin-top: 20px;
+}
+
+.mb10 {
+    margin-bottom: 10px;
+}
+
+.mb20 {
+    margin-bottom: 20px;
+}
+
+.mb5 {
+    margin-bottom: 5px;
+}
+
+.mb7 {
+    margin-bottom: 7px;
+}
+
+.mr10 {
+    margin-right: 10px;
+}
+.mr5 {
+    margin-right: 5px;
+}
+
+.mr20 {
+    margin-right: 20px;
+}
+
+.ml10 {
+    margin-left: 10px;
+}
+
+.rad5 {
+    border-radius: 5px;
+}
+
+.rad4 {
+    border-radius: 4px;
+}
+
+.rad3 {
+    border-radius: 3px;
+}
+
+
+.rad2 {
+    border-radius: 2px;
+}
+
+.opacity100{
+    opacity: 1;
+}
+.opacity50{
+    opacity: 0.5;
+}
+.opacity0{
+    opacity: 0;
+}
+.transition3s{
+    transition: opacity .3s ease-in-out;
+   -moz-transition: opacity .3s ease-in-out;
+   -webkit-transition: opacity .3s ease-in-out;
+}
+
+.transitionw6s{
+    transition: width .4s ease-in-out;
+   -moz-transition: width .4s ease-in-out;
+   -webkit-transition: width .4s ease-in-out;
+}
+.notransition {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+  }
+
+.clickable{
+    cursor: pointer;
+}
+.decornone > a{
+    text-decoration: none;
+    color: white;
+}
+.w0{
+    width: 0%;
+}
+.w100{
+    width: 100%
+}
+
+.h100{
+    height: 100%
+}
+.h100v{
+    height: 100vh;
+}
+.unclickable{
+    pointer-events: none;
+}
+
+.flexcolumn{
+    flex-direction: column
+}
+
+.flex {
+    display: flex;
+}
+
+.displaynone{
+    display: none;
+}
+.displayblock{
+    display: block
+}
+
+.flexwrap{
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.flexfull {
+    flex: 1;
+}
+
+.flex1 {
+    flex: 0.1;
+}
+
+.flex2 {
+    flex: 0.2;
+}
+
+.flex3 {
+    flex: 0.3;
+}
+.flex35 {
+    flex: 0.35;
+}
+
+
+.flex4 {
+    flex: 0.4;
+}
+
+.flex5 {
+    flex: 0.5;
+}
+
+.flex6 {
+    flex: 0.6;
+}
+
+.flex7 {
+    flex: 0.7;
+}
+
+.flex8 {
+    flex: 0.8;
+}
+
+.flex9 {
+    flex: 0.9
+}
+
+.positionrelative{
+    position: relative;
+}
+
+.positionabsolute{
+    position: absolute;
+}
+
+
+/* Animations */
+
+.sliderboxcontainer { 
+    overflow:hidden;
+    position:relative;
+    /* the container's height will determine the height of its slider  */
+    /* height:100%;  */
+}
+
+.sliderbox {
+    -moz-transition: height 0.4s ease-in; 
+    -webkit-transition: height 0.4s ease-in; 
+    -o-transition: height 0.4s ease-in;
+}
+
+
+.sliderbox.closed { 
+   height: 0em;
+}
+
+.bluestripedbackground{
+    background: repeating-linear-gradient(
+        45deg,
+        #606dbc,
+        #606dbc 10px,
+        #465298 10px,
+        #465298 20px
+      );
+}
+
+.italics{
+    font-style: italic;
+}
+
+.moreinfocircle{
+    display: inline-block;
+    width: 1.1em;
+    height: 1.1em;
+    /* padding: 2px 0px 2px 0px; */
+    border: 1px solid black;
+    text-align: center;
+    border-radius: 1.1em;
+    font-size: 1em;
+}
+
+.rainbowbar { 
+    height: 0.2em;
+	background: linear-gradient(90deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+	background-size: 400% 400%;
+	/* background-size: 1400% 1400%; */
+	-webkit-animation: Gradient 2s ease infinite;
+	-moz-animation: Gradient 2s ease infinite;
+	animation: Gradient 2s ease infinite;
+}
+
+@-webkit-keyframes Gradient {
+	0% {
+		background-position: 0% 50%
+	}
+	50% {
+		background-position: 100% 50%
+	}
+	100% {
+		background-position: 0% 50%
+	}
+}
+
+@-moz-keyframes Gradient {
+	0% {
+		background-position: 0% 50%
+	}
+	50% {
+		background-position: 100% 50%
+	}
+	100% {
+		background-position: 0% 50%
+	}
+}
+
+@keyframes Gradient {
+	0% {
+		background-position: 0% 50%
+	}
+	50% {
+		background-position: 100% 50%
+	}
+	100% {
+		background-position: 0% 50%
+	}
+} 
+ 
+.scrollwindow{
+    /* /* max-height: 16em;  */
+    overflow: scroll; 
+}
+
+.scrollwindowmodel{
+    max-height: 16.66em;
+}
+
+.scrollwindow::-webkit-scrollbar {
+    -webkit-appearance: none;
+    
+}
+
+.scrollwindow::-webkit-scrollbar:vertical {
+    width: 8px;
+   
+}
+
+.scrollwindow::-webkit-scrollbar:horizontal {
+    height: 8px;
+}
+
+.scrollwindow::-webkit-scrollbar-thumb{
+    border-radius: 8px;
+    border: 2px solid white; /* should match background, can't be transparent */
+    background-color: rgba(0, 0, 0, .5);
+}
+::-webkit-scrollbar-corner {
+    background-color: rgba(0, 0, 0, 0);
+}
