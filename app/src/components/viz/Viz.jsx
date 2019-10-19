@@ -3,6 +3,7 @@ import { InlineLoading, Button, Search, Modal, Tooltip } from 'carbon-components
 import { loadJSONData } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
+import SmallLineChart from "../linechart/SmallLineChart"
 
 
 class Viz extends Component {
@@ -58,8 +59,15 @@ class Viz extends Component {
         let resultList = this.state.testData.map((data, index) => {
             return (
                 <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 clickable ecgdatapoint rad3 iblock mr5" + (this.state.selectedData == index ? " active" : "")} indexvalue={index} >
-                    <div indexvalue={index} className="boldtext iblock  mb5">
+                    <div indexvalue={index} className="boldtext unclickable iblock  mb5">
                         {data.target}
+                        <SmallLineChart
+                            data={{
+                                data: this.state.testData[index],
+                                index: index
+                            }}
+                        > </SmallLineChart>
+
                     </div>
 
                 </div>
@@ -69,11 +77,12 @@ class Viz extends Component {
         return (
             <div>
 
-                <Button> Hello </Button>
+
 
 
                 <div className="bold mt10 sectiontitle mb10">
                     Anomaly Detection
+
                 </div>
 
                 <div className=" lh10 mb10">
@@ -111,10 +120,10 @@ class Viz extends Component {
                             {resultList}
                         </div>
                     </div>
-                    <div className="flex2 p10 ">
+                    {/* <div className="flex2 p10 ">
                         <div className="mb10 boldtext"> Model </div>
-                    </div>
-                    <div className="block p10 modeloutputbox border">
+                    </div> */}
+                    <div className=" p10 modeloutputbox rad5 ">
                         <div className="mb10 boldtext"> Model Output
 
                         </div>
@@ -128,7 +137,7 @@ class Viz extends Component {
                                             datatindex: this.state.testData[this.state.selectedData].index
                                         }}
 
-                                    > .. </LineChart>
+                                    > </LineChart>
                                 </div>
                             }
                             {/* {this.state.testData[0].index} */}

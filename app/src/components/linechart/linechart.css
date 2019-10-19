@@ -1,7 +1,7 @@
 .line {
     fill: none;
     stroke: #ffab00;
-    stroke-width: 3;
+    stroke-width: 2;
 }
   
 .overlay {
@@ -12,10 +12,14 @@
 /* Style the dots by assigning a fill and stroke */
 .dot {
     fill: #ffab00;
-    stroke: #fff;
+    stroke: #fff; 
 }
   
 .focus circle {
     fill: none;
     stroke: steelblue;
+}
+
+.domain{
+    stroke: rgba(255,255,255,0);
 }

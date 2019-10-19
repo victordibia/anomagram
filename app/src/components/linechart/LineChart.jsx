@@ -22,6 +22,10 @@ class LineChart extends Component {
         });
 
 
+        this.miniChartWidth = 340
+        this.miniChartHeight = 340
+
+
 
 
     }
@@ -44,7 +48,31 @@ class LineChart extends Component {
 
     }
 
+    setupScalesAxes(data) {
+        this.chartMargin = { top: 30, right: 5, bottom: 40, left: 20 }
+        this.chartWidth = this.miniChartWidth - this.chartMargin.left - this.chartMargin.right
+        this.chartHeight = this.miniChartHeight - this.chartMargin.top - this.chartMargin.bottom;
+
+        var n = data.length;
+
+        this.xScale = d3.scaleLinear()
+            .domain([0, n - 1]) // input
+            .range([0, this.chartWidth]); // output
+
+
+        this.yScale = d3.scaleLinear()
+            .domain([d3.min(data), d3.max(data)]) // input 
+            .range([this.chartHeight, 0]); // output 
+
+        this.xAxis = d3.axisBottom(this.xScale)
+        this.yAxis = d3.axisRight(this.yScale)
+            .tickSize(this.miniChartWidth)
+
+    }
+
     updateGraph(data) {
+        let self = this
+        this.setupScalesAxes(data)
         // Select the section we want to apply our changes to
         var svg = d3.select("div.linechartbox").transition();
 
@@ -52,40 +80,29 @@ class LineChart extends Component {
 
         // Make the changes
         svg.select(".line")   // change the line
-            .duration(750)
+            // .duration(750)
             .attr("d", this.line(data));
-        // svg.select(".x.axis") // change the x axis
-        //     .duration(750)
-        //     .call(xAxis);
-        // svg.select(".y.axis") // change the y axis
-        //     .duration(750)
-        //     .call(yAxis);
-
-
+        function customYAxis(g) {
+            g.call(self.yAxis);
+            svg.select(".domain").remove();
+            g.selectAll(".tick line").attr("stroke", "rgba(172, 172, 172, 0.74)").attr("stroke-dasharray", "2,2");
+            g.selectAll(".tick text").attr("x", -20).attr("y", -.01)
+        }
+        svg.select(".y.axis")
+            .call(customYAxis).duration(5);
     }
 
+
     drawGraph() {
-        let margin = { top: 10, right: 40, bottom: 20, left: 30 }
-            , width = 340// Use the window's width 
-            , height = 330; // Use the window's height
+        let self = this
+        this.setupScalesAxes(this.state.chartdata.data)
+        let width = this.chartWidth, height = this.chartHeight, margin = this.chartMargin
 
-        // The number of datapoints
-        var n = this.state.chartdata.data.length;
-
-        // 5. X scale will use the index of our data
-        var xScale = d3.scaleLinear()
-            .domain([0, n - 1]) // input
-            .range([0, width]); // output
-
-        // 6. Y scale will use the randomly generate number 
-        var yScale = d3.scaleLinear()
-            .domain([d3.min(this.state.chartdata.data), d3.max(this.state.chartdata.data)]) // input 
-            .range([height, 0]); // output 
 
         // 7. d3's line generator
         this.line = d3.line()
-            .x(function (d, i) { return xScale(i); }) // set the x values for the line generator
-            .y(function (d) { return yScale(d); }) // set the y values for the line generator 
+            .x(function (d, i) { return self.xScale(i); }) // set the x values for the line generator
+            .y(function (d) { return self.yScale(d); }) // set the y values for the line generator 
         // .curve(d3.curveMonotoneX) // apply smoothing to the line
 
         // 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
@@ -95,6 +112,21 @@ class LineChart extends Component {
         // d3.range(n).map(function (d) { return { "y": d3.randomUniform(1)() } })
 
 
+
+
+        function customYAxis(g) {
+            g.call(self.yAxis);
+            // g.select(".domain").remove();
+            g.selectAll(".tick line").attr("stroke", "rgba(172, 172, 172, 0.74)").attr("stroke-dasharray", "2,2");
+            g.selectAll(".tick text").attr("x", -20).attr("y", -.01)
+        }
+
+        function customXAxis(g) {
+            g.call(self.xAxis);
+            g.select(".domain").remove();
+            g.selectAll(".tick line").attr("x", 100)
+            g.selectAll(".tick text").attr("y", 15)
+        }
 
         // 1. Add the SVG to the page and employ #2
         var svg = d3.select("div.linechartbox").append("svg")
@@ -107,12 +139,12 @@ class LineChart extends Component {
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(xScale)); // Create an axis component with d3.axisBottom
+            .call(customXAxis); // Create an axis component with d3.axisBottom
 
         // 4. Call the y axis in a group tag
         svg.append("g")
             .attr("class", "y axis")
-            .call(d3.axisLeft(yScale)); // Create an axis component with d3.axisLeft
+            .call(customYAxis); // Create an axis component with d3.axisLeft
 
         // 9. Append the path, bind the data, and call the line generator 
         svg.append("path")
