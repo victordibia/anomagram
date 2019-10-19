@@ -1,28 +1,25 @@
+@import '@carbon/themes/scss/themes'; 
+
+// $carbon--theme: $carbon--theme--g100;
+// @include carbon--theme();
+ 
+
 $feature-flags: (
   ui-shell: true,
 );
 @import 'carbon-components/scss/globals/scss/styles.scss';
-// @import './header/header.css'; 
+// @import  './mytheme.scss';
 
 
-.bx--modal-content{
-    // margin: 0px; 
+
+
+
+// @include my-theme()
+
+// @include mytheme();
+
+.bx--header{
+    background-color:#292929;
+    // border: 10px solid green;
 }
 
-.fadeable{
-    opacity: 1;
-   transition: opacity 3.25s ease-in-out;
-   -moz-transition: opacity 3.25s ease-in-out;
-   -webkit-transition: opacity 3.25s ease-in-out;
-}
-
-.fadeable.opacity0{
-    opacity: 0
-}
-.fadeable.opacity1{
-    opacity: 1;
-}
-
-.h100{
-    height: 100%;
-}

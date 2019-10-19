@@ -5,7 +5,7 @@ import {
 
 } from "react-router-dom";
 
-import { Modal } from 'carbon-components-react';
+// import { Modal } from 'carbon-components-react';
 
 
 import "./template.css"

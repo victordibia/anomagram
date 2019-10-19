@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { InlineLoading, Button, Search, Modal, Tooltip } from 'carbon-components-react';
-import { loadJSONData, abbreviateString } from "../helperfunctions/HelperFunctions"
+import { loadJSONData } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
 
@@ -59,7 +59,7 @@ class Viz extends Component {
             return (
                 <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 clickable ecgdatapoint rad3 iblock mr5" + (this.state.selectedData == index ? " active" : "")} indexvalue={index} >
                     <div indexvalue={index} className="boldtext iblock  mb5">
-
+                        {data.target}
                     </div>
 
                 </div>
@@ -68,6 +68,9 @@ class Viz extends Component {
 
         return (
             <div>
+
+                <Button> Hello </Button>
+
 
                 <div className="bold mt10 sectiontitle mb10">
                     Anomaly Detection
@@ -79,21 +82,39 @@ class Viz extends Component {
 
                 </div>
 
+                {/* <div className="flex">
+                    <div className="flexfull mr10">
+                        <Search
+                            ref="searchbox"
+                            id="searchbox"
+                            labelText="Search"
+                            defaultValue="Who is the Minister for Health in Nigeria"
+                            placeHolderText="Enter your question e.g. When is the Nigerian Independence Day"
+                        // onKeyDown={this.searchKeyDown.bind(this)}
+                        ></Search>
+                    </div>
+                    <div className="">
+                        <Button
+                        // onClick={this.submitSearch.bind(this)}
+                        > Submit </Button>
+                    </div>
+                </div> */}
+
                 <div className="bold mt10 sectiontitle mb10">
                     ECG Dataset
                 </div>
 
                 <div className="flex">
-                    <div className="flex5 p10  ">
+                    <div className="flexfull p10  ">
                         <div className="mb10 boldtext"> ECG {this.state.testData.length}</div>
                         <div className="ecgdatabox mb10">
                             {resultList}
                         </div>
                     </div>
-                    <div className="flex1 p10 ">
+                    <div className="flex2 p10 ">
                         <div className="mb10 boldtext"> Model </div>
                     </div>
-                    <div className="flex4 p10  ">
+                    <div className="block p10 modeloutputbox border">
                         <div className="mb10 boldtext"> Model Output
 
                         </div>
@@ -101,7 +122,13 @@ class Viz extends Component {
                             {this.state.testData.length > 0 &&
                                 <div>
                                     {this.state.testData[this.state.selectedData].index}
-                                    <LineChart> .. </LineChart>
+                                    <LineChart
+                                        data={{
+                                            chartdata: this.state.testData[this.state.selectedData],
+                                            datatindex: this.state.testData[this.state.selectedData].index
+                                        }}
+
+                                    > .. </LineChart>
                                 </div>
                             }
                             {/* {this.state.testData[0].index} */}

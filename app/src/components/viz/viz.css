@@ -16,3 +16,21 @@
 .ecgdatapoint:hover{
    background: rgb(255, 185, 80);
 }
+
+.ecgdatapoint.active{
+    background: rgb(80, 255, 246);
+ }
+
+ .modeloutputbox{
+     width:400px;
+ }
+
+
+ /* 
+ #ffc815 yellow
+ #292929  dark grey
+#585858 lighter grey
+white 
+black
+ 
+ */
