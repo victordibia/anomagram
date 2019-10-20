@@ -1,4 +1,7 @@
 nodeexp
+.DS_Store
+app/.DS_Store
+
 
 # Logs
 logs
