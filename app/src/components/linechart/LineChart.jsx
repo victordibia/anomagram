@@ -39,9 +39,9 @@ class LineChart extends Component {
     componentDidUpdate(prevProps, prevState) {
         // console.log(this.props.data.chartdata.index, prevProps.data.chartdata.index);
 
-        if (this.props.data.chartdata.index != prevProps.data.chartdata.index) {
+        if (this.props.data.chartdata.index !== prevProps.data.chartdata.index) {
             this.setState({ chartdata: this.props.data.chartdata })
-            console.log("stuff hass changed");
+            // console.log("stuff hass changed");
             this.updateGraph(this.props.data.chartdata.data)
 
         }
@@ -49,7 +49,7 @@ class LineChart extends Component {
     }
 
     setupScalesAxes(data) {
-        this.chartMargin = { top: 30, right: 5, bottom: 40, left: 20 }
+        this.chartMargin = { top: 10, right: 5, bottom: 40, left: 20 }
         this.chartWidth = this.miniChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.miniChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
@@ -80,7 +80,7 @@ class LineChart extends Component {
 
         // Make the changes
         svg.select(".line")   // change the line
-            // .duration(750)
+            .duration(750)
             .attr("d", this.line(data));
         function customYAxis(g) {
             g.call(self.yAxis);

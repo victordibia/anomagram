@@ -12,16 +12,15 @@ class SmallLineChart extends Component {
         }
 
         this.miniChartWidth = 40
-        this.miniChartHeight = 30
+        this.miniChartHeight = 35
 
     }
 
     componentDidMount() {
-        console.log("Line component mounted")
-        let canvas = this.refs.canvas,
-            context = canvas.getContext('2d'),
-            width = canvas.width = this.miniChartWidth,
-            height = canvas.height = this.miniChartHeight;
+        // console.log("Line component mounted")
+        let canvas = this.refs.canvas
+        canvas.width = this.miniChartWidth
+        canvas.height = this.miniChartHeight;
         this.drawGraph()
 
     }
@@ -100,7 +99,7 @@ class SmallLineChart extends Component {
 
 
         return (
-            <div className="iblock ">
+            <div className="iblock  ">
                 <canvas ref="canvas" id="canvas"></canvas>
             </div>
         )

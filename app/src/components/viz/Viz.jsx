@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { InlineLoading, Button, Search, Modal, Tooltip } from 'carbon-components-react';
+// import { InlineLoading, Button, Search, Modal, Tooltip } from 'carbon-components-react';
 import { loadJSONData } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
@@ -11,7 +11,7 @@ class Viz extends Component {
         super(props)
 
         this.state = {
-            apptitle: "Deep Anomaly Playground",
+            apptitle: "Anomagram",
             testData: [],
             trainData: [],
             selectedData: 0
@@ -30,7 +30,7 @@ class Viz extends Component {
         let trainECGDataPath = process.env.PUBLIC_URL + "/data/ecg/train_small.json"
         loadJSONData(testECGDataPath).then(data => {
             this.setState({ testData: data })
-            console.log("test data loaded", data.length)
+            // console.log("test data loaded", data.length)
         })
 
         loadJSONData(trainECGDataPath).then(data => {
@@ -58,13 +58,13 @@ class Viz extends Component {
 
         let resultList = this.state.testData.map((data, index) => {
             return (
-                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 clickable ecgdatapoint rad3 iblock mr5" + (this.state.selectedData == index ? " active" : "")} indexvalue={index} >
-                    <div indexvalue={index} className="boldtext unclickable iblock  mb5">
-                        {data.target}
+                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable ecgdatapoint rad3 iblock mr5" + (this.state.selectedData + "" === (index + "") ? " active" : "")} indexvalue={index} >
+                    <div indexvalue={index} className="boldtext  unclickable iblock  mb5">
+
                         <SmallLineChart
                             data={{
                                 data: this.state.testData[index],
-                                index: index
+                                index: index,
                             }}
                         > </SmallLineChart>
 
@@ -81,11 +81,11 @@ class Viz extends Component {
 
 
                 <div className="bold mt10 sectiontitle mb10">
-                    Anomaly Detection
+                    Anomaly Detection with Deep Learning in the Browser!
 
                 </div>
 
-                <div className=" lh10 mb10">
+                <div className="mynotif h100 lh10 pl  instructions lightbluehightlight maxh16  lh10 mb10">
                     {this.state.apptitle} is an interactive visualization tool for exploring
                     deep learning models applied to the task of anomaly detection (on non-time series data).
 
@@ -110,7 +110,7 @@ class Viz extends Component {
                 </div> */}
 
                 <div className="bold mt10 sectiontitle mb10">
-                    ECG Dataset
+                    {/* ECG Dataset */}
                 </div>
 
                 <div className="flex">
@@ -130,7 +130,7 @@ class Viz extends Component {
                         <div>
                             {this.state.testData.length > 0 &&
                                 <div>
-                                    {this.state.testData[this.state.selectedData].index}
+                                    {/* {this.state.testData[this.state.selectedData].index} */}
                                     <LineChart
                                         data={{
                                             chartdata: this.state.testData[this.state.selectedData],

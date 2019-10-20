@@ -22,7 +22,7 @@ class AppHeader extends Component {
     constructor(props) {
         super(props)
 
-        this.appName = "Deep Anomaly Playground"
+        this.appName = "Anomagram"
         this.appDescription = "An interactive visualization for exploring deep learning models applied to the task of anomaly detectiion."
 
 

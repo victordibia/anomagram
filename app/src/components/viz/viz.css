@@ -3,22 +3,28 @@
 }
 
 .ecgdatabox{
-    max-height: 410px;
+    max-height: 330px;
     overflow: scroll;
 }
 
 .ecgdatapoint{
     height: 50px;
-    width: 50px;
-    border: solid 1px #ccc; 
+    width: 55px;
+    border-bottom: solid 3px rgb(252, 252, 252); 
+    background: rgba(214, 214, 214, 0.76);
+    opacity: 1;
 }
 
 .ecgdatapoint:hover{
-   background: rgb(255, 185, 80);
+   /* background: rgb(255, 185, 80); */
+   opacity: 0.5;
+   border-bottom: solid 3px #0062ff; 
 }
 
 .ecgdatapoint.active{
-    background: rgb(80, 255, 246);
+    /* background: rgb(80, 255, 246); */
+    border-bottom: solid 3px #0062ff; 
+    opacity: 1;
  }
 
  .modeloutputbox{
