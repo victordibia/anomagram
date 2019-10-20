@@ -85,7 +85,7 @@ class Viz extends Component {
 
                 </div>
 
-                <div className="mynotif h100 lh10 pl  instructions lightbluehightlight maxh16  lh10 mb10">
+                <div className="mynotif h100 lh10  lightbluehightlight maxh16  mb10">
                     {this.state.apptitle} is an interactive visualization tool for exploring
                     deep learning models applied to the task of anomaly detection (on non-time series data).
 
