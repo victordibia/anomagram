@@ -9,21 +9,13 @@ class LineChart extends Component {
         super(props)
 
         this.state = {
-            chartdata: this.props.data.chartdata
+            chart: this.props.data
         }
 
 
-        this.props.data.chartdata.data.forEach(each => {
 
-            if (Number.isNaN(each)) {
-                console.log(each);
-            }
-
-        });
-
-
-        this.miniChartWidth = 340
-        this.miniChartHeight = 340
+        this.minChartWidth = this.props.data.chartWidth
+        this.minChartHeight = this.props.data.chartHeight
 
 
 
@@ -39,10 +31,10 @@ class LineChart extends Component {
     componentDidUpdate(prevProps, prevState) {
         // console.log(this.props.data.chartdata.index, prevProps.data.chartdata.index);
 
-        if (this.props.data.chartdata.index !== prevProps.data.chartdata.index) {
-            this.setState({ chartdata: this.props.data.chartdata })
-            // console.log("stuff hass changed");
-            this.updateGraph(this.props.data.chartdata.data)
+        if (this.props.data.data.index !== prevProps.data.data.index) {
+            this.setState({ chart: this.props.data.chart })
+            // console.log("stuff hass changed", this.props.data.data);
+            this.updateGraph(this.props.data)
 
         }
 
@@ -50,8 +42,8 @@ class LineChart extends Component {
 
     setupScalesAxes(data) {
         this.chartMargin = { top: 10, right: 5, bottom: 40, left: 20 }
-        this.chartWidth = this.miniChartWidth - this.chartMargin.left - this.chartMargin.right
-        this.chartHeight = this.miniChartHeight - this.chartMargin.top - this.chartMargin.bottom;
+        this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
+        this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
         var n = data.length;
 
@@ -66,21 +58,23 @@ class LineChart extends Component {
 
         this.xAxis = d3.axisBottom(this.xScale)
         this.yAxis = d3.axisRight(this.yScale)
-            .tickSize(this.miniChartWidth)
+            .tickSize(this.minChartWidth)
 
     }
 
-    updateGraph(data) {
+    updateGraph(chart) {
         let self = this
+        let data = chart.data.data
+        // console.log(chart.color)
         this.setupScalesAxes(data)
         // Select the section we want to apply our changes to
         var svg = d3.select("div.linechartbox").transition();
 
 
-
         // Make the changes
         svg.select(".line")   // change the line
             .duration(750)
+            .attr("stroke", chart.color)
             .attr("d", this.line(data));
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -95,7 +89,7 @@ class LineChart extends Component {
 
     drawGraph() {
         let self = this
-        this.setupScalesAxes(this.state.chartdata.data)
+        this.setupScalesAxes(this.state.chart.data.data)
         let width = this.chartWidth, height = this.chartHeight, margin = this.chartMargin
 
 
@@ -106,7 +100,7 @@ class LineChart extends Component {
         // .curve(d3.curveMonotoneX) // apply smoothing to the line
 
         // 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
-        var dataset = this.state.chartdata.data
+        var dataset = this.state.chart.data.data
 
 
         // d3.range(n).map(function (d) { return { "y": d3.randomUniform(1)() } })
@@ -150,6 +144,7 @@ class LineChart extends Component {
         svg.append("path")
             .datum(dataset) // 10. Binds data to the line 
             .attr("class", "line") // Assign a class for styling 
+            .attr("stroke", this.state.chart.color)
             .attr("d", this.line); // 11. Calls the line generator 
 
         // // 12. Appends a circle for each datapoint 

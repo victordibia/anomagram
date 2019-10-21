@@ -8,8 +8,8 @@
 }
 
 .ecgdatapoint{
-    height: 50px;
-    width: 55px;
+    /* height: 50px; */
+    /* width: 55px; */
     border-bottom: solid 3px rgb(252, 252, 252); 
     background: rgba(214, 214, 214, 0.76);
     opacity: 1;
@@ -28,7 +28,7 @@
  }
 
  .modeloutputbox{
-     
+     /* background:#414141; */
  }
 
 

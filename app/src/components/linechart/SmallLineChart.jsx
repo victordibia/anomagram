@@ -11,8 +11,8 @@ class SmallLineChart extends Component {
             chart: this.props.data
         }
 
-        this.miniChartWidth = 40
-        this.miniChartHeight = 35
+        this.miniChartWidth = this.props.data.chartWidth
+        this.miniChartHeight = this.props.data.chartHeight
 
     }
 
@@ -61,6 +61,10 @@ class SmallLineChart extends Component {
         context.translate(0, this.chartHeight);
         context.scale(1, -1);
 
+        context.strokeStyle = this.state.chart.color;
+        // console.log(this.state.chart.color);
+
+
         // context.fillStyle = '#f6f6f6';
         // context.fillRect(0, 0, this.chartWidth, this.chartHeight);
 
@@ -76,7 +80,7 @@ class SmallLineChart extends Component {
             context.beginPath();
             context.moveTo(left, prev_stat);
             context.lineTo(left + move_left_by, the_stat);
-            context.lineWidth = 1;
+            context.lineWidth = 1.6;
             context.lineCap = 'round';
             /*
                 if(the_stat < stats[stat-1]) {
@@ -99,7 +103,7 @@ class SmallLineChart extends Component {
 
 
         return (
-            <div className="iblock  ">
+            <div className="iblock mt2">
                 <canvas ref="canvas" id="canvas"></canvas>
             </div>
         )

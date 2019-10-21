@@ -69,6 +69,9 @@
     line-height: 1.0rem;
 }
 
+.smalldesc{
+    font-size: 0.72em;
+}
 
 .sectiontitle{
     font-size: 1.2em;
@@ -175,9 +178,14 @@
     padding-right: 20px;
 }
 
+.pl4 {
+    padding-left: 4px;
+}
+
 .pl5 {
     padding-left: 5px;
 }
+
 .pl10 {
     padding-left: 10px;
 }
