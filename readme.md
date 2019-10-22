@@ -9,7 +9,9 @@ An interactive experience built with [Tensorflow.js](http://tensorflow.org/js) t
 
 Anomalies often referred to as outliers, abnormalities, rare events or deviants are data points or patterns in data that do not adhere or conform to a well-defined notion of normal behavior. Anomaly detection is therefore defined as the task of finding patterns in data that do not adhere to a well-defined notion of normal behavior. 
 
-At the heart of most approaches to anomaly detection (and by Merlin's beard ... there are a lot), is the fundamental concept of modeling "normal behaviour". Once this is achieved, we can leverage this knowledge/mechanism in assigning an anomaly score (a measure of "normalness") to new data points test time. 
+At the heart of most approaches to anomaly detection (and by Merlin's beard ... there are a lot), is the fundamental concept of modeling "normal behavior". Once this is achieved, we can leverage this knowledge/mechanism in assigning an anomaly score (a measure of "normalness") to new data points test time. 
+
+> Various approaches differ on _how_ normal behavior is modelled and _how_ an anomaly score is assigned. Time series forecasting approaches tend to first forecast future values and compute an anomaly score as the difference between predictions and actual values.
 
 Existing approaches for anomaly detection typically focus on time series data and univariate data streams (e.g. number of concurrent users of a telecoms base station over time). However, as data include more variables, it becomes more challenging to model each stream individually and aggregate results. For these situations, deep learning can be valuable. 
 
