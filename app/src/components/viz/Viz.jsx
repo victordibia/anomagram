@@ -24,11 +24,11 @@ class Viz extends Component {
         this.loadData()
 
         this.chartColorMap = {
-            1: { color: "#0062ff", name: "Normal" },
-            2: { color: "#ffa32c", name: "R-on-T Premature Ventricular Contraction" },
-            3: { color: "orange", name: "Supraventricular Premature or Ectopic Beat " },
-            4: { color: "orange", name: "Premature Ventricular Contraction" },
-            5: { color: "orange", name: "Unclassifiable Beat" },
+            1: { color: "#0062ff", colornorm: "#0062ff", name: "Normal" },
+            2: { color: "#ffa32c", colornorm: "grey", name: "R-on-T Premature Ventricular Contraction" },
+            3: { color: "violet", colornorm: "grey", name: "Supraventricular Premature or Ectopic Beat " },
+            4: { color: "orange", colornorm: "grey", name: "Premature Ventricular Contraction" },
+            5: { color: "red", colornorm: "grey", name: "Unclassifiable Beat" },
         }
 
     }
@@ -69,8 +69,10 @@ class Viz extends Component {
             let name = data[1].name
             return (
                 <div className="iblock mr10 mb5" key={"legendrow" + index}>
-                    <div style={{ borderLeftColor: color, borderStyle: "solid", borderLeftWidth: "5px" }} className="iblock legendtext pl4 mediumdesc"> {name}</div>
+                    <div style={{ background: color }} className="indicatorcircle iblock mr5"></div>
+                    <div className="iblock legendtext pl4 mediumdesc"> {name}</div>
                     <div className="iblock"></div>
+
                 </div>
             )
         });
@@ -80,15 +82,20 @@ class Viz extends Component {
                 <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable ecgdatapoint rad3 iblock mr5" + (this.state.selectedData + "" === (index + "") ? " active" : "")} indexvalue={index} >
                     <div indexvalue={index} className="boldtext  unclickable iblock ">
 
-                        <SmallLineChart
-                            data={{
-                                data: this.state.testData[index],
-                                index: index,
-                                color: this.chartColorMap[this.state.testData[index].target].color,
-                                chartWidth: 70,
-                                chartHeight: 30
-                            }}
-                        > </SmallLineChart>
+                        <div className="positionrelative">
+                            <div className="p3 indicatoroutrcircle  positionabsolute bottomright">
+                                <div style={{ background: this.chartColorMap[this.state.testData[index].target].color }} className="indicatorcircle "></div>
+                            </div>
+                            <SmallLineChart
+                                data={{
+                                    data: this.state.testData[index],
+                                    index: index,
+                                    color: this.chartColorMap[this.state.testData[index].target].colornorm,
+                                    chartWidth: 72,
+                                    chartHeight: 30
+                                }}
+                            > </SmallLineChart>
+                        </div>
 
                     </div>
 
@@ -142,26 +149,32 @@ class Viz extends Component {
 
                         </div>
                         <div>
-                            <div>
-                                holder
-                                <br />
-                                <br />
-                                <br />
-                            </div>
+
                             {this.state.testData.length > 0 &&
                                 <div>
-                                    {/* {this.state.testData[this.state.selectedData].index} */}
-                                    <LineChart
-                                        data={{
-                                            data: this.state.testData[this.state.selectedData],
-                                            index: this.state.testData[this.state.selectedData].index,
-                                            color: this.chartColorMap[this.state.testData[this.state.selectedData].target].color,
-                                            chartWidth: 390,
-                                            chartHeight: 340
-                                        }}
+                                    <div className="mediumdesc mb5">
+                                        <span className="boldtext"> Ground Truth Label  </span>: {this.chartColorMap[this.state.testData[this.state.selectedData].target].name}
+                                    </div>
+                                    <div className="mediumdesc mb5">
+                                        <span className="boldtext"> Model Classification </span>: ... 🤷
+                                    </div>
 
-                                    > </LineChart>
+                                    <div>
+                                        {/* {this.state.testData[this.state.selectedData].index} */}
+                                        <LineChart
+                                            data={{
+                                                data: this.state.testData[this.state.selectedData],
+                                                index: this.state.testData[this.state.selectedData].index,
+                                                color: this.chartColorMap[this.state.testData[this.state.selectedData].target].colornorm,
+                                                chartWidth: 390,
+                                                chartHeight: 340
+                                            }}
+
+                                        > </LineChart>
+                                    </div>
+
                                 </div>
+
                             }
                             {/* {this.state.testData[0].index} */}
                         </div>

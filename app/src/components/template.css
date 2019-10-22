@@ -139,6 +139,12 @@
 .p5{
     padding: 5px;
 }
+.p4{
+    padding: 4px;
+}
+.p3{
+    padding: 3px;
+}
 .pt10 {
     padding-top: 10px;
 }
@@ -228,6 +234,7 @@
 .mr5 {
     margin-right: 5px;
 }
+
 
 .mr20 {
     margin-right: 20px;
@@ -376,7 +383,10 @@
 .positionabsolute{
     position: absolute;
 }
-
+.bottomright{
+    bottom: 0px;
+    right: 0px;
+}
 
 /* Animations */
 

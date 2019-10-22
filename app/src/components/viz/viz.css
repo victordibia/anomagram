@@ -28,9 +28,20 @@
  }
 
  .modeloutputbox{
-     /* background:#414141; */
+     /* background:#ffa32c; */
  }
 
+ .indicatorcircle{
+     height: 6px;
+     width: 6px;
+     border-radius: 6px;  
+     opacity: 0.95; 
+ }
+
+ .indicatoroutrcircle{
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.8);
+ }
 
  /* 
  #ffc815 yellow
