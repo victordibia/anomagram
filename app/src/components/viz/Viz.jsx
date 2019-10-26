@@ -182,6 +182,10 @@ class Viz extends Component {
                 </div>
 
 
+                <div>
+                    A VAE (an extension of an AE) can allow us generate sampled data without 
+                </div>
+
 
 
 
