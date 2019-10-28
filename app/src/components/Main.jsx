@@ -14,6 +14,7 @@ import "./template.css"
 import AppHeader from "./header/AppHeader";
 import Footer from "./footer/Footer";
 import Viz from "./viz/Viz";
+import Train from "./train/Train"
 
 import { createBrowserHistory } from 'history';
 
@@ -77,6 +78,7 @@ class Main extends Component {
 
                 <div className="container-fluid p10">
                     <Route exact path="/" component={Viz} />
+                    <Route exact path="/train" component={Train} />
 
                 </div>
                 <div id="footer"> <Footer /> </div>

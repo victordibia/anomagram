@@ -31,6 +31,8 @@ class Viz extends Component {
             5: { color: "red", colornorm: "grey", name: "Unclassifiable Beat" },
         }
 
+        this.maxSmaallChart = 60
+
     }
 
     loadData() {
@@ -77,7 +79,7 @@ class Viz extends Component {
             )
         });
 
-        let dataPoints = this.state.testData.map((data, index) => {
+        let dataPoints = this.state.testData.slice(0, this.maxSmaallChart).map((data, index) => {
             return (
                 <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable ecgdatapoint rad3 iblock mr5" + (this.state.selectedData + "" === (index + "") ? " active" : "")} indexvalue={index} >
                     <div indexvalue={index} className="boldtext  unclickable iblock ">
@@ -183,7 +185,7 @@ class Viz extends Component {
 
 
                 <div>
-                    A VAE (an extension of an AE) can allow us generate sampled data without 
+                    A VAE (an extension of an AE) can allow us generate sampled data without
                 </div>
 
 

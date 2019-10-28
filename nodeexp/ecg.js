@@ -19,7 +19,7 @@ let modelParams = {
 }
 
 let numSteps = 30
-let numEpochs = 30
+let numEpochs = 60
 let batchSize = 256
 
 let modelSavePath = "file://./webmodel/ecg"
@@ -27,7 +27,6 @@ let modelSavePath = "file://./webmodel/ecg"
 let model, encoder, decoder
 [model, encoder, decoder] = ae_model.buildModel(modelParams)
 
-// ae.summary() 
 
 
 console.log(" >> Train/Test Split | Train:", trainEcg.length, " Test:", testEcg.length);

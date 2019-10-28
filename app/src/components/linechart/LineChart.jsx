@@ -105,9 +105,6 @@ class LineChart extends Component {
 
         // d3.range(n).map(function (d) { return { "y": d3.randomUniform(1)() } })
 
-
-
-
         function customYAxis(g) {
             g.call(self.yAxis);
             // g.select(".domain").remove();
