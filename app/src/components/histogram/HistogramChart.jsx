@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import "./scatterplot.css"
+import "./histogram.css"
 import * as d3 from "d3"
 
+class HistogramChart extends Component {
 
-class ScatterPlot extends Component {
     constructor(props) {
         super(props)
 
@@ -21,7 +21,7 @@ class ScatterPlot extends Component {
 
         this.drawGraph(this.props.data.data)
 
-        console.log(this.props.data);
+        // console.log(this.props.data); 
     }
     setupScalesAxes(data) {
         // console.log(data);
@@ -33,14 +33,46 @@ class ScatterPlot extends Component {
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
 
+
         this.xScale = d3.scaleLinear()
-            .domain([d3.min(data, function (d) { return d.x }), d3.max(data, function (d) { return d.x })]) // input  
+            .domain(d3.extent(data, function (d) { return d.mse })).nice()
             .range([this.chartMargin.left, this.chartWidth - this.chartMargin.right])
 
+        // All Bins
+        this.bins = d3.histogram()
+            .value(function (d) { return d.mse })
+            .domain(this.xScale.domain())
+            .thresholds(this.xScale.ticks(self.numTicks))
+            (data)
 
+        // Normal Bins
+        this.binNorm = d3.histogram()
+            .value(function (d) {
+                if (d.label + "" === "0") {
+                    return d.mse
+                };
+            })
+            .domain(this.xScale.domain())
+            .thresholds(this.xScale.ticks(self.numTicks))
+            (data)
+
+        // Abnormal Bins
+        this.binsA = d3.histogram()
+            .value(function (d) {
+                if (d.label + "" === "1") {
+                    return d.mse
+                };
+            })
+            .domain(this.xScale.domain())
+            .thresholds(this.xScale.ticks(self.numTicks))
+            (data)
+
+        // this.xScale = d3.scaleLinear()
+        //     .domain([0, n - 1]) // input
+        //     .range([0, this.chartWidth]); // output
 
         this.yScale = d3.scaleLinear()
-            .domain([d3.min(data, function (d) { return d.y }), d3.max(data, function (d) { return d.y })]) // input  
+            .domain([0, d3.max(self.bins, d => d.length)]).nice()
             .range([this.chartHeight - this.chartMargin.bottom, this.chartMargin.top])
 
         this.xAxis = d3.axisBottom(this.xScale)
@@ -62,22 +94,25 @@ class ScatterPlot extends Component {
             .attr("transform", "translate(" + this.chartMargin.left + "," + this.chartMargin.top + ")");
 
 
-        svg.append('g')
-            .selectAll("dot")
-            .data(data)
-            .enter()
-            .append("circle")
-            .attr("cx", function (d) { return self.xScale(d.x); })
-            .attr("cy", function (d) { return self.yScale(d.y); })
-            .attr("r", 2.5)
-            .attr("class", d => {
-                if (d.label + "" === "0") {
-                    return "normcolor"
-                } else {
-                    return "anormcolor"
-                }
-            })
+        svg.append("g")
+            .attr("class", "normcolor")
+            .selectAll("rect")
+            .data(self.binNorm)
+            .join("rect")
+            .attr("x", d => self.xScale(d.x0) + 1)
+            .attr("width", d => Math.max(0, self.xScale(d.x1) - self.xScale(d.x0) - 1))
+            .attr("y", d => self.yScale(d.length))
+            .attr("height", d => self.yScale(0) - self.yScale(d.length));
 
+        svg.append("g")
+            .attr("class", "anormcolor")
+            .selectAll("rect")
+            .data(self.binsA)
+            .join("rect")
+            .attr("x", d => self.xScale(d.x0) + 1)
+            .attr("width", d => Math.max(0, self.xScale(d.x1) - self.xScale(d.x0) - 1))
+            .attr("y", d => self.yScale(d.length))
+            .attr("height", d => self.yScale(0) - self.yScale(d.length));
 
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -104,13 +139,15 @@ class ScatterPlot extends Component {
             .call(customYAxis); // Create an axis component with d3.axisLeft
 
     }
+
     render() {
         return (
             <div>
-                ScatterPlot
+                Anomaly Histogram
+            <div className="linechartbox"></div>
             </div>
         );
     }
 }
 
-export default ScatterPlot;
+export default HistogramChart;

@@ -18,7 +18,7 @@ let modelParams = {
     adamBeta1: 0.5
 }
 
-let numSteps = 1
+let numSteps = 10
 let numEpochs = 60
 let batchSize = 256
 
