@@ -35,32 +35,16 @@ let buildModel = function (params) {
 
 
 
-
-    //  enc_hidden = Dense(hidden_dim[0], activation='relu', name='encoder_hidden_0')(inputs)
-    // i = 1
-    // while i < hidden_layers:
-    //     enc_hidden = Dense(hidden_dim[i],activation='relu',name='encoder_hidden_'+str(i))(enc_hidden)
-    //     i+=1
-
-
-
-
-    // Specify decoder
-    // const latentInput = tf.input({ shape: [latentDim] })
-    // let decoderHidden = tf.layers.dense({ units: 7, activation: "relu" }).apply(latentInput);
-    // decoderHidden = tf.layers.dense({ units: 15, activation: "relu" }).apply(decoderHidden);
-    // const decoderOutput = tf.layers.dense({ units: numFeatures }).apply(decoderHidden);
-    // const decoder = tf.model({ inputs: latentInput, outputs: decoderOutput, name: "decoder" })
-
     const latentInput = tf.input({ shape: [latentDim] })
     let decoderHidden = tf.layers.dense({ units: hiddenDim[hiddenDim.length - 1], activation: "relu" }).apply(latentInput);
-    let j = hiddenDim.length - 2
-    while (i > 0) {
+    let j = hiddenDim.length - 1
+    while (j > 0) {
+        j--;
         decoderHidden = tf.layers.dense({ units: hiddenDim[j], activation: "relu" }).apply(decoderHidden);
-        i--;
+
     }
 
-    const decoderOutput = tf.layers.dense({ units: numFeatures }).apply(decoderHidden);
+    const decoderOutput = tf.layers.dense({ units: numFeatures, activation: "sigmoid" }).apply(decoderHidden);
     const decoder = tf.model({ inputs: latentInput, outputs: decoderOutput, name: "decoder" })
 
     // link output of ender to decoder 

@@ -14,11 +14,11 @@ let modelParams = {
     hiddenLayers: 2,
     latentDim: 2,
     hiddenDim: [15, 7],
-    learningRate: 0.005,
+    learningRate: 0.001,
     adamBeta1: 0.5
 }
 
-let numSteps = 30
+let numSteps = 1
 let numEpochs = 60
 let batchSize = 256
 
@@ -26,8 +26,30 @@ let modelSavePath = "file://./webmodel/ecg"
 
 let model, encoder, decoder
 [model, encoder, decoder] = ae_model.buildModel(modelParams)
+encoder.summary()
+decoder.summary()
+model.summary()
 
+async function loadSavedModel() {
+    model = await tf.loadLayersModel(modelSavePath + "/model.json");
+    console.log("model loaded");
 
+    // const ae = tf.model({ inputs: input, outputs: output, name: "autoencoder" })
+    const optimizer = tf.train.adam(modelParams.learningRate, modelParams.adamBeta1)
+
+    model.compile({ optimizer: optimizer, loss: "meanSquaredError" })
+
+    for (let i = 0; i < numSteps; i++) {
+        const res = await model.fit(xs,
+            xs, { epochs: numEpochs, verbose: 0, batchSize: batchSize });
+        console.log("Step loss", i, res.history.loss[0]);
+    }
+
+    await model.save(modelSavePath);
+    await model.save("file://../app/public/webmodel/ecg");
+}
+
+loadSavedModel()
 
 console.log(" >> Train/Test Split | Train:", trainEcg.length, " Test:", testEcg.length);
 // console.log(" >> Features per data point ", ecg[0].data.length)
@@ -47,7 +69,7 @@ yTest = testEcg.map(item => item.target + "" === 1 + "" ? 0 : 1)
 // console.log(xs, xsTest);
 
 
-async function train_data() {
+async function train_data(model) {
     for (let i = 0; i < numSteps; i++) {
         const res = await model.fit(xs,
             xs, { epochs: numEpochs, verbose: 0, batchSize: batchSize });
@@ -56,13 +78,12 @@ async function train_data() {
 
     await model.save(modelSavePath);
 
-
 }
 
 let out_hold = []
 
-async function main() {
-    let train = await train_data();
+async function main(model) {
+    let train = await train_data(model);
 
     let preds = await model.predict(xsTest)
     console.log(xsTest.shape, preds.shape)
@@ -79,10 +100,8 @@ async function main() {
         out_hold = _.sortBy(out_hold, 'mse');
         // console.log(out_hold);
     });
-    // 
+    //  
 
     console.log("mse", mse.shape);
-
-
 }
-main()
+// main(model)

@@ -13,21 +13,34 @@ class Train extends Component {
         this.model = await tf.loadLayersModel(modelPath);
         console.log("model loaded");
         this.loadTestData()
-
-        // pull out encoder 
-
-        // const layerActivation = newModel.predict(inputValue);
-
-
     }
 
     componentDidMount() {
-        this.loadSavedModel()
+        // this.loadSavedModel()
+        let data = [{ mse: 18.332530975341797, label: 0 },
+        { mse: 19.321346282958984, label: 0 },
+        { mse: 20.688814163208008, label: 1 },
+        { mse: 20.891155242919922, label: 0 },
+        { mse: 21.140560150146484, label: 1 },
+        { mse: 21.535856246948242, label: 0 },
+        { mse: 21.76593589782715, label: 1 },
+        { mse: 20.688814163208008, label: 1 },
+        { mse: 20.891155242919922, label: 0 },
+        { mse: 21.140560150146484, label: 1 },
+        { mse: 21.535856246948242, label: 0 },
+        { mse: 21.76593589782715, label: 1 },
+        { mse: 20.688814163208008, label: 1 },
+        { mse: 20.891155242919922, label: 0 },
+        { mse: 21.140560150146484, label: 1 },
+        { mse: 21.535856246948242, label: 0 },
+        { mse: 21.76593589782715, label: 1 },
+        { mse: 22.02683448791504, label: 0 },
+        { mse: 22.37567710876465, label: 0 }]
+
 
         this.minChartWidth = 450
-        this.minChartHeight = 350
-        this.numTicks = 40
-        // this.drawGraph(data)
+        this.minChartHeight = 450
+        this.drawGraph(data)
     }
 
     setupScalesAxes(data) {
@@ -39,39 +52,18 @@ class Train extends Component {
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
+        var n = data.length;
+
 
 
         this.xScale = d3.scaleLinear()
             .domain(d3.extent(data, function (d) { return d.mse })).nice()
             .range([this.chartMargin.left, this.chartWidth - this.chartMargin.right])
 
-        // All Bins
         this.bins = d3.histogram()
-            .value(function (d) { return d.mse })
+            .value(function (d) { return d.mse; })
             .domain(this.xScale.domain())
-            .thresholds(this.xScale.ticks(self.numTicks))
-            (data)
-
-        // Normal Bins
-        this.binNorm = d3.histogram()
-            .value(function (d) {
-                if (d.label + "" === "0") {
-                    return d.mse
-                };
-            })
-            .domain(this.xScale.domain())
-            .thresholds(this.xScale.ticks(self.numTicks))
-            (data)
-
-        // Abnormal Bins
-        this.binsA = d3.histogram()
-            .value(function (d) {
-                if (d.label + "" === "1") {
-                    return d.mse
-                };
-            })
-            .domain(this.xScale.domain())
-            .thresholds(this.xScale.ticks(self.numTicks))
+            .thresholds(this.xScale.ticks(10))
             (data)
 
         // this.xScale = d3.scaleLinear()
@@ -81,6 +73,10 @@ class Train extends Component {
         this.yScale = d3.scaleLinear()
             .domain([0, d3.max(self.bins, d => d.length)]).nice()
             .range([this.chartHeight - this.chartMargin.bottom, this.chartMargin.top])
+
+        // this.yScale = d3.scaleLinear()
+        //     .domain([d3.min(data, function (d) { return d.mse }), d3.max(data, function (d) { return d.mse })]) // input 
+        //     .range([this.chartHeight, 0]); // output 
 
         this.xAxis = d3.axisBottom(this.xScale)
         this.yAxis = d3.axisRight(this.yScale)
@@ -118,37 +114,24 @@ class Train extends Component {
     drawGraph(data) {
         let self = this
         this.setupScalesAxes(data)
-
-        const svg = d3.select("div.linechartbox").append("svg")
-            .attr("width", this.chartWidth + this.chartMargin.left + this.chartMargin.right)
-            .attr("height", this.chartHeight + this.chartMargin.top + this.chartMargin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + this.chartMargin.left + "," + this.chartMargin.top + ")");
+        let width = this.chartWidth, height = this.chartHeight, margin = this.chartMargin
 
 
-        svg.append("g")
-            .attr("class", "normcolor")
-            .selectAll("rect")
-            .data(self.binNorm)
-            .join("rect")
-            .attr("x", d => self.xScale(d.x0) + 1)
-            .attr("width", d => Math.max(0, self.xScale(d.x1) - self.xScale(d.x0) - 1))
-            .attr("y", d => self.yScale(d.length))
-            .attr("height", d => self.yScale(0) - self.yScale(d.length));
+        // // 7. d3's line generator
+        // this.line = d3.line()
+        //     .x(function (d, i) { return self.xScale(i); }) // set the x values for the line generator
+        //     .y(function (d) { return self.yScale(d.mse); }) // set the y values for the line generator 
+        // // .curve(d3.curveMonotoneX) // apply smoothing to the line
 
-        svg.append("g")
-            .attr("class", "anormcolor")
-            .selectAll("rect")
-            .data(self.binsA)
-            .join("rect")
-            .attr("x", d => self.xScale(d.x0) + 1)
-            .attr("width", d => Math.max(0, self.xScale(d.x1) - self.xScale(d.x0) - 1))
-            .attr("y", d => self.yScale(d.length))
-            .attr("height", d => self.yScale(0) - self.yScale(d.length));
+        // 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
+        // var dataset = data
+
+
+        // d3.range(n).map(function (d) { return { "y": d3.randomUniform(1)() } })
 
         function customYAxis(g) {
             g.call(self.yAxis);
-            // g.select(".domain").remove();
+            g.select(".domain").remove();
             g.selectAll(".tick line").attr("stroke", "rgba(172, 172, 172, 0.74)").attr("stroke-dasharray", "2,2");
             g.selectAll(".tick text").attr("x", -20).attr("y", -.01)
         }
@@ -159,16 +142,48 @@ class Train extends Component {
             g.selectAll(".tick line").attr("x", 100)
             g.selectAll(".tick text").attr("y", 15)
         }
+
+        // 1. Add the SVG to the page and employ #2
+        var svg = d3.select("div.linechartbox").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+        svg.append("g")
+            .attr("fill", "steelblue")
+            .selectAll("rect")
+            .data(self.bins)
+            .join("rect")
+            .attr("x", d => self.xScale(d.x0) + 1)
+            .attr("transform", function (d) {
+                return "translate(" + self.xScale(d.x0) + "," + self.yScale(d.length) + ")";
+            })
+            .attr("width", d => Math.max(0, self.xScale(d.x1) - self.xScale(d.x0) - 1))
+            // .attr("y", d => {
+            //     console.log(self.yScale(d));
+            //     self.yScale(d.length)
+            // })
+
+            .attr("height", d => {
+                return self.yScale(0) - self.yScale(d.length)
+            });
         // 3. Call the x axis in a group tag
         svg.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + (self.chartHeight - self.chartMargin.top - 20) + ")")
+            .attr("transform", "translate(0," + height + ")")
             .call(customXAxis); // Create an axis component with d3.axisBottom
 
         // 4. Call the y axis in a group tag
         svg.append("g")
             .attr("class", "y axis")
             .call(customYAxis); // Create an axis component with d3.axisLeft
+
+
+
+
+
 
     }
 
@@ -185,7 +200,7 @@ class Train extends Component {
 
             let preds = this.model.predict(xsTest)
             console.log(xsTest.shape, preds.shape)
-            let mse = tf.sub(preds, xsTest).square().mean(1) //tf.losses.meanSquaredError(preds, xsTest)
+            let mse = tf.sub(preds, xsTest).square().mean(1).mul(1000) //tf.losses.meanSquaredError(preds, xsTest)
             let out_hold = []
             mse.array().then(array => {
                 array.forEach((element, i) => {
@@ -198,12 +213,6 @@ class Train extends Component {
                 self.drawGraph(out_hold)
             });
 
-            const encoder = tf.model({ inputs: this.model.inputs, outputs: this.model.getLayer("encoder").getOutputAt(1) });
-            let encPreds = encoder.predict(xsTest)
-            encPreds.array().then(array => {
-                console.log(array);
-
-            })
 
         })
     }
