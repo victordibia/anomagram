@@ -31,7 +31,7 @@ class Viz extends Component {
             5: { color: "red", colornorm: "grey", name: "Unclassifiable Beat" },
         }
 
-        this.maxSmaallChart = 60
+        this.maxSmallChart = 200
 
     }
 
@@ -60,7 +60,11 @@ class Viz extends Component {
 
     clickDataPoint(e) {
         this.setState({ selectedData: e.target.getAttribute("indexvalue") })
-        // console.log(this.state.testData[this.state.selectedData].data)
+
+        let colorAttrr = e.target.getAttribute("targetval") + "" === "1" ? "green" : "red"
+        console.log(e.target.getAttribute("targetval"), colorAttrr)
+        this.refs.labelcolordiv.style.backgroundColor = colorAttrr
+        this.refs.predictioncolordiv.style.backgroundColor = colorAttrr
     }
 
     render() {
@@ -79,9 +83,9 @@ class Viz extends Component {
             )
         });
 
-        let dataPoints = this.state.testData.slice(0, this.maxSmaallChart).map((data, index) => {
+        let dataPoints = this.state.testData.slice(0, this.maxSmallChart).map((data, index) => {
             return (
-                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable ecgdatapoint rad3 iblock mr5" + (this.state.selectedData + "" === (index + "") ? " active" : "")} indexvalue={index} >
+                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable ecgdatapoint rad3 iblock mr5" + (this.state.selectedData + "" === (index + "") ? " active" : "")} indexvalue={index} targetval={data.target} >
                     <div indexvalue={index} className="boldtext  unclickable iblock ">
 
                         <div className="positionrelative">
@@ -154,11 +158,23 @@ class Viz extends Component {
 
                             {this.state.testData.length > 0 &&
                                 <div>
-                                    <div className="mediumdesc mb5">
-                                        <span className="boldtext"> Ground Truth Label  </span>: {this.chartColorMap[this.state.testData[this.state.selectedData].target].name}
+                                    <div className="flex mediumdesc mb5 displaynone">
+                                        <div className="mr10 boldtext">
+                                            Label
+                                        </div>
+                                        <div ref="labelcolordiv" className="flexfull colorbox greenbox">
+
+                                        </div>
+                                        {/* <span className="boldtext"> </span>: {this.chartColorMap[this.state.testData[this.state.selectedData].target].name} */}
                                     </div>
-                                    <div className="mediumdesc mb5">
-                                        <span className="boldtext"> Model Classification </span>: ... 🤷
+                                    <div className="flex mediumdesc mb5">
+                                        <div className="mr10 boldtext">
+                                            {this.state.testData[this.state.selectedData].target + "" === "1" ? "NORMAL" : "ABNORMAL"}
+                                        </div>
+                                        <div ref="predictioncolordiv" className="flexfull colorbox redbox">
+
+                                        </div>
+                                        {/* <span className="boldtext"> </span>: {this.chartColorMap[this.state.testData[this.state.selectedData].target].name} */}
                                     </div>
 
                                     <div>
@@ -169,7 +185,7 @@ class Viz extends Component {
                                                 index: this.state.testData[this.state.selectedData].index,
                                                 color: this.chartColorMap[this.state.testData[this.state.selectedData].target].colornorm,
                                                 chartWidth: 390,
-                                                chartHeight: 340
+                                                chartHeight: 370
                                             }}
 
                                         > </LineChart>
@@ -185,7 +201,7 @@ class Viz extends Component {
 
 
                 <div>
-                    A VAE (an extension of an AE) can allow us generate sampled data without
+                    {/* A VAE (an extension of an AE) can allow us generate sampled data without */}
                 </div>
 
 

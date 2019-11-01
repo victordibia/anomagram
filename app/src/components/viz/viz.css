@@ -43,6 +43,19 @@
     background: rgba(255, 255, 255, 0.8);
  }
 
+ .greenbox{
+     background: green;
+     height: 10px;
+ }
+
+ .redbox{
+    background: red;
+    height: 10px;
+}
+
+.colorbox{
+    transition: background-color 0.5s ease;
+}
  /* 
  #ffc815 yellow
  #292929  dark grey

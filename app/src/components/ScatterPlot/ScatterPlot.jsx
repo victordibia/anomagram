@@ -55,7 +55,7 @@ class ScatterPlot extends Component {
         let self = this
         this.setupScalesAxes(data)
 
-        const svg = d3.select("div.linechartbox").append("svg")
+        const svg = d3.select("div.scatterplotchart").append("svg")
             .attr("width", this.chartWidth + this.chartMargin.left + this.chartMargin.right)
             .attr("height", this.chartHeight + this.chartMargin.top + this.chartMargin.bottom)
             .append("g")
@@ -107,8 +107,10 @@ class ScatterPlot extends Component {
     render() {
         return (
             <div>
-                ScatterPlot
+                VAE Dimension ScatterPlot
+                 <div className="scatterplotchart"> </div>
             </div>
+
         );
     }
 }

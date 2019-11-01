@@ -87,7 +87,7 @@ class HistogramChart extends Component {
         let self = this
         this.setupScalesAxes(data)
 
-        const svg = d3.select("div.linechartbox").append("svg")
+        const svg = d3.select("div.histogramchart").append("svg")
             .attr("width", this.chartWidth + this.chartMargin.left + this.chartMargin.right)
             .attr("height", this.chartHeight + this.chartMargin.top + this.chartMargin.bottom)
             .append("g")
@@ -144,7 +144,7 @@ class HistogramChart extends Component {
         return (
             <div>
                 Anomaly Histogram
-            <div className="linechartbox"></div>
+            <div className="histogramchart"></div>
             </div>
         );
     }

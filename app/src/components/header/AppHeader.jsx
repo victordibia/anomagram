@@ -8,7 +8,6 @@ import {
     HeaderGlobalAction,
     SkipToContent,
 } from 'carbon-components-react/lib/components/UIShell';
-
 import {
     NavLink
 } from "react-router-dom";
