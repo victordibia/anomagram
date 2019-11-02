@@ -18,11 +18,21 @@ class HistogramChart extends Component {
 
     componentDidMount() {
 
-
         this.drawGraph(this.props.data.data)
 
         // console.log(this.props.data); 
     }
+
+    componentDidUpdate(prevProps, prevState) {
+
+        if (prevProps.data.epoch != this.props.data.epoch) {
+            // console.log("props updated");
+            this.updateGraph(this.props.data.data)
+        }
+
+    }
+
+
     setupScalesAxes(data) {
         // console.log(data);
 
@@ -55,7 +65,7 @@ class HistogramChart extends Component {
             .thresholds(this.xScale.ticks(self.numTicks))(data)
 
         // Abnormal Bins
-        this.binsA = d3.histogram()
+        this.binsAnorm = d3.histogram()
             .value(function (d) {
                 if (d.label + "" === "1") {
                     return d.mse
@@ -80,9 +90,64 @@ class HistogramChart extends Component {
 
     }
 
+    updateGraph(data) {
+        let self = this
+        // console.log(data[0]);
+
+
+        this.setupScalesAxes(data)
+
+        let svg = d3.select("div.histogramchart") //.transition();
+        // console.log(svg);
+
+        // // Abnormal Bins
+        svg.select(".normcolor")
+            .selectAll("rect")
+            .data(self.binNorm)
+            .join("rect")
+            .attr("x", d => self.xScale(d.x0) + 1)
+            .attr("width", d => Math.max(0, self.xScale(d.x1) - self.xScale(d.x0) - 1))
+            .attr("y", d => self.yScale(d.length))
+            .attr("height", d => self.yScale(0) - self.yScale(d.length))
+        // .transition();
+
+        svg.select(".anormcolor")
+            .selectAll("rect")
+            .data(self.binsAnorm)
+            .join("rect")
+            .attr("x", d => self.xScale(d.x0) + 1)
+            .attr("width", d => Math.max(0, self.xScale(d.x1) - self.xScale(d.x0) - 1))
+            .attr("y", d => self.yScale(d.length))
+            .attr("height", d => self.yScale(0) - self.yScale(d.length))
+
+        function customYAxis(g) {
+            g.call(self.yAxis);
+            // g.select(".domain").remove();
+            g.selectAll(".tick line").attr("stroke", "rgba(172, 172, 172, 0.74)").attr("stroke-dasharray", "2,2");
+            g.selectAll(".tick text").attr("x", -20).attr("y", -.01)
+        }
+
+        function customXAxis(g) {
+            g.call(self.xAxis);
+            g.select(".domain").remove();
+            g.selectAll(".tick line").attr("x", 100)
+            g.selectAll(".tick text").attr("y", 15)
+        }
+
+        svg.select(".y.axis")
+            .call(customYAxis);
+
+        svg.select(".x.axis")
+            .call(customXAxis);
+
+
+    }
+
+
     drawGraph(data) {
         let self = this
         this.setupScalesAxes(data)
+        // console.log(data[0]);
 
         const svg = d3.select("div.histogramchart").append("svg")
             .attr("width", this.chartWidth + this.chartMargin.left + this.chartMargin.right)
@@ -104,7 +169,7 @@ class HistogramChart extends Component {
         svg.append("g")
             .attr("class", "anormcolor")
             .selectAll("rect")
-            .data(self.binsA)
+            .data(self.binsAnorm)
             .join("rect")
             .attr("x", d => self.xScale(d.x0) + 1)
             .attr("width", d => Math.max(0, self.xScale(d.x1) - self.xScale(d.x0) - 1))

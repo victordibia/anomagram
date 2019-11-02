@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Button } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
-import { loadJSONData } from "../helperfunctions/HelperFunctions"
+import { loadJSONData, showToast } from "../helperfunctions/HelperFunctions"
 import HistogramChart from "../histogram/HistogramChart"
 import ScatterPlot from "../scatterplot/ScatterPlot"
 import { buildModel } from "./models/ae"
@@ -16,8 +16,10 @@ class Train extends Component {
 
         this.state = {
             apptitle: "Anomagram",
-            testData: [],
-            trainData: [],
+            testDataLoaded: false,
+            trainDataLoaded: false,
+            trainDataShape: [0, 0],
+            testDataShape: [0, 0],
             mseData: [],
             createdModel: null,
             encodedData: [],
@@ -30,13 +32,18 @@ class Train extends Component {
             hiddenDim: [15, 7],
             learningRate: 0.05,
             adamBeta1: 0.5,
-            outputActivation: "sigmoid"
+            outputActivation: "sigmoid",
+            batchSize: 512,
+            numSteps: 15,
+            numEpochs: 1
         }
 
-        this.numSteps = 3
-        this.numEpochs = 20
-        this.batchSize = 256
+
         this.currentSteps = 0
+
+        this.xsTrain = []
+        this.xsTest = []
+        this.yTest = []
 
     }
 
@@ -45,6 +52,7 @@ class Train extends Component {
 
         this.loadTestData()
         this.loadTrainData()
+
     }
 
     createModel(xsTest, yTest) {
@@ -60,23 +68,27 @@ class Train extends Component {
         }
         let model = buildModel(modelParams)
         // this.trainModel(model, xs)
-        this.createModel = model
+        this.createdModel = model
         this.getPredictions(xsTest, yTest)
-
+        showToast("success", "Model successfully created")
     }
 
-    trainModel(model, xs) {
+    trainModel() {
         // for (let i = 0; i < this.numSteps; i++) {
         let startTime = new Date();
-        model.fit(xs,
-            xs, { epochs: this.numEpochs, verbose: 0, batchSize: this.batchSize }
+        this.createdModel.fit(this.xsTrain,
+            this.xsTrain, { epochs: this.state.numEpochs, verbose: 0, batchSize: this.state.batchSize }
         ).then(res => {
             let endTime = new Date();
             let elapsedTime = (endTime - startTime) / 1000
             console.log("Step loss", this.currentSteps, res.history.loss[0], elapsedTime);
-            if (this.numSteps > this.currentSteps) {
-                this.trainModel(model, xs)
+            this.getPredictions()
+            if (this.state.numSteps > this.currentSteps) {
+                this.trainModel()
                 this.currentSteps++
+                this.setState({ currentEpoch: this.currentSteps })
+            } else {
+                this.currentSteps = 0
             }
         });
     }
@@ -95,6 +107,7 @@ class Train extends Component {
         let self = this
         let ecgTrainDataPath = "data/ecg/train.json"
         loadJSONData(ecgTrainDataPath).then(ecgTrain => {
+            showToast("success", "Train data loaded")
             let trainEcg = []
             for (let row in ecgTrain) {
                 let val = ecgTrain[row]
@@ -102,45 +115,49 @@ class Train extends Component {
                     trainEcg.push(val)
                 }
             }
-            const xs = tf.tensor2d(trainEcg.map(item => item.data
+            this.setState({ trainDataLoaded: true })
+
+
+            this.xsTrain = tf.tensor2d(trainEcg.map(item => item.data
             ), [trainEcg.length, trainEcg[0].data.length])
-            console.log(trainEcg.length, xs.shape[1], "train size");
-            // self.createModel(xs)
+
+            this.setState({ trainDataShape: this.xsTrain.shape })
+
         })
     }
 
-    getPredictions(xsTest, yTest) {
+    getPredictions() {
         let self = this;
 
         // Get predictions 
         let startTime = new Date()
-        let preds = this.createModel.predict(xsTest)
+        let preds = this.createdModel.predict(this.xsTest)
         let elapsedTime = (new Date() - startTime) / 1000
 
 
         // Compute mean squared error difference between predictions and ground truth
-        let mse = tf.sub(preds, xsTest).square().mean(1) //tf.losses.meanSquaredError(preds, xsTest)
+        let mse = tf.sub(preds, this.xsTest).square().mean(1) //tf.losses.meanSquaredError(preds, xsTest)
         let mseDataHolder = []
         mse.array().then(array => {
             array.forEach((element, i) => {
                 // console.log({ "mse": element, "label": yTest[i] });
-                mseDataHolder.push({ "mse": element, "label": yTest[i] })
+                mseDataHolder.push({ "mse": element, "label": this.yTest[i] })
                 // console.log(mseDataHolder.length)
             });
             // mseDataHolder = _.sortBy(mseDataHolder, 'mse');
-            // console.log(mseDataHolder);
+            // console.log("mse updated");
             self.setState({ mseData: mseDataHolder })
             // this.loadTestData()
         });
 
         // Generate encoder output 
-        const encoder = tf.model({ inputs: this.createModel.inputs, outputs: this.createModel.getLayer("encoder").getOutputAt(1) });
-        let encPreds = encoder.predict(xsTest)
+        const encoder = tf.model({ inputs: this.createdModel.inputs, outputs: this.createdModel.getLayer("encoder").getOutputAt(1) });
+        let encPreds = encoder.predict(this.xsTest)
 
         let encPredHolder = []
         encPreds.array().then(array => {
             array.forEach((element, i) => {
-                encPredHolder.push({ x: element[0], y: element[1], "label": yTest[i] })
+                encPredHolder.push({ x: element[0], y: element[1], "label": this.yTest[i] })
             });
             self.setState({ encodedData: encPredHolder })
         })
@@ -154,23 +171,29 @@ class Train extends Component {
 
         loadJSONData(ecgDataPath).then(testEcg => {
 
-            this.setState({ testData: testEcg })
+            showToast("success", "Test data loaded")
+
+            this.setState({ testDataLoaded: true })
 
             // Set numfeatures to size of input dataset 
             this.setState({ numFeatures: testEcg[0].data.length })
 
             // create test data TENSOR from test data json array 
-            const xsTest = tf.tensor2d(testEcg.map(item => item.data
+            this.xsTest = tf.tensor2d(testEcg.map(item => item.data
             ), [testEcg.length, testEcg[0].data.length])
 
+            this.setState({ testDataShape: this.xsTest.shape })
+
             // create yLabel Tensor
-            let yTest = testEcg.map(item => item.target + "" === 1 + "" ? 0 : 1)
-            this.createModel(xsTest, yTest)
+            this.yTest = testEcg.map(item => item.target + "" === 1 + "" ? 0 : 1)
+            this.createModel()
         })
     }
 
     trainButtonClick(e) {
         console.log("traain click")
+        showToast("info", "bingo", 6000)
+        this.trainModel()
     }
 
     predictButtonClick(e) {
@@ -183,18 +206,22 @@ class Train extends Component {
                 <div className="mb10">
                     <Button
                         className="mr5 iblock"
-                        disabled={this.state.testData.length > 0 ? false : true}
+                        disabled={this.state.testDataLoaded && this.state.trainDataLoaded ? false : true}
                         onClick={this.trainButtonClick.bind(this)}
                     > Train </Button>
                     <Button
                         className="mr5 iblock"
-                        disabled={this.state.testData.length > 0 ? false : true}
+                        disabled={this.state.testDataLoaded > 0 ? false : true}
                         onClick={this.predictButtonClick.bind(this)}
                     > Predict </Button>
                 </div>
 
                 <div className="greyborder p10 mb10">
-                    <div className="iblock, mr10"> Current Epoch: {this.state.currentEpoch}</div>
+                    <div className="iblock mr10"> Epochs: {this.state.numEpochs}</div>
+                    <div className="iblock mr10"> Batch Size: {this.state.batchSize}</div>
+                    <div className="iblock mr10"> Learning Rate: {this.state.learningRate}</div>
+                    <div className="iblock mr10"> Train: {this.state.trainDataShape[0]}</div>
+                    <div className="iblock"> Test: {this.state.testDataShape[0]}</div>
                 </div>
 
                 <div>
@@ -204,7 +231,8 @@ class Train extends Component {
                                 data={{
                                     data: this.state.mseData,
                                     chartWidth: 450,
-                                    chartHeight: 300
+                                    chartHeight: 300,
+                                    epoch: this.state.currentEpoch
                                 }}
                             ></HistogramChart>
                         }
@@ -215,7 +243,8 @@ class Train extends Component {
                                 data={{
                                     data: this.state.encodedData,
                                     chartWidth: 450,
-                                    chartHeight: 300
+                                    chartHeight: 300,
+                                    epoch: this.state.currentEpoch
                                 }}
 
                             ></ScatterPlot>

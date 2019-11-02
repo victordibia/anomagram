@@ -80,7 +80,9 @@ class Main extends Component {
                     <Route exact path="/" component={Viz} />
                     <Route exact path="/train" component={Train} />
 
+                    <div id="notificatiionbox" className="notificationtopright p5  ">
 
+                    </div>
                 </div>
                 <div id="footer"> <Footer /> </div>
             </HashRouter>

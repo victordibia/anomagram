@@ -1,8 +1,25 @@
 import { ToastNotification } from "carbon-components-react"
 
-export function showToast(type, message, duration) {
-    let body = document.getElementsByTagName("body")[0]
+export function showToast(type, message, duration = 4000) {
+    let notifbox = document.getElementById("notificatiionbox")
+    let notif = document.createElement('div');
+    notif.className = "notificationinner"
+    notif.innerHTML = "" + message
+    notifbox.append(notif)
+    notif.style.opacity = 1
+    // console.log(notifbox);
+
+    setTimeout(() => {
+        // notif.remove()
+        notif.style.opacity = 0
+        setTimeout(() => {
+            notif.remove()
+        }, 1500);
+    }, duration);
+
 }
+
+
 
 export function abbreviateString(value, maxLength) {
     if (value.length <= maxLength) {

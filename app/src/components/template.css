@@ -513,6 +513,19 @@
 
 .notificationtopright{
     position: absolute;
-    top: 70px;
-    right: 5px;
+    top: 60px;
+    right: 10px;
+}
+
+.notificationinner{
+    padding: 10px;
+    border-left: solid 4px #054ADA ;
+    background: rgba(231, 231, 231, 0.93);
+    max-width: 250px;
+
+    opacity: 0;
+    transition: opacity 1.5s;
+    -webkit-transition: opacity 1.5s; 
+    margin-bottom: 5px;
+
 }
