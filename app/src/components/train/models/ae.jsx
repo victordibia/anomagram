@@ -4,14 +4,13 @@
 // Craft an autoencoder
 
 const tf = require('@tensorflow/tfjs');
-const _ = require('lodash');
+// const _ = require('lodash');
 
 
 
 export function buildModel(params) {
 
-    const numFeatures = params.numFeatures    // Set feaetures to size of features
-    const hiddenLayers = params.hiddenLayers
+    const numFeatures = params.numFeatures    // Set feaetures to size of features 
     const latentDim = params.latentDim
     const hiddenDim = params.hiddenDim
     const learningRate = params.learningRate, adamBeta1 = params.adamBeta1
@@ -59,7 +58,7 @@ export function buildModel(params) {
 
     ae.compile({ optimizer: optimizer, loss: "meanSquaredError" })
 
-    return [ae, encoder, decoder]
+    return ae
 }
 
 

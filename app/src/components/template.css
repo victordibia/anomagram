@@ -510,3 +510,9 @@
 ::-webkit-scrollbar-corner {
     background-color: rgba(0, 0, 0, 0);
 }
+
+.notificationtopright{
+    position: absolute;
+    top: 70px;
+    right: 5px;
+}

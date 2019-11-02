@@ -1,3 +1,8 @@
+import { ToastNotification } from "carbon-components-react"
+
+export function showToast(type, message, duration) {
+    let body = document.getElementsByTagName("body")[0]
+}
 
 export function abbreviateString(value, maxLength) {
     if (value.length <= maxLength) {

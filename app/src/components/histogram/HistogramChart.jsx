@@ -42,8 +42,7 @@ class HistogramChart extends Component {
         this.bins = d3.histogram()
             .value(function (d) { return d.mse })
             .domain(this.xScale.domain())
-            .thresholds(this.xScale.ticks(self.numTicks))
-            (data)
+            .thresholds(this.xScale.ticks(self.numTicks))(data)
 
         // Normal Bins
         this.binNorm = d3.histogram()
@@ -53,8 +52,7 @@ class HistogramChart extends Component {
                 };
             })
             .domain(this.xScale.domain())
-            .thresholds(this.xScale.ticks(self.numTicks))
-            (data)
+            .thresholds(this.xScale.ticks(self.numTicks))(data)
 
         // Abnormal Bins
         this.binsA = d3.histogram()
@@ -64,8 +62,7 @@ class HistogramChart extends Component {
                 };
             })
             .domain(this.xScale.domain())
-            .thresholds(this.xScale.ticks(self.numTicks))
-            (data)
+            .thresholds(this.xScale.ticks(self.numTicks))(data)
 
         // this.xScale = d3.scaleLinear()
         //     .domain([0, n - 1]) // input

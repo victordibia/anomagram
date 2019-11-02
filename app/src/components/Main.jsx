@@ -5,7 +5,7 @@ import {
 
 } from "react-router-dom";
 
-// import { Modal } from 'carbon-components-react';
+import { InlineNotification } from 'carbon-components-react';
 
 
 import "./template.css"
@@ -79,6 +79,7 @@ class Main extends Component {
                 <div className="container-fluid p10">
                     <Route exact path="/" component={Viz} />
                     <Route exact path="/train" component={Train} />
+
 
                 </div>
                 <div id="footer"> <Footer /> </div>

@@ -21,12 +21,12 @@ class ScatterPlot extends Component {
 
         this.drawGraph(this.props.data.data)
 
-        console.log(this.props.data);
+        // console.log(this.props.data);
     }
     setupScalesAxes(data) {
         // console.log(data);
 
-        let self = this
+        // let self = this
 
         this.chartMargin = { top: 10, right: 5, bottom: 40, left: 20 }
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
