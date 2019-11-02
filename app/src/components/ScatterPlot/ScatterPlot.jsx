@@ -23,6 +23,67 @@ class ScatterPlot extends Component {
 
         // console.log(this.props.data);
     }
+
+    componentDidUpdate(prevProps, prevState) {
+
+        if (prevProps.data.epoch != this.props.data.epoch) {
+            // console.log("props updated");
+            this.updateGraph(this.props.data.data)
+        }
+
+    }
+
+    updateGraph(data) {
+        let self = this
+        // console.log(data[0]);
+
+        d3.select("div.scatterplotchart").selectAll(".scatternode > *").remove();
+
+        this.setupScalesAxes(data)
+
+        let svg = d3.select("div.scatterplotchart") //.transition();
+
+        // svg.selectAll("dot").remove()
+
+        svg.select(".scatternode")
+            .selectAll("dot")
+            .data(data)
+            .join("circle")
+            .attr("cx", function (d) { return self.xScale(d.x); })
+            .attr("cy", function (d) { return self.yScale(d.y); })
+            .attr("r", 2.5)
+            .attr("class", d => {
+                if (d.label + "" === "0") {
+                    return "normcolor"
+                } else {
+                    return "anormcolor"
+                }
+            })
+
+
+        function customYAxis(g) {
+            g.call(self.yAxis);
+            // g.select(".domain").remove();
+            g.selectAll(".tick line").attr("stroke", "rgba(172, 172, 172, 0.74)").attr("stroke-dasharray", "2,2");
+            g.selectAll(".tick text").attr("x", -20).attr("y", -.01)
+        }
+
+        function customXAxis(g) {
+            g.call(self.xAxis);
+            g.select(".domain").remove();
+            g.selectAll(".tick line").attr("x", 100)
+            g.selectAll(".tick text").attr("y", 15)
+        }
+
+        svg.select(".y.axis")
+            .call(customYAxis);
+
+        svg.select(".x.axis")
+            .call(customXAxis);
+
+
+
+    }
     setupScalesAxes(data) {
         // console.log(data);
 
@@ -63,10 +124,10 @@ class ScatterPlot extends Component {
 
 
         svg.append('g')
+            .attr("class", "scatternode")
             .selectAll("dot")
             .data(data)
-            .enter()
-            .append("circle")
+            .join("circle")
             .attr("cx", function (d) { return self.xScale(d.x); })
             .attr("cy", function (d) { return self.yScale(d.y); })
             .attr("r", 2.5)
