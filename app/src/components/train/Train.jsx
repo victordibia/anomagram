@@ -14,8 +14,11 @@ class Train extends Component {
     constructor(props) {
         super(props)
 
+        this.trainMetricHolder = []
+
         this.state = {
             apptitle: "Anomagram",
+            isTraining: false,
             testDataLoaded: false,
             trainDataLoaded: false,
             trainDataShape: [0, 0],
@@ -35,11 +38,15 @@ class Train extends Component {
             outputActivation: "sigmoid",
             batchSize: 512,
             numSteps: 15,
-            numEpochs: 1
+            numEpochs: 1,
+
+            trainMetrics: this.trainMetricHolder
         }
 
 
-        this.currentSteps = 0
+        this.currentSteps = 0;
+        this.CumulativeSteps = 0;
+
 
         this.xsTrain = []
         this.xsTest = []
@@ -75,20 +82,30 @@ class Train extends Component {
 
     trainModel() {
         // for (let i = 0; i < this.numSteps; i++) {
+        this.setState({ isTraining: true })
+
+        this.currentSteps++;
         let startTime = new Date();
         this.createdModel.fit(this.xsTrain,
             this.xsTrain, { epochs: this.state.numEpochs, verbose: 0, batchSize: this.state.batchSize }
         ).then(res => {
             let endTime = new Date();
             let elapsedTime = (endTime - startTime) / 1000
-            console.log("Step loss", this.currentSteps, res.history.loss[0], elapsedTime);
+
+            let metricRow = { epoch: this.CumulativeSteps, loss: res.history.loss[0], traintime: elapsedTime }
+            this.trainMetricHolder.push(metricRow)
+            // console.log("Step loss", this.currentSteps, this.CumulativeSteps, res.history.loss[0], elapsedTime);
             this.getPredictions()
             if (this.state.numSteps > this.currentSteps) {
                 this.trainModel()
-                this.currentSteps++
+                this.CumulativeSteps++;
                 this.setState({ currentEpoch: this.currentSteps })
             } else {
                 this.currentSteps = 0
+                this.setState({ isTraining: false })
+
+                console.log("seting state");
+
             }
         });
     }
@@ -107,7 +124,7 @@ class Train extends Component {
         let self = this
         let ecgTrainDataPath = "data/ecg/train.json"
         loadJSONData(ecgTrainDataPath).then(ecgTrain => {
-            showToast("success", "Train data loaded")
+            // showToast("success", "Train data loaded")
             let trainEcg = []
             for (let row in ecgTrain) {
                 let val = ecgTrain[row]
@@ -171,7 +188,7 @@ class Train extends Component {
 
         loadJSONData(ecgDataPath).then(testEcg => {
 
-            showToast("success", "Test data loaded")
+            // showToast("success", "Test data loaded")
 
             this.setState({ testDataLoaded: true })
 
@@ -192,7 +209,7 @@ class Train extends Component {
 
     trainButtonClick(e) {
         console.log("traain click")
-        showToast("info", "bingo", 6000)
+        // showToast("info", "Training model ", 6000)
         this.trainModel()
     }
 
@@ -206,23 +223,26 @@ class Train extends Component {
                 <div className="mb10">
                     <Button
                         className="mr5 iblock"
-                        disabled={this.state.testDataLoaded && this.state.trainDataLoaded ? false : true}
+                        disabled={this.state.testDataLoaded && this.state.trainDataLoaded && (!this.state.isTraining) ? false : true}
                         onClick={this.trainButtonClick.bind(this)}
                     > Train </Button>
                     <Button
                         className="mr5 iblock"
-                        disabled={this.state.testDataLoaded > 0 ? false : true}
+                        disabled={this.state.testDataLoaded && this.state.trainDataLoaded && (!this.state.isTraining) ? false : true}
                         onClick={this.predictButtonClick.bind(this)}
                     > Predict </Button>
                 </div>
 
+                <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div>
                 <div className="greyborder p10 mb10">
-                    <div className="iblock mr10"> Epochs: {this.state.numEpochs}</div>
+                    <div className="iblock mr10"> Epochs: {this.state.trainMetrics.length}</div>
                     <div className="iblock mr10"> Batch Size: {this.state.batchSize}</div>
                     <div className="iblock mr10"> Learning Rate: {this.state.learningRate}</div>
                     <div className="iblock mr10"> Train: {this.state.trainDataShape[0]}</div>
                     <div className="iblock"> Test: {this.state.testDataShape[0]}</div>
                 </div>
+
+
 
                 <div>
                     <div className="iblock mr10">

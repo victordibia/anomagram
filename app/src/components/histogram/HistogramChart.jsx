@@ -204,9 +204,13 @@ class HistogramChart extends Component {
 
     render() {
         return (
-            <div>
+            <div className="positionrelative ">
+                <div className="chartlegend p5 mediumdesc">
+                    <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Normal </div>
+                    <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Abnormal </div>
+                </div>
                 Anomaly Histogram
-            <div className="histogramchart"></div>
+                <div className="histogramchart"></div>
             </div>
         );
     }
