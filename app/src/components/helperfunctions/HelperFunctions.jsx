@@ -1,4 +1,4 @@
-import { ToastNotification } from "carbon-components-react"
+// import { ToastNotification } from "carbon-components-react"
 
 export function showToast(type, message, duration = 4000) {
     let notifbox = document.getElementById("notificatiionbox")

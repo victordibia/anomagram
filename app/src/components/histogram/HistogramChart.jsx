@@ -24,8 +24,7 @@ class HistogramChart extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-
-        if (prevProps.data.epoch != this.props.data.epoch) {
+        if (prevProps.data.epoch !== this.props.data.epoch) {
             // console.log("props updated");
             this.updateGraph(this.props.data.data)
         }

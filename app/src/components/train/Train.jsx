@@ -5,6 +5,7 @@ import * as tf from '@tensorflow/tfjs';
 import { loadJSONData, showToast } from "../helperfunctions/HelperFunctions"
 import HistogramChart from "../histogram/HistogramChart"
 import ScatterPlot from "../scatterplot/ScatterPlot"
+import LossChart from "../losschart/LossChart"
 import { buildModel } from "./models/ae"
 // import 
 
@@ -15,6 +16,7 @@ class Train extends Component {
         super(props)
 
         this.trainMetricHolder = []
+        this.CumulativeSteps = 0;
 
         this.state = {
             apptitle: "Anomagram",
@@ -37,20 +39,24 @@ class Train extends Component {
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
             batchSize: 512,
-            numSteps: 15,
+            numSteps: 2,
             numEpochs: 1,
 
-            trainMetrics: this.trainMetricHolder
+            trainMetrics: this.trainMetricHolder,
+            CumulativeSteps: this.CumulativeSteps
         }
 
 
         this.currentSteps = 0;
-        this.CumulativeSteps = 0;
+
 
 
         this.xsTrain = []
         this.xsTest = []
         this.yTest = []
+
+        this.trainDataPath = "data/ecg/train.json"
+        this.testDataPath = "data/ecg/test.json"
 
     }
 
@@ -85,26 +91,31 @@ class Train extends Component {
         this.setState({ isTraining: true })
 
         this.currentSteps++;
+        this.CumulativeSteps++; this.setState({ CumulativeSteps: this.CumulativeSteps });
         let startTime = new Date();
         this.createdModel.fit(this.xsTrain,
-            this.xsTrain, { epochs: this.state.numEpochs, verbose: 0, batchSize: this.state.batchSize }
+            this.xsTrain, { epochs: this.state.numEpochs, verbose: 0, batchSize: this.state.batchSize, validationData: [this.xsTest, this.xsTest] }
         ).then(res => {
             let endTime = new Date();
             let elapsedTime = (endTime - startTime) / 1000
 
-            let metricRow = { epoch: this.CumulativeSteps, loss: res.history.loss[0], traintime: elapsedTime }
+            let metricRow = { epoch: this.CumulativeSteps, loss: res.history.loss[0], val_loss: res.history.val_loss[0], traintime: elapsedTime }
             this.trainMetricHolder.push(metricRow)
+            console.log(metricRow);
+
             // console.log("Step loss", this.currentSteps, this.CumulativeSteps, res.history.loss[0], elapsedTime);
             this.getPredictions()
             if (this.state.numSteps > this.currentSteps) {
-                this.trainModel()
-                this.CumulativeSteps++;
+
+
                 this.setState({ currentEpoch: this.currentSteps })
+
+                this.trainModel()
             } else {
                 this.currentSteps = 0
                 this.setState({ isTraining: false })
 
-                console.log("seting state");
+                // console.log("seting state");
 
             }
         });
@@ -121,8 +132,8 @@ class Train extends Component {
 
     loadTrainData() {
         // TODO .. launch loadning spinnr
-        let self = this
-        let ecgTrainDataPath = "data/ecg/train.json"
+        // let self = this
+        let ecgTrainDataPath = this.trainDataPath
         loadJSONData(ecgTrainDataPath).then(ecgTrain => {
             // showToast("success", "Train data loaded")
             let trainEcg = []
@@ -146,10 +157,13 @@ class Train extends Component {
     getPredictions() {
         let self = this;
 
+
         // Get predictions 
         let startTime = new Date()
         let preds = this.createdModel.predict(this.xsTest)
         let elapsedTime = (new Date() - startTime) / 1000
+
+
 
 
         // Compute mean squared error difference between predictions and ground truth
@@ -165,7 +179,10 @@ class Train extends Component {
             // console.log("mse updated");
             self.setState({ mseData: mseDataHolder })
             // this.loadTestData()
+            // console.log("getting preds", mseDataHolder[0]);
         });
+
+
 
         // Generate encoder output 
         const encoder = tf.model({ inputs: this.createdModel.inputs, outputs: this.createdModel.getLayer("encoder").getOutputAt(1) });
@@ -183,8 +200,8 @@ class Train extends Component {
     // visualizeMSE(mse)
 
     loadTestData() {
-        let self = this
-        let ecgDataPath = "data/ecg/test.json"
+        // let self = this
+        let ecgDataPath = this.testDataPath
 
         loadJSONData(ecgDataPath).then(testEcg => {
 
@@ -235,7 +252,7 @@ class Train extends Component {
 
                 <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div>
                 <div className="greyborder p10 mb10">
-                    <div className="iblock mr10"> Epochs: {this.state.trainMetrics.length}</div>
+                    <div className="iblock mr10"> Epdfochs: {this.state.trainMetrics.length + " - " + this.state.CumulativeSteps}</div>
                     <div className="iblock mr10"> Batch Size: {this.state.batchSize}</div>
                     <div className="iblock mr10"> Learning Rate: {this.state.learningRate}</div>
                     <div className="iblock mr10"> Train: {this.state.trainDataShape[0]}</div>
@@ -252,7 +269,7 @@ class Train extends Component {
                                     data: this.state.mseData,
                                     chartWidth: 450,
                                     chartHeight: 300,
-                                    epoch: this.state.currentEpoch
+                                    epoch: this.state.CumulativeSteps
                                 }}
                             ></HistogramChart>
                         }
@@ -264,10 +281,24 @@ class Train extends Component {
                                     data: this.state.encodedData,
                                     chartWidth: 450,
                                     chartHeight: 300,
-                                    epoch: this.state.currentEpoch
+                                    epoch: this.state.CumulativeSteps
                                 }}
 
                             ></ScatterPlot>
+                        }
+                    </div>
+
+                    <div className="iblock mr10">
+                        {this.state.mseData.length > 0 &&
+                            <LossChart
+                                data={{
+                                    data: this.state.encodedData,
+                                    chartWidth: 450,
+                                    chartHeight: 300,
+                                    epoch: this.state.CumulativeSteps
+                                }}
+
+                            ></LossChart>
                         }
                     </div>
                 </div>

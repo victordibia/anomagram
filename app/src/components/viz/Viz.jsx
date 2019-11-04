@@ -177,7 +177,7 @@ class Viz extends Component {
                                         {/* <span className="boldtext"> </span>: {this.chartColorMap[this.state.testData[this.state.selectedData].target].name} */}
                                     </div>
 
-                                    <div>
+                                    <div className="iblock">
                                         {/* {this.state.testData[this.state.selectedData].index} */}
                                         <LineChart
                                             data={{

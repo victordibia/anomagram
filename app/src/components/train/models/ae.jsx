@@ -56,7 +56,7 @@ export function buildModel(params) {
     const ae = tf.model({ inputs: input, outputs: output, name: "autoencoder" })
     const optimizer = tf.train.adam(learningRate, adamBeta1)
 
-    ae.compile({ optimizer: optimizer, loss: "meanSquaredError" })
+    ae.compile({ optimizer: optimizer, loss: "meanSquaredError", metrics: ["accuracy"] })
 
     return ae
 }
