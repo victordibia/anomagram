@@ -38,11 +38,11 @@ class LossChart extends Component {
         let self = this
         // console.log(data[0]);
 
-        d3.select("div.scatterplotchart").selectAll(".scatternode > *").remove();
+        d3.select("div.losschart").selectAll(".scatternode > *").remove();
 
         this.setupScalesAxes(data)
 
-        let svg = d3.select("div.scatterplotchart") //.transition();
+        let svg = d3.select("div.losschart") //.transition();
 
         // svg.selectAll("dot").remove()
 
@@ -94,51 +94,58 @@ class LossChart extends Component {
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
+        var n = data.length;
 
         this.xScale = d3.scaleLinear()
-            .domain([d3.min(data, function (d) { return d.x }), d3.max(data, function (d) { return d.x })]) // input  
-            .range([this.chartMargin.left, this.chartWidth - this.chartMargin.right])
-
+            .domain([0, n]) // input
+            .range([0, this.chartWidth]); // output
 
 
         this.yScale = d3.scaleLinear()
-            .domain([d3.min(data, function (d) { return d.y }), d3.max(data, function (d) { return d.y })]) // input  
-            .range([this.chartHeight - this.chartMargin.bottom, this.chartMargin.top])
+            .domain([d3.min(data, function (d) {
+                console.log(Math.min(d.loss, d.val_loss))
+                return Math.min(d.loss, d.val_loss)
+            }), d3.max(data, function (d) {
+                return Math.max(d.loss, d.val_loss)
+            })]) // input 
+            .range([this.chartHeight, 0]); // output 
 
         this.xAxis = d3.axisBottom(this.xScale)
         this.yAxis = d3.axisRight(this.yScale)
             .tickSize(this.minChartWidth)
 
 
-
     }
 
     drawGraph(data) {
         let self = this
+
+
+        data = [{ epoch: 1, loss: 0.9578104019165039, val_loss: 0.9471035003662109, traintime: 2.247 },
+        { epoch: 2, loss: 0.7673317790031433, val_loss: 0.8629779815673828, traintime: 0.146 },
+        { epoch: 3, loss: 0.749285876750946, val_loss: 0.8709790110588074, traintime: 0.152 },
+        { epoch: 4, loss: 0.7410370707511902, val_loss: 0.8575628995895386, traintime: 0.11 }]
+        // console.log(data)
+
         this.setupScalesAxes(data)
 
-        const svg = d3.select("div.scatterplotchart").append("svg")
+        this.line = d3.line()
+            .x(function (d, i) { return self.xScale(i); }) // set the x values for the line generator
+            .y(function (d) { return self.yScale(d.loss); }) // set the y values for the line generator 
+        // .curve(d3.curveMonotoneX) // apply smoothing to the line
+
+        const svg = d3.select("div.losschart").append("svg")
             .attr("width", this.chartWidth + this.chartMargin.left + this.chartMargin.right)
             .attr("height", this.chartHeight + this.chartMargin.top + this.chartMargin.bottom)
             .append("g")
             .attr("transform", "translate(" + this.chartMargin.left + "," + this.chartMargin.top + ")");
 
 
-        svg.append('g')
-            .attr("class", "scatternode")
-            .selectAll("dot")
-            .data(data)
-            .join("circle")
-            .attr("cx", function (d) { return self.xScale(d.x); })
-            .attr("cy", function (d) { return self.yScale(d.y); })
-            .attr("r", 2.5)
-            .attr("class", d => {
-                if (d.label + "" === "0") {
-                    return "normcolor"
-                } else {
-                    return "anormcolor"
-                }
-            })
+        svg.append("path")
+            .datum(data) // 10. Binds data to the line 
+            .attr("class", "line") // Assign a class for styling 
+            .attr("stroke", "green")
+            .attr("d", this.line); // 11. Calls the line generator 
 
 
         function customYAxis(g) {
@@ -173,8 +180,8 @@ class LossChart extends Component {
                     <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Normal </div>
                     <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Abnormal </div>
                 </div>
-                VAE Dimension ScatterPlot
-                     <div className="scatterplotchart"> </div>
+                Training Loss Chart
+                     <div className="losschart"> </div>
             </div>
 
         );

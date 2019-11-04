@@ -101,7 +101,7 @@ class Train extends Component {
 
             let metricRow = { epoch: this.CumulativeSteps, loss: res.history.loss[0], val_loss: res.history.val_loss[0], traintime: elapsedTime }
             this.trainMetricHolder.push(metricRow)
-            console.log(metricRow);
+            // console.log(metricRow);
 
             // console.log("Step loss", this.currentSteps, this.CumulativeSteps, res.history.loss[0], elapsedTime);
             this.getPredictions()
@@ -115,7 +115,7 @@ class Train extends Component {
                 this.currentSteps = 0
                 this.setState({ isTraining: false })
 
-                // console.log("seting state");
+                console.log(this.trainMetricHolder);
 
             }
         });
@@ -292,7 +292,7 @@ class Train extends Component {
                         {this.state.mseData.length > 0 &&
                             <LossChart
                                 data={{
-                                    data: this.state.encodedData,
+                                    data: this.state.trainMetrics,
                                     chartWidth: 450,
                                     chartHeight: 300,
                                     epoch: this.state.CumulativeSteps
