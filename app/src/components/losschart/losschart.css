@@ -1,0 +1,28 @@
+.losstraincolor{
+    stroke: rgba(0, 98, 255, 0.8);  
+}
+.lossvalcolor{
+ stroke:  rgba(255, 170, 0, 0.8);; 
+}
+
+.lossline{
+    fill: none; 
+    stroke-width: 2;
+}
+
+.traindot{
+    fill:  rgba(0, 98, 255, 1);  
+}
+
+.valdot{
+    fill:  rgba(255, 170, 0, 1);  
+}
+
+.notrainingdata{
+    border: 1px solid grey;
+    padding: 10px;
+    position: absolute;
+    display: block;
+    top: 40%;
+    left: 30%;
+}

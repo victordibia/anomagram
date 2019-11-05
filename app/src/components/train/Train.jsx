@@ -39,11 +39,11 @@ class Train extends Component {
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
             batchSize: 512,
-            numSteps: 2,
+            numSteps: 20,
             numEpochs: 1,
 
             trainMetrics: this.trainMetricHolder,
-            CumulativeSteps: this.CumulativeSteps
+            CumulativeSteps: 0
         }
 
 
@@ -91,7 +91,9 @@ class Train extends Component {
         this.setState({ isTraining: true })
 
         this.currentSteps++;
-        this.CumulativeSteps++; this.setState({ CumulativeSteps: this.CumulativeSteps });
+        this.CumulativeSteps++;
+        this.setState({ CumulativeSteps: this.CumulativeSteps });
+        // 
         let startTime = new Date();
         this.createdModel.fit(this.xsTrain,
             this.xsTrain, { epochs: this.state.numEpochs, verbose: 0, batchSize: this.state.batchSize, validationData: [this.xsTest, this.xsTest] }
@@ -106,8 +108,6 @@ class Train extends Component {
             // console.log("Step loss", this.currentSteps, this.CumulativeSteps, res.history.loss[0], elapsedTime);
             this.getPredictions()
             if (this.state.numSteps > this.currentSteps) {
-
-
                 this.setState({ currentEpoch: this.currentSteps })
 
                 this.trainModel()
@@ -115,7 +115,8 @@ class Train extends Component {
                 this.currentSteps = 0
                 this.setState({ isTraining: false })
 
-                console.log(this.trainMetricHolder);
+
+                // console.log(this.trainMetricHolder);
 
             }
         });
@@ -225,7 +226,7 @@ class Train extends Component {
     }
 
     trainButtonClick(e) {
-        console.log("traain click")
+        // console.log("traain click")
         // showToast("info", "Training model ", 6000)
         this.trainModel()
     }
@@ -244,7 +245,7 @@ class Train extends Component {
                         onClick={this.trainButtonClick.bind(this)}
                     > Train </Button>
                     <Button
-                        className="mr5 iblock"
+                        className="mr5 iblock displaynone hidden"
                         disabled={this.state.testDataLoaded && this.state.trainDataLoaded && (!this.state.isTraining) ? false : true}
                         onClick={this.predictButtonClick.bind(this)}
                     > Predict </Button>
@@ -252,7 +253,7 @@ class Train extends Component {
 
                 <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div>
                 <div className="greyborder p10 mb10">
-                    <div className="iblock mr10"> Epdfochs: {this.state.trainMetrics.length + " - " + this.state.CumulativeSteps}</div>
+                    <div className="iblock mr10"> Epochs: {this.state.CumulativeSteps}</div>
                     <div className="iblock mr10"> Batch Size: {this.state.batchSize}</div>
                     <div className="iblock mr10"> Learning Rate: {this.state.learningRate}</div>
                     <div className="iblock mr10"> Train: {this.state.trainDataShape[0]}</div>
@@ -262,7 +263,7 @@ class Train extends Component {
 
 
                 <div>
-                    <div className="iblock mr10">
+                    <div className="iblock mr10 ">
                         {this.state.mseData.length > 0 &&
                             <HistogramChart
                                 data={{
@@ -274,7 +275,7 @@ class Train extends Component {
                             ></HistogramChart>
                         }
                     </div>
-                    <div className="iblock mr10">
+                    <div className="iblock mr10  ">
                         {this.state.encodedData.length > 0 &&
                             <ScatterPlot
                                 data={{

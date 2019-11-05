@@ -15,51 +15,54 @@ class LossChart extends Component {
         this.minChartHeight = this.props.data.chartHeight
 
         this.numTicks = 40
+        this.dotRadius = 3.5
     }
 
     componentDidMount() {
-
-
         this.drawGraph(this.props.data.data)
-
-        // console.log(this.props.data);
     }
 
     componentDidUpdate(prevProps, prevState) {
-
         if (prevProps.data.epoch !== this.props.data.epoch) {
             // console.log("props updated");
             this.updateGraph(this.props.data.data)
         }
-
     }
 
     updateGraph(data) {
         let self = this
         // console.log(data[0]);
 
-        d3.select("div.losschart").selectAll(".scatternode > *").remove();
+        // d3.select("div.losschart").selectAll(".lossline").remove();
+        // d3.select("div.losschart").selectAll(".pointdot").remove();
 
         this.setupScalesAxes(data)
+        let svg = d3.select("div.losschart").transition();
 
-        let svg = d3.select("div.losschart") //.transition();
+        svg.select(".losstraincolor")
+            .duration(self.animationDuration)
+            .attr("d", this.line2); // 11. Calls the line generator 
 
-        // svg.selectAll("dot").remove()
+        svg.select(".lossvalcolor")
+            .duration(self.animationDuration)
+            .attr("d", this.line); // 11. Calls the line generator 
 
-        svg.select(".scatternode")
-            .selectAll("dot")
-            .data(data)
-            .join("circle")
-            .attr("cx", function (d) { return self.xScale(d.x); })
-            .attr("cy", function (d) { return self.yScale(d.y); })
-            .attr("r", 2.5)
-            .attr("class", d => {
-                if (d.label + "" === "0") {
-                    return "normcolor"
-                } else {
-                    return "anormcolor"
-                }
-            })
+
+        //     svg.selectAll(".pointdot")
+        //     .data(data)
+        //     .join("circle") // Uses the enter().append() method
+        //     .attr("class", "pointdot traindot") // Assign a class for styling
+        //     .attr("cx", function (d, i) { return self.xScale(i) })
+        //     .attr("cy", function (d) { return self.yScale(d.loss) })
+        //     .attr("r", this.dotRadius)
+
+        // svg.selectAll(".dot")
+        //     .data(data)
+        //     .join("circle") // Uses the enter().append() method
+        //     .attr("class", "pointdot valdot") // Assign a class for styling
+        //     .attr("cx", function (d, i) { return self.xScale(i) })
+        //     .attr("cy", function (d) { return self.yScale(d.val_loss) })
+        //     .attr("r", this.dotRadius)
 
 
         function customYAxis(g) {
@@ -82,38 +85,64 @@ class LossChart extends Component {
         svg.select(".x.axis")
             .call(customXAxis);
 
-
-
     }
     setupScalesAxes(data) {
         // console.log(data);
 
-        // let self = this
-
-        this.chartMargin = { top: 10, right: 5, bottom: 40, left: 20 }
+        // let self = this 
+        this.chartMargin = { top: 10, right: 10, bottom: 40, left: 20 }
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
         var n = data.length;
 
         this.xScale = d3.scaleLinear()
-            .domain([0, n]) // input
+            .domain([0, n - 1]) // input
             .range([0, this.chartWidth]); // output
 
 
         this.yScale = d3.scaleLinear()
             .domain([d3.min(data, function (d) {
-                console.log(Math.min(d.loss, d.val_loss))
+                // console.log(Math.min(d.loss, d.val_loss))
                 return Math.min(d.loss, d.val_loss)
             }), d3.max(data, function (d) {
                 return Math.max(d.loss, d.val_loss)
             })]) // input 
-            .range([this.chartHeight, 0]); // output 
+            .range([this.chartHeight, 10]); // output 
 
         this.xAxis = d3.axisBottom(this.xScale)
         this.yAxis = d3.axisRight(this.yScale)
             .tickSize(this.minChartWidth)
+    }
+    drawLines(svg, data) {
+        let self = this
 
+
+        svg.append("path")
+            .datum(data) // 10. Binds data to the line 
+            .attr("class", "lossline losstraincolor") // Assign a class for styling  
+            .attr("d", this.line); // 11. Calls the line generator 
+
+        svg.append("path")
+            .datum(data) // 10. Binds data to the line 
+            .attr("class", "lossline lossvalcolor") // Assign a class for styling  
+            .attr("d", this.line2); // 11. Calls the line generator 
+
+        // svg.selectAll(".dot")
+        //     .data(data)
+        //     .join("circle") // Uses the enter().append() method
+        //     .attr("class", "pointdot traindot") // Assign a class for styling
+        //     .attr("cx", function (d, i) { return self.xScale(i) })
+        //     .attr("cy", function (d) { return self.yScale(d.loss) })
+        //     .attr("r", this.dotRadius)
+
+        // svg.selectAll(".dot")
+        //     .data(data)
+        //     .join("circle") // Uses the enter().append() method
+        //     .attr("class", "pointdot valdot") // Assign a class for styling
+        //     .attr("cx", function (d, i) { return self.xScale(i) })
+        //     .attr("cy", function (d) { return self.yScale(d.val_loss) })
+        //     .attr("r", this.dotRadius)
 
     }
 
@@ -121,18 +150,25 @@ class LossChart extends Component {
         let self = this
 
 
-        data = [{ epoch: 1, loss: 0.9578104019165039, val_loss: 0.9471035003662109, traintime: 2.247 },
-        { epoch: 2, loss: 0.7673317790031433, val_loss: 0.8629779815673828, traintime: 0.146 },
-        { epoch: 3, loss: 0.749285876750946, val_loss: 0.8709790110588074, traintime: 0.152 },
-        { epoch: 4, loss: 0.7410370707511902, val_loss: 0.8575628995895386, traintime: 0.11 }]
-        // console.log(data)
+        // data = [{ epoch: 1, loss: 0.9578104019165039, val_loss: 0.9471035003662109, traintime: 2.247 },
+        // { epoch: 2, loss: 0.7673317790031433, val_loss: 0.8629779815673828, traintime: 0.146 },
+        // { epoch: 3, loss: 0.749285876750946, val_loss: 0.8709790110588074, traintime: 0.152 },
+        // { epoch: 4, loss: 0.7410370707511902, val_loss: 0.8575628995895386, traintime: 0.11 }]
+        console.log(data)
 
         this.setupScalesAxes(data)
 
         this.line = d3.line()
             .x(function (d, i) { return self.xScale(i); }) // set the x values for the line generator
             .y(function (d) { return self.yScale(d.loss); }) // set the y values for the line generator 
-        // .curve(d3.curveMonotoneX) // apply smoothing to the line
+            .curve(d3.curveMonotoneX) // apply smoothing to the line
+
+        this.line2 = d3.line()
+            .x(function (d, i) { return self.xScale(i); }) // set the x values for the line generator
+            .y(function (d) { return self.yScale(d.val_loss); }) // set the y values for the line generator 
+            .curve(d3.curveMonotoneX) // apply smoothing to the line
+
+
 
         const svg = d3.select("div.losschart").append("svg")
             .attr("width", this.chartWidth + this.chartMargin.left + this.chartMargin.right)
@@ -140,13 +176,7 @@ class LossChart extends Component {
             .append("g")
             .attr("transform", "translate(" + this.chartMargin.left + "," + this.chartMargin.top + ")");
 
-
-        svg.append("path")
-            .datum(data) // 10. Binds data to the line 
-            .attr("class", "line") // Assign a class for styling 
-            .attr("stroke", "green")
-            .attr("d", this.line); // 11. Calls the line generator 
-
+        this.drawLines(svg, data)
 
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -157,14 +187,14 @@ class LossChart extends Component {
 
         function customXAxis(g) {
             g.call(self.xAxis);
-            g.select(".domain").remove();
+            // g.select(".domain").remove();
             g.selectAll(".tick line").attr("x", 100)
             g.selectAll(".tick text").attr("y", 15)
         }
         // 3. Call the x axis in a group tag
         svg.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + (self.chartHeight - self.chartMargin.top - 20) + ")")
+            .attr("transform", "translate(0," + (self.chartHeight - self.chartMargin.top + 15) + ")")
             .call(customXAxis); // Create an axis component with d3.axisBottom
 
         // 4. Call the y axis in a group tag
@@ -177,11 +207,16 @@ class LossChart extends Component {
         return (
             <div className="positionrelative ">
                 <div className="chartlegend p5 mediumdesc">
-                    <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Normal </div>
-                    <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Abnormal </div>
+                    <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Train Loss </div>
+                    <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Validation Loss </div>
                 </div>
                 Training Loss Chart
-                     <div className="losschart"> </div>
+                {this.props.data.data.length <= 0 &&
+                    <div className="notrainingdata">
+                        No training loss data yet
+                </div>
+                }
+                <div className="losschart"> </div>
             </div>
 
         );
