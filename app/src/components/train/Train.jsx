@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Button } from "carbon-components-react"
+import { Button, Loading } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
 import { loadJSONData, showToast } from "../helperfunctions/HelperFunctions"
 import HistogramChart from "../histogram/HistogramChart"
 import ScatterPlot from "../scatterplot/ScatterPlot"
 import LossChart from "../losschart/LossChart"
+import { Reset16, PlayFilled16, PauseFilled16 } from '@carbon/icons-react';
 import { buildModel } from "./models/ae"
 // import 
 
@@ -89,7 +90,7 @@ class Train extends Component {
 
     trainModel() {
         // for (let i = 0; i < this.numSteps; i++) {
-        this.setState({ isTraining: true })
+
 
         this.currentSteps++;
         this.CumulativeSteps++;
@@ -108,7 +109,7 @@ class Train extends Component {
 
             // console.log("Step loss", this.currentSteps, this.CumulativeSteps, res.history.loss[0], elapsedTime);
             this.getPredictions()
-            if (this.state.numSteps > this.currentSteps) {
+            if (this.state.numSteps > this.currentSteps && this.state.isTraining) {
                 this.setState({ currentEpoch: this.currentSteps })
 
                 this.trainModel()
@@ -212,7 +213,13 @@ class Train extends Component {
     trainButtonClick(e) {
         // console.log("traain click")
         // showToast("info", "Training model ", 6000)
-        this.trainModel()
+        if (this.state.isTraining) {
+            this.setState({ isTraining: false })
+        } else {
+            this.setState({ isTraining: true })
+            this.trainModel()
+        }
+
     }
 
     predictButtonClick(e) {
@@ -225,14 +232,28 @@ class Train extends Component {
                 <div className="mb10">
                     <Button
                         className="mr5 iblock"
-                        disabled={(!this.state.isTraining) ? false : true}
+                        renderIcon={this.state.isTraining ? PauseFilled16 : PlayFilled16}
+                        // disabled={(!this.state.isTraining) ? false : true}
                         onClick={this.trainButtonClick.bind(this)}
-                    > Train </Button>
+                    > {this.state.isTraining ? "Pause" : "Train"}
+                    </Button>
+
                     <Button
                         className="mr5 iblock displaynone"
-                        disabled={(!this.state.isTraining) ? false : true}
+                        renderIcon={Reset16}
+                        // disabled={(!this.state.isTraining) ? false : true}
                         onClick={this.predictButtonClick.bind(this)}
-                    > Predict </Button>
+                    > Reset </Button>
+
+                    <Loading
+                        className="iblock mt10"
+                        active={(!this.state.isTraining) ? false : true}
+                        small={true}
+                        withOverlay={false}
+                    >
+
+                    </Loading>
+
                 </div>
 
                 {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}

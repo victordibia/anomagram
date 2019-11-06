@@ -119,6 +119,16 @@ class HistogramChart extends Component {
             .attr("y", d => self.yScale(d.length))
             .attr("height", d => self.yScale(0) - self.yScale(d.length))
 
+        // Remove previous threshold line
+        // d3.select(".thresholdline").transition().duration(5500).style("opacity", 0).remove()
+        let thresholdVal = this.getThreshold(data)
+        svg.select(".thresholdline")
+            .attr("x1", this.xScale(thresholdVal))
+            .attr("x2", this.xScale(thresholdVal))
+
+        svg.select(".thresholdtext")
+            .attr("x", this.xScale(thresholdVal))
+
         function customYAxis(g) {
             g.call(self.yAxis);
             // g.select(".domain").remove();
@@ -142,6 +152,26 @@ class HistogramChart extends Component {
 
     }
 
+    getThreshold(data) {
+        let meanNormal = d3.mean(data, function (d) {
+            if (d.label + "" === "0") {
+                return d.mse
+            };
+        })
+
+        let meanAbnormal = d3.mean(data, function (d) {
+            if (d.label + "" === "1") {
+                return d.mse
+            };
+        })
+
+        let midPoint = (meanNormal + meanAbnormal) / 2
+        let walkBackPercentage = 0.2
+        let thresholdVal = Math.min(meanNormal, meanAbnormal) + (midPoint - Math.min(meanNormal, meanAbnormal)) * walkBackPercentage
+
+
+        return thresholdVal
+    }
 
     drawGraph(data) {
         let self = this
@@ -155,6 +185,13 @@ class HistogramChart extends Component {
             .attr("transform", "translate(" + this.chartMargin.left + "," + this.chartMargin.top + ")");
 
 
+
+
+
+        console.log(this.yScale.domain());
+
+
+        // normal histogram
         svg.append("g")
             .attr("class", "normcolor")
             .selectAll("rect")
@@ -165,6 +202,7 @@ class HistogramChart extends Component {
             .attr("y", d => self.yScale(d.length))
             .attr("height", d => self.yScale(0) - self.yScale(d.length));
 
+        // Abnormal histogram
         svg.append("g")
             .attr("class", "anormcolor")
             .selectAll("rect")
@@ -174,6 +212,24 @@ class HistogramChart extends Component {
             .attr("width", d => Math.max(0, self.xScale(d.x1) - self.xScale(d.x0) - 1))
             .attr("y", d => self.yScale(d.length))
             .attr("height", d => self.yScale(0) - self.yScale(d.length));
+
+        //add threshold line
+        let thresholdVal = this.getThreshold(data)
+        // threshold line
+        svg.append("line")
+            .attr("class", "thresholdline")
+            .attr("x1", this.xScale(thresholdVal))  //<<== change your code here
+            .attr("y1", this.yScale(0))
+            .attr("x2", this.xScale(thresholdVal))  //<<== and here
+            .attr("y2", this.yScale(this.yScale.domain()[1]))
+        // threshold label
+        svg.append("text")
+            .attr("class", "thresholdtext")
+            .attr("x", this.xScale(thresholdVal))
+            .attr("y", this.yScale(this.yScale.domain()[1]))
+            .attr("dy", ".95em")
+            .attr("dx", ".35em")
+            .text("Anomaly \n Threshold");
 
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -208,7 +264,7 @@ class HistogramChart extends Component {
                     <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Normal </div>
                     <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Abnormal </div>
                 </div>
-                Histogram of Mean Square Error
+                <div className="charttitle"> Histogram of Mean Square Error </div>
                 <div className="histogramchart"></div>
             </div>
         );

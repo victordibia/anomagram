@@ -6,3 +6,13 @@
  fill:  rgba(255, 170, 0, 0.8);;
  stroke: white;
 }
+
+.thresholdtext{
+    font-size: 0.9em;
+    fill:rgba(80, 80, 80, 0.8); 
+}
+.thresholdline{
+    stroke-width: 1.5;
+    stroke: red;
+    stroke-dasharray: 0.4em;
+}

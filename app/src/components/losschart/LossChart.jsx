@@ -97,7 +97,6 @@ class LossChart extends Component {
             .tickSize(this.minChartWidth)
     }
     drawLines(svg, data) {
-        let self = this
 
 
         svg.append("path")
@@ -109,22 +108,6 @@ class LossChart extends Component {
             .datum(data) // 10. Binds data to the line 
             .attr("class", "lossline lossvalcolor") // Assign a class for styling  
             .attr("d", this.valLine); // 11. Calls the line generator 
-
-        // svg.selectAll(".dot")
-        //     .data(data)
-        //     .join("circle") // Uses the enter().append() method
-        //     .attr("class", "pointdot traindot") // Assign a class for styling
-        //     .attr("cx", function (d, i) { return self.xScale(i) })
-        //     .attr("cy", function (d) { return self.yScale(d.loss) })
-        //     .attr("r", this.dotRadius)
-
-        // svg.selectAll(".dot")
-        //     .data(data)
-        //     .join("circle") // Uses the enter().append() method
-        //     .attr("class", "pointdot valdot") // Assign a class for styling
-        //     .attr("cx", function (d, i) { return self.xScale(i) })
-        //     .attr("cy", function (d) { return self.yScale(d.val_loss) })
-        //     .attr("r", this.dotRadius)
 
     }
 
