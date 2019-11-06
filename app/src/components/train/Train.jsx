@@ -15,14 +15,15 @@ class Train extends Component {
     constructor(props) {
         super(props)
 
+        this.testData = require("../../data/ecg/test.json")
+        this.trainData = require("../../data/ecg/train.json")
+
         this.trainMetricHolder = []
         this.CumulativeSteps = 0;
 
         this.state = {
             apptitle: "Anomagram",
             isTraining: false,
-            testDataLoaded: false,
-            trainDataLoaded: false,
             trainDataShape: [0, 0],
             testDataShape: [0, 0],
             mseData: [],
@@ -31,15 +32,15 @@ class Train extends Component {
             selectedData: 0,
 
             currentEpoch: 0,
-            numFeatures: 0,
+            numFeatures: this.testData[0].data.length,
             hiddenLayers: 2,
             latentDim: 2,
-            hiddenDim: [15, 7],
+            hiddenDim: [10, 7],
             learningRate: 0.05,
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
             batchSize: 512,
-            numSteps: 20,
+            numSteps: 40,
             numEpochs: 1,
 
             trainMetrics: this.trainMetricHolder,
@@ -63,8 +64,8 @@ class Train extends Component {
     componentDidMount() {
         // this.loadSavedModel()
 
-        this.loadTestData()
-        this.loadTrainData()
+        this.generateDataTensors()
+        this.createModel()
 
     }
 
@@ -115,7 +116,6 @@ class Train extends Component {
                 this.currentSteps = 0
                 this.setState({ isTraining: false })
 
-
                 // console.log(this.trainMetricHolder);
 
             }
@@ -131,29 +131,7 @@ class Train extends Component {
 
     }
 
-    loadTrainData() {
-        // TODO .. launch loadning spinnr
-        // let self = this
-        let ecgTrainDataPath = this.trainDataPath
-        loadJSONData(ecgTrainDataPath).then(ecgTrain => {
-            // showToast("success", "Train data loaded")
-            let trainEcg = []
-            for (let row in ecgTrain) {
-                let val = ecgTrain[row]
-                if (val.target + "" === 1 + "") {
-                    trainEcg.push(val)
-                }
-            }
-            this.setState({ trainDataLoaded: true })
 
-
-            this.xsTrain = tf.tensor2d(trainEcg.map(item => item.data
-            ), [trainEcg.length, trainEcg[0].data.length])
-
-            this.setState({ trainDataShape: this.xsTrain.shape })
-
-        })
-    }
 
     getPredictions() {
         let self = this;
@@ -199,30 +177,36 @@ class Train extends Component {
     }
 
     // visualizeMSE(mse)
+    generateDataTensors() {
 
-    loadTestData() {
-        // let self = this
-        let ecgDataPath = this.testDataPath
 
-        loadJSONData(ecgDataPath).then(testEcg => {
 
-            // showToast("success", "Test data loaded")
+        //train tensor
+        let trainEcg = []
+        for (let row in this.trainData) {
+            let val = this.trainData[row]
+            if (val.target + "" === 1 + "") {
+                trainEcg.push(val)
+            }
+        }
 
-            this.setState({ testDataLoaded: true })
+        this.xsTrain = tf.tensor2d(trainEcg.map(item => item.data
+        ), [trainEcg.length, trainEcg[0].data.length])
+        this.setState({ trainDataShape: this.xsTrain.shape })
 
-            // Set numfeatures to size of input dataset 
-            this.setState({ numFeatures: testEcg[0].data.length })
 
-            // create test data TENSOR from test data json array 
-            this.xsTest = tf.tensor2d(testEcg.map(item => item.data
-            ), [testEcg.length, testEcg[0].data.length])
+        // test tensor  
+        // create test data TENSOR from test data json array 
+        this.xsTest = tf.tensor2d(this.testData.map(item => item.data
+        ), [this.testData.length, this.testData[0].data.length])
 
-            this.setState({ testDataShape: this.xsTest.shape })
+        // create yLabel Tensor
+        this.yTest = this.testData.map(item => item.target + "" === 1 + "" ? 0 : 1)
 
-            // create yLabel Tensor
-            this.yTest = testEcg.map(item => item.target + "" === 1 + "" ? 0 : 1)
-            this.createModel()
-        })
+        this.setState({ testDataShape: this.xsTest.shape })
+
+
+
     }
 
     trainButtonClick(e) {
@@ -241,17 +225,17 @@ class Train extends Component {
                 <div className="mb10">
                     <Button
                         className="mr5 iblock"
-                        disabled={this.state.testDataLoaded && this.state.trainDataLoaded && (!this.state.isTraining) ? false : true}
+                        disabled={(!this.state.isTraining) ? false : true}
                         onClick={this.trainButtonClick.bind(this)}
                     > Train </Button>
                     <Button
-                        className="mr5 iblock displaynone hidden"
-                        disabled={this.state.testDataLoaded && this.state.trainDataLoaded && (!this.state.isTraining) ? false : true}
+                        className="mr5 iblock displaynone"
+                        disabled={(!this.state.isTraining) ? false : true}
                         onClick={this.predictButtonClick.bind(this)}
                     > Predict </Button>
                 </div>
 
-                <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div>
+                {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
                 <div className="greyborder p10 mb10">
                     <div className="iblock mr10"> Epochs: {this.state.CumulativeSteps}</div>
                     <div className="iblock mr10"> Batch Size: {this.state.batchSize}</div>
@@ -263,6 +247,20 @@ class Train extends Component {
 
 
                 <div>
+                    <div className="iblock mr10">
+                        {this.state.mseData.length > 0 &&
+                            <LossChart
+                                data={{
+                                    data: this.state.trainMetrics,
+                                    chartWidth: 450,
+                                    chartHeight: 300,
+                                    epoch: this.state.CumulativeSteps
+                                }}
+
+                            ></LossChart>
+                        }
+                    </div>
+
                     <div className="iblock mr10 ">
                         {this.state.mseData.length > 0 &&
                             <HistogramChart
@@ -289,19 +287,7 @@ class Train extends Component {
                         }
                     </div>
 
-                    <div className="iblock mr10">
-                        {this.state.mseData.length > 0 &&
-                            <LossChart
-                                data={{
-                                    data: this.state.trainMetrics,
-                                    chartWidth: 450,
-                                    chartHeight: 300,
-                                    epoch: this.state.CumulativeSteps
-                                }}
 
-                            ></LossChart>
-                        }
-                    </div>
                 </div>
 
 

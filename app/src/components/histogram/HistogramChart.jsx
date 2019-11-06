@@ -208,7 +208,7 @@ class HistogramChart extends Component {
                     <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Normal </div>
                     <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Abnormal </div>
                 </div>
-                Anomaly Histogram
+                Histogram of Mean Square Error
                 <div className="histogramchart"></div>
             </div>
         );

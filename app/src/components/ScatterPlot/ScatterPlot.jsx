@@ -143,7 +143,7 @@ class ScatterPlot extends Component {
         function customYAxis(g) {
             g.call(self.yAxis);
             // g.select(".domain").remove();
-            g.selectAll(".tick line").attr("stroke", "rgba(172, 172, 172, 0.74)").attr("stroke-dasharray", "2,2");
+            g.selectAll(".tick line").attr("stroke", "rgba(172, 172, 172, 0.74)").attr("stroke-dasharray", "2,2")
             g.selectAll(".tick text").attr("x", -20).attr("y", -.01)
         }
 
@@ -167,7 +167,7 @@ class ScatterPlot extends Component {
     }
     render() {
         return (
-            <div className="positionrelative ">
+            <div className="positionrelative  ">
                 <div className="chartlegend p5 mediumdesc">
                     <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Normal </div>
                     <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Abnormal </div>

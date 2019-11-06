@@ -4,20 +4,24 @@ import { loadJSONData } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
 import SmallLineChart from "../linechart/SmallLineChart"
+// import "../../data" 
 
 
 class Viz extends Component {
     constructor(props) {
         super(props)
 
+
+        this.testData = require("../../data/ecg/test.json")
+
         this.state = {
             apptitle: "Anomagram",
-            testData: [],
+            testData: this.testData,
             trainData: [],
             selectedData: 0
         }
 
-        // this.testData = require("../../data/ecg/test.json")
+
         // this.trainData = require("../../data/ecg/train.json")
         // console.log(this.testData.length, this.trainData.length)
 
@@ -31,21 +35,21 @@ class Viz extends Component {
             5: { color: "red", colornorm: "grey", name: "Unclassifiable Beat" },
         }
 
-        this.maxSmallChart = 200
+        this.maxSmallChart = 100
 
     }
 
     loadData() {
-        let testECGDataPath = process.env.PUBLIC_URL + "/data/ecg/test_small.json"
-        let trainECGDataPath = process.env.PUBLIC_URL + "/data/ecg/train_small.json"
-        loadJSONData(testECGDataPath).then(data => {
-            this.setState({ testData: data })
-            // console.log("test data loaded", data.length)
-        })
+        // let testECGDataPath = process.env.PUBLIC_URL + "/data/ecg/test_small.json"
+        // let trainECGDataPath = process.env.PUBLIC_URL + "/data/ecg/train_small.json"
+        // loadJSONData(testECGDataPath).then(data => {
+        //     this.setState({ testData: data })
+        //     // console.log("test data loaded", data.length)
+        // })
 
-        loadJSONData(trainECGDataPath).then(data => {
-            this.setState({ trainData: data })
-        })
+        // loadJSONData(trainECGDataPath).then(data => {
+        //     this.setState({ trainData: data })
+        // })
 
     }
     componentDidUpdate(prevProps, prevState) {
