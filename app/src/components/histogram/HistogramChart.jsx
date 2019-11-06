@@ -24,7 +24,7 @@ class HistogramChart extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.data.epoch !== this.props.data.epoch) {
+        if ((prevProps.data.epoch !== this.props.data.epoch) || this.props.data.epoch + "" === "0") {
             // console.log("props updated");
             this.updateGraph(this.props.data.data)
         }
@@ -184,11 +184,6 @@ class HistogramChart extends Component {
             .append("g")
             .attr("transform", "translate(" + this.chartMargin.left + "," + this.chartMargin.top + ")");
 
-
-
-
-
-        console.log(this.yScale.domain());
 
 
         // normal histogram

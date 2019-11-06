@@ -14,7 +14,7 @@ export function buildModel(params) {
     const latentDim = params.latentDim
     const hiddenDim = params.hiddenDim
     const outputActivation = params.outputActivation
-    const optimizer = params.optimizer
+
     // console.log(numFeatures);
 
 
@@ -56,7 +56,7 @@ export function buildModel(params) {
     const ae = tf.model({ inputs: input, outputs: output, name: "autoencoder" })
 
 
-    ae.compile({ optimizer: optimizer, loss: "meanSquaredError", metrics: ["accuracy"] })
+    ae.compile({ optimizer: params.optimizer, loss: "meanSquaredError", metrics: ["accuracy"] })
     return ae
 }
 

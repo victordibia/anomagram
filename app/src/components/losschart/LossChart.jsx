@@ -23,7 +23,7 @@ class LossChart extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.data.epoch !== this.props.data.epoch) {
+        if ((prevProps.data.epoch !== this.props.data.epoch) && this.props.data.data.length > 0) {
             // console.log("props updated");
             this.updateGraph(this.props.data.data)
         }
@@ -31,7 +31,6 @@ class LossChart extends Component {
 
     updateGraph(data) {
         let self = this
-        // console.log(data[0]);
 
         // d3.select("div.losschart").selectAll(".lossline").remove();
         // d3.select("div.losschart").selectAll(".pointdot").remove();
@@ -119,7 +118,7 @@ class LossChart extends Component {
         // { epoch: 2, loss: 0.7673317790031433, val_loss: 0.8629779815673828, traintime: 0.146 },
         // { epoch: 3, loss: 0.749285876750946, val_loss: 0.8709790110588074, traintime: 0.152 },
         // { epoch: 4, loss: 0.7410370707511902, val_loss: 0.8575628995895386, traintime: 0.11 }]
-        // console.log(data)
+        // data = [{ epoch: this.CumulativeSteps, loss: 0, val_loss: 0, traintime: 0 }]
 
         this.setupScalesAxes(data)
 

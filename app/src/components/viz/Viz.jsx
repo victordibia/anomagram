@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 // import { InlineLoading, Button, Search, Modal, Tooltip } from 'carbon-components-react';
-import { loadJSONData } from "../helperfunctions/HelperFunctions"
+// import { loadJSONData } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
 import SmallLineChart from "../linechart/SmallLineChart"

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Button, Loading } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
-import { loadJSONData, showToast } from "../helperfunctions/HelperFunctions"
+import { showToast } from "../helperfunctions/HelperFunctions"
 import HistogramChart from "../histogram/HistogramChart"
 import ScatterPlot from "../scatterplot/ScatterPlot"
 import LossChart from "../losschart/LossChart"
@@ -41,7 +41,7 @@ class Train extends Component {
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
             batchSize: 512,
-            numSteps: 40,
+            numSteps: 20,
             numEpochs: 1,
 
             trainMetrics: this.trainMetricHolder,
@@ -83,6 +83,8 @@ class Train extends Component {
 
     componentWillUnmount() {
         this.disposeModelTensors()
+        this.xsTest.dispose()
+        this.xsTrain.dispose()
     }
     createModel() {
 
@@ -123,8 +125,9 @@ class Train extends Component {
 
             let metricRow = { epoch: this.CumulativeSteps, loss: res.history.loss[0], val_loss: res.history.val_loss[0], traintime: elapsedTime }
             this.trainMetricHolder.push(metricRow)
-            // console.log(metricRow);
 
+
+            // this.setState({ trainMetrics: this.trainMetricHolder });
             // console.log("Step loss", this.currentSteps, this.CumulativeSteps, res.history.loss[0], elapsedTime);
             this.getPredictions()
             if (this.state.numSteps > this.currentSteps && this.state.isTraining) {
@@ -157,9 +160,9 @@ class Train extends Component {
 
 
         // Get predictions 
-        let startTime = new Date()
+        // let startTime = new Date()
         let preds = this.createdModel.predict(this.xsTest)
-        let elapsedTime = (new Date() - startTime) / 1000
+        // let elapsedTime = (new Date() - startTime) / 1000
 
         // Compute mean squared error difference between predictions and ground truth
         const mse = tf.tidy(() => {
@@ -194,7 +197,7 @@ class Train extends Component {
         preds.dispose()
         encoderPredictions.dispose()
         mse.dispose()
-        console.log(tf.memory());
+        // console.log(tf.memory());
 
     }
 
@@ -242,7 +245,8 @@ class Train extends Component {
         this.setState({ isTraining: false })
         this.setState({ CumulativeSteps: 0 })
         // this.setState({ mseData: [] })
-        // this.trainMetricHolder = []
+        this.trainMetricHolder = []
+        this.setState({ trainMetrics: this.trainMetricHolder })
         this.createModel()
     }
     render() {
@@ -288,19 +292,7 @@ class Train extends Component {
 
 
                 <div>
-                    <div className="iblock mr10">
-                        {this.state.mseData.length > 0 &&
-                            <LossChart
-                                data={{
-                                    data: this.state.trainMetrics,
-                                    chartWidth: 450,
-                                    chartHeight: 300,
-                                    epoch: this.state.CumulativeSteps
-                                }}
 
-                            ></LossChart>
-                        }
-                    </div>
 
                     <div className="iblock mr10 ">
                         {this.state.mseData.length > 0 &&
@@ -309,7 +301,7 @@ class Train extends Component {
                                     data: this.state.mseData,
                                     chartWidth: 450,
                                     chartHeight: 300,
-                                    epoch: this.state.CumulativeSteps + this.state.CumulativeSteps + "" == "0" ? Math.random() : ""
+                                    epoch: this.state.CumulativeSteps
                                 }}
                             ></HistogramChart>
                         }
@@ -321,10 +313,23 @@ class Train extends Component {
                                     data: this.state.encodedData,
                                     chartWidth: 450,
                                     chartHeight: 300,
-                                    epoch: this.state.CumulativeSteps + this.state.CumulativeSteps + "" == "0" ? Math.random() : ""
+                                    epoch: this.state.CumulativeSteps
                                 }}
 
                             ></ScatterPlot>
+                        }
+                    </div>
+                    <div className="iblock mr10">
+                        {this.state.trainMetrics.length > 0 &&
+                            <LossChart
+                                data={{
+                                    data: this.state.trainMetrics,
+                                    chartWidth: 450,
+                                    chartHeight: 300,
+                                    epoch: this.state.CumulativeSteps
+                                }}
+
+                            ></LossChart>
                         }
                     </div>
 
