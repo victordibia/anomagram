@@ -3,9 +3,13 @@ import { Button, Loading } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
 import { showToast } from "../helperfunctions/HelperFunctions"
+
+// custom charts 
 import HistogramChart from "../histogram/HistogramChart"
 import ScatterPlot from "../scatterplot/ScatterPlot"
 import LossChart from "../losschart/LossChart"
+import ComposeModel from "../composemodel/ComposeModel"
+
 import { Reset16, PlayFilled16, PauseFilled16 } from '@carbon/icons-react';
 import { buildModel } from "./models/ae"
 // import 
@@ -60,6 +64,9 @@ class Train extends Component {
         this.trainDataPath = "data/ecg/train.json"
         this.testDataPath = "data/ecg/test.json"
 
+        this.chartWidth = 450;
+        this.chartHeight = 300;
+
     }
 
     componentDidMount() {
@@ -104,7 +111,7 @@ class Train extends Component {
         this.createdModel = buildModel(modelParams)
         this.getPredictions()
 
-        showToast("success", "Model successfully created")
+        // showToast("success", "Model successfully created")
         console.log(tf.memory());
     }
 
@@ -157,7 +164,6 @@ class Train extends Component {
 
     getPredictions() {
         let self = this;
-
 
         // Get predictions 
         // let startTime = new Date()
@@ -289,53 +295,68 @@ class Train extends Component {
                     <div className="iblock"> Test: {this.state.testDataShape[0]}</div>
                 </div>
 
-
-
+                {/* // Model Composer  */}
                 <div>
+                    <ComposeModel>
 
-
-                    <div className="iblock mr10 ">
-                        {this.state.mseData.length > 0 &&
-                            <HistogramChart
-                                data={{
-                                    data: this.state.mseData,
-                                    chartWidth: 450,
-                                    chartHeight: 300,
-                                    epoch: this.state.CumulativeSteps
-                                }}
-                            ></HistogramChart>
-                        }
-                    </div>
-                    <div className="iblock mr10  ">
-                        {this.state.encodedData.length > 0 &&
-                            <ScatterPlot
-                                data={{
-                                    data: this.state.encodedData,
-                                    chartWidth: 450,
-                                    chartHeight: 300,
-                                    epoch: this.state.CumulativeSteps
-                                }}
-
-                            ></ScatterPlot>
-                        }
-                    </div>
-                    <div className="iblock mr10">
-                        {this.state.trainMetrics.length > 0 &&
-                            <LossChart
-                                data={{
-                                    data: this.state.trainMetrics,
-                                    chartWidth: 450,
-                                    chartHeight: 300,
-                                    epoch: this.state.CumulativeSteps
-                                }}
-
-                            ></LossChart>
-                        }
-                    </div>
-
-
+                    </ComposeModel>
                 </div>
 
+                {false &&
+                    <div>
+
+                        <div className="iblock mr10 " >
+                            <div className={"positionrelative " + (this.state.trainMetrics.length <= 0 ? " greyborder lightgreyhighlight " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
+                                {this.state.trainMetrics.length <= 0 &&
+                                    <div className="notrainingdata">
+                                        No training loss data yet
+                                </div>
+                                }
+                                {this.state.trainMetrics.length > 0 &&
+                                    <LossChart
+                                        data={{
+                                            data: this.state.trainMetrics,
+                                            chartWidth: 450,
+                                            chartHeight: 300,
+                                            epoch: this.state.CumulativeSteps
+                                        }}
+
+                                    ></LossChart>
+                                }
+
+                            </div>
+                        </div>
+
+                        <div className="iblock mr10 ">
+                            {this.state.mseData.length > 0 &&
+                                <HistogramChart
+                                    data={{
+                                        data: this.state.mseData,
+                                        chartWidth: 450,
+                                        chartHeight: 300,
+                                        epoch: this.state.CumulativeSteps
+                                    }}
+                                ></HistogramChart>
+                            }
+                        </div>
+                        <div className="iblock mr10  ">
+                            {this.state.encodedData.length > 0 &&
+                                <ScatterPlot
+                                    data={{
+                                        data: this.state.encodedData,
+                                        chartWidth: 450,
+                                        chartHeight: 300,
+                                        epoch: this.state.CumulativeSteps
+                                    }}
+
+                                ></ScatterPlot>
+                            }
+                        </div>
+                    </div>
+                }
+                <br />
+                <br />
+                <br />
 
             </div>
         );

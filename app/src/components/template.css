@@ -22,6 +22,10 @@
 .greyhighlight {
     background: rgba(209, 209, 209, 0.9);
 }
+
+.lightgreyhighlight {
+    background: rgba(231, 231, 231, 0.9);
+}
 .justifycenter{
     justify-content: center;
 }

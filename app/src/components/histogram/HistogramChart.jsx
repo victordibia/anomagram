@@ -79,7 +79,7 @@ class HistogramChart extends Component {
 
         this.yScale = d3.scaleLinear()
             .domain([0, d3.max(self.bins, d => d.length)]).nice()
-            .range([this.chartHeight - this.chartMargin.bottom, this.chartMargin.top])
+            .range([this.chartHeight, 0])
 
         this.xAxis = d3.axisBottom(this.xScale)
         this.yAxis = d3.axisRight(this.yScale)
@@ -242,7 +242,7 @@ class HistogramChart extends Component {
         // 3. Call the x axis in a group tag
         svg.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + (self.chartHeight - self.chartMargin.top - 20) + ")")
+            .attr("transform", "translate(0," + (self.chartHeight + 10) + ")")
             .call(customXAxis); // Create an axis component with d3.axisBottom
 
         // 4. Call the y axis in a group tag

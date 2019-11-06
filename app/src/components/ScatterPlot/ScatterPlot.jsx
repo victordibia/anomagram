@@ -102,7 +102,7 @@ class ScatterPlot extends Component {
 
         this.yScale = d3.scaleLinear()
             .domain([d3.min(data, function (d) { return d.y }), d3.max(data, function (d) { return d.y })]) // input  
-            .range([this.chartHeight - this.chartMargin.bottom, this.chartMargin.top])
+            .range([this.chartHeight, 0])
 
         this.xAxis = d3.axisBottom(this.xScale)
         this.yAxis = d3.axisRight(this.yScale)
@@ -156,7 +156,7 @@ class ScatterPlot extends Component {
         // 3. Call the x axis in a group tag
         svg.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + (self.chartHeight - self.chartMargin.top - 20) + ")")
+            .attr("transform", "translate(0," + (self.chartHeight + 10) + ")")
             .call(customXAxis); // Create an axis component with d3.axisBottom
 
         // 4. Call the y axis in a group tag
@@ -172,7 +172,7 @@ class ScatterPlot extends Component {
                     <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Normal </div>
                     <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Abnormal </div>
                 </div>
-                VAE Dimension ScatterPlot
+                Autoencoder Bottleneck Dimension ScatterPlot
                  <div className="scatterplotchart"> </div>
             </div>
 
