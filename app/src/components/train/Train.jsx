@@ -37,7 +37,7 @@ class Train extends Component {
             hiddenLayers: 2,
             latentDim: 2,
             hiddenDim: [10, 7],
-            learningRate: 0.05,
+            learningRate: 0.005,
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
             batchSize: 512,
@@ -66,26 +66,44 @@ class Train extends Component {
         // this.loadSavedModel()
 
         this.generateDataTensors()
+
+
         this.createModel()
 
     }
 
-    createModel(xsTest, yTest) {
+    disposeModelTensors() {
+        if (this.createdModel) {
+            // this.encoder.dispose()
+            this.createdModel.dispose()
+            this.optimizer.dispose()
+
+        }
+    }
+
+    componentWillUnmount() {
+        this.disposeModelTensors()
+    }
+    createModel() {
+
+        // dispose of existing model to release tensors from memory
+        this.disposeModelTensors()
         //construct model
+        this.optimizer = tf.train.adam(this.state.learningRate, this.state.adamBeta1)
         let modelParams = {
             numFeatures: this.state.numFeatures,
             hiddenLayers: this.state.hiddenLayers,
             latentDim: this.state.latentDim,
             hiddenDim: this.state.hiddenDim,
-            learningRate: this.state.learningRate,
-            adamBeta1: this.state.adamBeta1,
+            optimizer: this.optimizer,
             outputActivation: "sigmoid"
         }
-        let model = buildModel(modelParams)
-        // this.trainModel(model, xs)
-        this.createdModel = model
-        this.getPredictions(xsTest, yTest)
+
+        this.createdModel = buildModel(modelParams)
+        this.getPredictions()
+
         showToast("success", "Model successfully created")
+        console.log(tf.memory());
     }
 
     trainModel() {
@@ -143,11 +161,11 @@ class Train extends Component {
         let preds = this.createdModel.predict(this.xsTest)
         let elapsedTime = (new Date() - startTime) / 1000
 
-
-
-
         // Compute mean squared error difference between predictions and ground truth
-        let mse = tf.sub(preds, this.xsTest).square().mean(1) //tf.losses.meanSquaredError(preds, xsTest)
+        const mse = tf.tidy(() => {
+            return tf.sub(preds, this.xsTest).square().mean(1)
+        })
+        // let mse = tf.sub(preds, this.xsTest).square().mean(1) //tf.losses.meanSquaredError(preds, xsTest)
         let mseDataHolder = []
         mse.array().then(array => {
             array.forEach((element, i) => {
@@ -155,33 +173,33 @@ class Train extends Component {
                 mseDataHolder.push({ "mse": element, "label": this.yTest[i] })
                 // console.log(mseDataHolder.length)
             });
-            // mseDataHolder = _.sortBy(mseDataHolder, 'mse');
-            // console.log("mse updated");
             self.setState({ mseData: mseDataHolder })
-            // this.loadTestData()
-            // console.log("getting preds", mseDataHolder[0]);
         });
 
 
 
         // Generate encoder output 
-        const encoder = tf.model({ inputs: this.createdModel.inputs, outputs: this.createdModel.getLayer("encoder").getOutputAt(1) });
-        let encPreds = encoder.predict(this.xsTest)
+        this.encoder = tf.model({ inputs: this.createdModel.inputs, outputs: this.createdModel.getLayer("encoder").getOutputAt(1) });
+        let encoderPredictions = this.encoder.predict(this.xsTest)
 
         let encPredHolder = []
-        encPreds.array().then(array => {
+        encoderPredictions.array().then(array => {
             array.forEach((element, i) => {
                 encPredHolder.push({ x: element[0], y: element[1], "label": this.yTest[i] })
             });
             self.setState({ encodedData: encPredHolder })
         })
+
+
+        preds.dispose()
+        encoderPredictions.dispose()
+        mse.dispose()
+        console.log(tf.memory());
+
     }
 
     // visualizeMSE(mse)
     generateDataTensors() {
-
-
-
         //train tensor
         let trainEcg = []
         for (let row in this.trainData) {
@@ -206,8 +224,6 @@ class Train extends Component {
 
         this.setState({ testDataShape: this.xsTest.shape })
 
-
-
     }
 
     trainButtonClick(e) {
@@ -222,8 +238,12 @@ class Train extends Component {
 
     }
 
-    predictButtonClick(e) {
-        console.log("predict click")
+    resetModelButtonClick(e) {
+        this.setState({ isTraining: false })
+        this.setState({ CumulativeSteps: 0 })
+        // this.setState({ mseData: [] })
+        // this.trainMetricHolder = []
+        this.createModel()
     }
     render() {
         return (
@@ -241,8 +261,8 @@ class Train extends Component {
                     <Button
                         className="mr5 iblock displaynone"
                         renderIcon={Reset16}
-                        // disabled={(!this.state.isTraining) ? false : true}
-                        onClick={this.predictButtonClick.bind(this)}
+                        disabled={(!this.state.isTraining) ? false : true}
+                        onClick={this.resetModelButtonClick.bind(this)}
                     > Reset </Button>
 
                     <Loading
@@ -289,7 +309,7 @@ class Train extends Component {
                                     data: this.state.mseData,
                                     chartWidth: 450,
                                     chartHeight: 300,
-                                    epoch: this.state.CumulativeSteps
+                                    epoch: this.state.CumulativeSteps + this.state.CumulativeSteps + "" == "0" ? Math.random() : ""
                                 }}
                             ></HistogramChart>
                         }
@@ -301,7 +321,7 @@ class Train extends Component {
                                     data: this.state.encodedData,
                                     chartWidth: 450,
                                     chartHeight: 300,
-                                    epoch: this.state.CumulativeSteps
+                                    epoch: this.state.CumulativeSteps + this.state.CumulativeSteps + "" == "0" ? Math.random() : ""
                                 }}
 
                             ></ScatterPlot>
