@@ -324,6 +324,11 @@
     flex-direction: column
 }
 
+.flexjustifycenter{
+    justify-content: center;
+    align-items:center;
+}
+
 .flex {
     display: flex;
 }

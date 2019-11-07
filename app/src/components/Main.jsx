@@ -15,6 +15,7 @@ import AppHeader from "./header/AppHeader";
 import Footer from "./footer/Footer";
 import Viz from "./viz/Viz";
 import Train from "./train/Train"
+import ComposeModel from "./composemodel/ComposeModel"
 
 import { createBrowserHistory } from 'history';
 
@@ -79,6 +80,7 @@ class Main extends Component {
                 <div className="container-fluid p10">
                     <Route exact path="/" component={Viz} />
                     <Route exact path="/train" component={Train} />
+                    <Route exact path="/compose" component={ComposeModel} />
 
                     <div id="notificatiionbox" className="notificationtopright p5  ">
 

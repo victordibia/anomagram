@@ -1,14 +1,17 @@
+.eachlayerbox{
 
-
-#footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    border-top: 1px solid #f0f3f6;
-    padding: 14px;
-    background: #fff;
+    height: 30px;
+    width: 30px;
+    border: grey 2px solid;
+    border-radius: 4px;
 }
 
-#footer a {
-    text-decoration: none;
+.updatebutton{
+    display: inline-block;
+    background: rgba(128, 128, 128, 0.463);
+    padding: 5px;
+    border-radius: 14px;
+}
+.updatebutton:hover{
+    background: rgba(128, 128, 128, 0.763);
 }
