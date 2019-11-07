@@ -9,8 +9,8 @@
 .updatebutton{
     display: inline-block;
     background: rgba(128, 128, 128, 0.463);
-    padding: 5px;
-    border-radius: 14px;
+    padding: 7px;
+    border-radius: 4px;
 }
 .updatebutton:hover{
     background: rgba(128, 128, 128, 0.763);
