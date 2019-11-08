@@ -296,11 +296,11 @@ class Train extends Component {
                 </div>
 
                 {/* // Model Composer  */}
-                {/* <div>
+                <div>
                     <ComposeModel>
 
                     </ComposeModel>
-                </div> */}
+                </div>
 
                 {true &&
                     <div>

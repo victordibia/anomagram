@@ -20,7 +20,7 @@ class ComposeModel extends Component {
             defaultLayerDim: 3
         }
 
-        this.lineHolder = { encoder: [], decoder: [] }
+        this.lineHolder = []
 
         this.rightTopAnchor = { x: "100%", y: "5%" }
         this.rightBottomAnchor = { x: "100%", y: "95%" }
@@ -36,28 +36,32 @@ class ComposeModel extends Component {
     }
 
     drawAllLines() {
-
-
         for (const layer in this.state.encoderDims) {
             if ((layer * 1) !== (this.state.encoderDims.length - 1)) {
-                let startEl = this.getElement("encoder", "layerdiv", "layerdiv" + layer)
-                let endEl = this.getElement("encoder", "layerdiv", "layerdiv" + (layer * 1 + 1))
+                let startId = "layerdiv" + layer;
+                let endId = "layerdiv" + (layer * 1 + 1);
+                let startEl = this.getElement("encoder", "layerdiv", startId)
+                let endEl = this.getElement("encoder", "layerdiv", endId)
                 // console.log(startEl, endEl);
-                this.drawLeaderLine(startEl, endEl, this.rightTopAnchor, this.leftTopAnchor, "straight")
-                this.drawLeaderLine(startEl, endEl, this.rightTopAnchor, this.leftBottomAnchor, "straight")
-                this.drawLeaderLine(startEl, endEl, this.rightBottomAnchor, this.leftTopAnchor, "straight")
-                this.drawLeaderLine(startEl, endEl, this.rightBottomAnchor, this.leftBottomAnchor, "straight")
+                let params = { pathType: "straight", startId: startId, endId: endId, network: "encoder" }
+                this.drawLeaderLine(startEl, endEl, this.rightTopAnchor, this.leftTopAnchor, params)
+                this.drawLeaderLine(startEl, endEl, this.rightTopAnchor, this.leftBottomAnchor, params)
+                this.drawLeaderLine(startEl, endEl, this.rightBottomAnchor, this.leftTopAnchor, params)
+                this.drawLeaderLine(startEl, endEl, this.rightBottomAnchor, this.leftBottomAnchor, params)
             }
         }
+
+        console.log(this.lineHolder.length);
+
 
 
     }
 
-    drawLeaderLine(startElement, endElement, startAnchor, endAnchor, pathType) {
-        let self = this
+    drawLeaderLine(startElement, endElement, startAnchor, endAnchor, params) {
+
         let blueColor = "grey"
         let lineWidth = 1.5
-        let plugType = "square"
+        let plugType = "disc"
 
         let line = new LeaderLine(
             LeaderLine.pointAnchor(startElement, startAnchor),
@@ -66,48 +70,66 @@ class ComposeModel extends Component {
             startPlug: plugType,
             endPlug: plugType,
             startPlugColor: blueColor,
-            path: pathType,
+            path: params.pathType,
             size: lineWidth,
-            startSocketGravity: -150,
-            // hide: true,
-            dash: { gap: 2 },
-
-            // endPlugSize: 2,
+            hide: true,
+            dash: { gap: 2 }
 
         });
         // document.querySelector('.leader-line').style.zIndex = -100
         animOptions.duration = 800
-        // line.show("draw", animOptions)
-        // self.lineHolder.push({ line: line, index: 0 })
+        line.show("draw", animOptions)
+        this.lineHolder.push({ line: line, startId: params.startId, endId: params.endId, network: params.network })
     }
 
-    addEncoderLayerClick(e) {
+    removeAllLines(line) {
+        this.lineHolder.forEach(function (each) {
+            each.line.remove()
+        })
+        this.lineHolder = []
+    }
 
-        if (this.state.encoderDims.length + 1 <= this.state.maxLayers) {
-            let currentDims = this.state.encoderDims
-            currentDims.push(this.state.defaultLayerDim)
-            this.setState({ encoderDims: currentDims })
+
+    redrawLine(lineId) {
+        this.lineHolder.forEach(function (each) {
+            if (each.startId === lineId || each.endId === lineId) {
+                // each.line.color = "red"
+                each.line.hide("none")
+                each.line.show("draw", animOptions)
+                each.line.position();
+            } else {
+                each.line.position();
+            }
+        })
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+
+        for (const i in this.state.encoderDims) {
+            if (this.state.encoderDims[i] != prevState.encoderDims[i]) {
+                this.redrawLine("layerdiv" + i)
+
+            }
         }
 
-    }
+        if (this.state.encoderDims.length > prevState.encoderDims.length) {
+            console.log("layer added");
 
+        } else {
+            console.log("layer removed");
 
-    removeEncoderLayerClick(e) {
-
-        if (this.state.encoderDims.length - 1 >= this.state.minLayers) {
-            let currentDims = this.state.encoderDims
-            currentDims.pop()
-            this.setState({ encoderDims: currentDims })
         }
 
 
-        // }
-
     }
+
+    componentWillUnmount() {
+        this.removeAllLines()
+    }
+
+
 
     setStateVal(varGroup, newDims) {
-
-
         if (varGroup + "" === "encoder") {
             this.setState({ encoderDims: newDims })
         } else {
@@ -118,11 +140,11 @@ class ComposeModel extends Component {
     getDims(dimType) {
         switch (dimType) {
             case "encoder":
-                return this.state.encoderDims
+                return this.state.encoderDims.slice()
             case "decoder":
-                return this.state.decoderDims
+                return this.state.decoderDims.slice()
             case "latent":
-                return this.state.latentDim
+                return this.state.latentDim.slice()
             default:
                 break
         }
@@ -132,7 +154,6 @@ class ComposeModel extends Component {
 
 
     updateLayerClick(e) {
-
         let currentDims = this.getDims(e.target.getAttribute("layergroup"));
 
         if (e.target.getAttribute("buttonaction") === "add") {
@@ -151,8 +172,12 @@ class ComposeModel extends Component {
         }
     }
 
+
     updateUnits(e) {
 
+        // console.log(e.target.parentElement.querySelector("div.layerdiv").getAttribute("layerdiv"));
+
+        // 
         let currentDims = this.getDims(e.target.getAttribute("layergroup"));
         let currentUnit = currentDims[e.target.getAttribute("unitindex") * 1]
         // console.log(e.target.getAttribute("unitindex"), currentUnit);
@@ -224,7 +249,7 @@ class ComposeModel extends Component {
                 // console.log("layerunit" + layerindex + unitindex)
                 return (
                     <div nodeunit={"layerunit" + layerindex + unitindex} ref={"layerunit" + layerindex + unitindex} className="eachunitbox " key={"eachunit" + unitindex}>
-                        {/* {index} */}
+                        {/* <div className="smalldesc p5">dense</div> */}
                     </div>
                 )
             })
