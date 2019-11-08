@@ -128,6 +128,7 @@ class HistogramChart extends Component {
 
         svg.select(".thresholdtext")
             .attr("x", this.xScale(thresholdVal))
+            .text("Anomaly Threshold - " + thresholdVal.toFixed(2));
 
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -224,7 +225,7 @@ class HistogramChart extends Component {
             .attr("y", this.yScale(this.yScale.domain()[1]))
             .attr("dy", ".95em")
             .attr("dx", ".35em")
-            .text("Anomaly \n Threshold");
+            .text("Anomaly Threshold - " + thresholdVal.toFixed(2));
 
         function customYAxis(g) {
             g.call(self.yAxis);

@@ -1,9 +1,14 @@
-.eachlayerbox{
+.eachunitbox{
+    height: 15px;
+    width: 25;
+    border: grey 1px solid;
+    border-radius: 2px;
+    margin: 0px 2px 3px 2px;
+}
 
-    height: 30px;
-    width: 30px;
-    border: grey 2px solid;
-    border-radius: 4px;
+.layerdiv{
+    border: 1px solid rgba(0, 0, 255, 0.589);
+    border-radius: 3px;
 }
 
 .updatebutton{
@@ -14,4 +19,17 @@
 }
 .updatebutton:hover{
     background: rgba(128, 128, 128, 0.763);
+}
+
+.modelsectiontitle{
+    /* border: 1px solid grey; */
+    /* border-bottom: 2px dashed grey; */
+    /* padding: 10px 0px 0px 0px;  */
+    text-align: center;
+}
+
+.iotextdata{
+    text-orientation: sideways;
+    writing-mode: vertical-rl;
+    text-align: center;
 }

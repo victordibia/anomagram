@@ -26,6 +26,10 @@ class LossChart extends Component {
         if ((prevProps.data.epoch !== this.props.data.epoch) && this.props.data.data.length > 0) {
             // console.log("props updated");
             this.updateGraph(this.props.data.data)
+            this.refs["trainlabel"].innerHTML = this.props.data.data[this.props.data.data.length - 1].loss.toFixed(2)
+            this.refs["validationlabel"].innerHTML = this.props.data.data[this.props.data.data.length - 1].val_loss.toFixed(2)
+            // console.log(this.props.data.data[0].loss, this.refs["trainlabel"]);
+
         }
     }
 
@@ -168,11 +172,21 @@ class LossChart extends Component {
 
     }
     render() {
+        // console.log(this.props.data.data[his.props.data.data].loss.toFixed(2));
+
         return (
             <div className="positionrelative">
                 <div className="chartlegend p5 mediumdesc">
-                    <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Train Loss </div>
-                    <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Validation Loss </div>
+                    <div className="mb3">
+                        <div className="legendcolorbox mr5  themeblue iblock"></div>
+                        <div ref="trainlabel" className="iblock boldtext mr5">0.0</div>
+                        <div className="iblock ">Train Loss</div>
+                    </div>
+                    <div>
+                        <div className="legendcolorbox mr5 themeorange iblock"></div>
+                        <div ref="validationlabel" className="iblock boldtext mr5">0.0</div>
+                        <div className="iblock ">Validation Loss</div>
+                    </div>
                 </div>
                 Training Loss Chart
 

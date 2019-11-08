@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Button, Loading } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
-import { showToast } from "../helperfunctions/HelperFunctions"
+// import { showToast } from "../helperfunctions/HelperFunctions"
 
 // custom charts 
 import HistogramChart from "../histogram/HistogramChart"
@@ -40,12 +40,12 @@ class Train extends Component {
             numFeatures: this.testData[0].data.length,
             hiddenLayers: 2,
             latentDim: 2,
-            hiddenDim: [10, 7],
+            hiddenDim: [7, 5],
             learningRate: 0.005,
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
             batchSize: 512,
-            numSteps: 20,
+            numSteps: 60,
             numEpochs: 1,
 
             trainMetrics: this.trainMetricHolder,
@@ -112,7 +112,7 @@ class Train extends Component {
         this.getPredictions()
 
         // showToast("success", "Model successfully created")
-        console.log(tf.memory());
+        // console.log(tf.memory());
     }
 
     trainModel() {
@@ -296,14 +296,16 @@ class Train extends Component {
                 </div>
 
                 {/* // Model Composer  */}
-                <div>
+                {/* <div>
                     <ComposeModel>
 
                     </ComposeModel>
-                </div>
+                </div> */}
 
-                {false &&
+                {true &&
                     <div>
+
+
 
                         <div className="iblock mr10 " >
                             <div className={"positionrelative " + (this.state.trainMetrics.length <= 0 ? " greyborder lightgreyhighlight " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
