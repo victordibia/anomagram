@@ -64,8 +64,8 @@ class Train extends Component {
         this.trainDataPath = "data/ecg/train.json"
         this.testDataPath = "data/ecg/test.json"
 
-        this.chartWidth = 450;
-        this.chartHeight = 300;
+        this.chartWidth = 350;
+        this.chartHeight = 250;
 
     }
 
@@ -109,7 +109,7 @@ class Train extends Component {
         }
 
         this.createdModel = buildModel(modelParams)
-        this.getPredictions()
+        // this.getPredictions()
 
         // showToast("success", "Model successfully created")
         // console.log(tf.memory());
@@ -296,10 +296,30 @@ class Train extends Component {
                 </div>
 
                 {/* // Model Composer  */}
-                <div>
-                    <ComposeModel>
+                <div className="flex ">
+                    <div className="flex7 mr10 "> <ComposeModel></ComposeModel></div>
+                    <div className="flex3 flex h100 border flexjustifycenter">
 
-                    </ComposeModel>
+                        <div className={"positionrelative h100" + (this.state.trainMetrics.length <= 0 ? " greyborder lightgreyhighlight " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
+                            {this.state.trainMetrics.length <= 0 &&
+                                <div className="notrainingdata">
+                                    No training loss data yet
+                                </div>
+                            }
+                            {this.state.trainMetrics.length > 0 &&
+                                <LossChart
+                                    data={{
+                                        data: this.state.trainMetrics,
+                                        chartWidth: this.chartWidth,
+                                        chartHeight: this.chartHeight,
+                                        epoch: this.state.CumulativeSteps
+                                    }}
+
+                                ></LossChart>
+                            }
+
+                        </div>
+                    </div>
                 </div>
 
                 {true &&
@@ -308,25 +328,7 @@ class Train extends Component {
 
 
                         <div className="iblock mr10 " >
-                            <div className={"positionrelative " + (this.state.trainMetrics.length <= 0 ? " greyborder lightgreyhighlight " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
-                                {this.state.trainMetrics.length <= 0 &&
-                                    <div className="notrainingdata">
-                                        No training loss data yet
-                                </div>
-                                }
-                                {this.state.trainMetrics.length > 0 &&
-                                    <LossChart
-                                        data={{
-                                            data: this.state.trainMetrics,
-                                            chartWidth: 450,
-                                            chartHeight: 300,
-                                            epoch: this.state.CumulativeSteps
-                                        }}
 
-                                    ></LossChart>
-                                }
-
-                            </div>
                         </div>
 
                         <div className="iblock mr10 ">
@@ -334,8 +336,8 @@ class Train extends Component {
                                 <HistogramChart
                                     data={{
                                         data: this.state.mseData,
-                                        chartWidth: 450,
-                                        chartHeight: 300,
+                                        chartWidth: this.chartWidth,
+                                        chartHeight: this.chartHeight,
                                         epoch: this.state.CumulativeSteps
                                     }}
                                 ></HistogramChart>
@@ -346,8 +348,8 @@ class Train extends Component {
                                 <ScatterPlot
                                     data={{
                                         data: this.state.encodedData,
-                                        chartWidth: 450,
-                                        chartHeight: 300,
+                                        chartWidth: this.chartWidth,
+                                        chartHeight: this.chartHeight,
                                         epoch: this.state.CumulativeSteps
                                     }}
 

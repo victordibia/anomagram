@@ -15,7 +15,7 @@ class ComposeModel extends Component {
             latentDim: [2],
             maxLayers: 6,
             minLayers: 2,
-            maxUnits: 8,
+            maxUnits: 12,
             minUnits: 2,
             defaultLayerDim: 3
         }
@@ -35,27 +35,61 @@ class ComposeModel extends Component {
         return document.querySelector("div." + network).querySelector("[" + attributeName + "=" + attributeValue + "]")
     }
 
+    addLayerLines(network, layer) {
+        if ((layer * 1) !== (this.state.encoderDims.length - 1)) {
+            let startId = "layerdiv" + layer;
+            let endId = "layerdiv" + (layer * 1 + 1);
+            let startEl = this.getElement(network, "layerdiv", startId)
+            let endEl = this.getElement(network, "layerdiv", endId)
+            // console.log(startEl, endEl);
+            let params = { pathType: "straight", startId: startId, endId: endId, network: network }
+            this.drawLeaderLine(startEl, endEl, network === "encoder" ? this.rightTopAnchor : this.leftTopAnchor, network === "encoder" ? this.leftTopAnchor : this.rightTopAnchor, params)
+            this.drawLeaderLine(startEl, endEl, network === "encoder" ? this.rightTopAnchor : this.leftTopAnchor, network === "encoder" ? this.leftBottomAnchor : this.rightBottomAnchor, params)
+            this.drawLeaderLine(startEl, endEl, network === "encoder" ? this.rightBottomAnchor : this.leftBottomAnchor, network === "encoder" ? this.leftTopAnchor : this.rightTopAnchor, params)
+            this.drawLeaderLine(startEl, endEl, network === "encoder" ? this.rightBottomAnchor : this.leftBottomAnchor, network === "encoder" ? this.leftBottomAnchor : this.rightBottomAnchor, params)
+        }
+    }
     drawAllLines() {
         for (const layer in this.state.encoderDims) {
-            if ((layer * 1) !== (this.state.encoderDims.length - 1)) {
-                let startId = "layerdiv" + layer;
-                let endId = "layerdiv" + (layer * 1 + 1);
-                let startEl = this.getElement("encoder", "layerdiv", startId)
-                let endEl = this.getElement("encoder", "layerdiv", endId)
-                // console.log(startEl, endEl);
-                let params = { pathType: "straight", startId: startId, endId: endId, network: "encoder" }
-                this.drawLeaderLine(startEl, endEl, this.rightTopAnchor, this.leftTopAnchor, params)
-                this.drawLeaderLine(startEl, endEl, this.rightTopAnchor, this.leftBottomAnchor, params)
-                this.drawLeaderLine(startEl, endEl, this.rightBottomAnchor, this.leftTopAnchor, params)
-                this.drawLeaderLine(startEl, endEl, this.rightBottomAnchor, this.leftBottomAnchor, params)
-            }
+            this.addLayerLines("encoder", layer)
+            this.addLayerLines("decoder", layer)
+
         }
 
-        console.log(this.lineHolder.length);
+    }
 
+
+    removeLayerLines(lineId) {
+
+        // Remove lines associated with a deleted layer
+        // Remove it from the DOM and also from the holder array 
+
+
+        let toRemove = new Map()
+        this.lineHolder.forEach(function (each, i) {
+            if (each.startId === lineId || each.endId === lineId) {
+                each.line.remove()
+                toRemove.set(i, "dot")
+            } else {
+                each.line.position()
+            }
+        })
+
+        // Remove lines queed up for deletion
+        let newHolder = []
+        this.lineHolder.forEach(function (each, i) {
+            if (toRemove.get(i) == null) {
+                newHolder.push(each)
+            }
+        });
+
+
+        // console.log("old", this.lineHolder.length, newHolder.length);
+        this.lineHolder = newHolder
 
 
     }
+
 
     drawLeaderLine(startElement, endElement, startAnchor, endAnchor, params) {
 
@@ -104,19 +138,20 @@ class ComposeModel extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-
+        // Handle addition of a new node/unit in a layer 
         for (const i in this.state.encoderDims) {
-            if (this.state.encoderDims[i] != prevState.encoderDims[i]) {
+            if (this.state.encoderDims[i] !== prevState.encoderDims[i]) {
                 this.redrawLine("layerdiv" + i)
-
             }
         }
 
+        // Handle layer addition or removal 
         if (this.state.encoderDims.length > prevState.encoderDims.length) {
-            console.log("layer added");
+            this.addLayerLines("encoder", this.state.encoderDims.length - 2)
+            this.addLayerLines("decoder", this.state.encoderDims.length - 2)
 
-        } else {
-            console.log("layer removed");
+        } else if (this.state.encoderDims.length < prevState.encoderDims.length) {
+            this.removeLayerLines("layerdiv" + this.state.encoderDims.length)
 
         }
 
@@ -132,8 +167,10 @@ class ComposeModel extends Component {
     setStateVal(varGroup, newDims) {
         if (varGroup + "" === "encoder") {
             this.setState({ encoderDims: newDims })
-        } else {
+        } else if (varGroup + "" === "decoder") {
             this.setState({ decoderDims: newDims })
+        } else if (varGroup + "" === "latent") {
+            this.setState({ latentDim: newDims })
         }
     }
 
@@ -154,6 +191,8 @@ class ComposeModel extends Component {
 
 
     updateLayerClick(e) {
+
+
         let currentDims = this.getDims(e.target.getAttribute("layergroup"));
 
         if (e.target.getAttribute("buttonaction") === "add") {
@@ -175,9 +214,7 @@ class ComposeModel extends Component {
 
     updateUnits(e) {
 
-        // console.log(e.target.parentElement.querySelector("div.layerdiv").getAttribute("layerdiv"));
-
-        // 
+        // Update state variables for dimension units
         let currentDims = this.getDims(e.target.getAttribute("layergroup"));
         let currentUnit = currentDims[e.target.getAttribute("unitindex") * 1]
         // console.log(e.target.getAttribute("unitindex"), currentUnit);
@@ -206,22 +243,22 @@ class ComposeModel extends Component {
 
     render() {
 
-        let latentLayers = this.state.latentDim.map((data, index) => {
-            let eachLayer = _.range(data).map((data, index) => {
+        let latentLayers = this.state.latentDim.map((data, layerindex) => {
+            let eachLayer = _.range(data).map((unitindex) => {
                 return (
-                    <div className="eachunitbox " key={"eachlayer" + index}>
+                    <div className="eachunitbox " key={"eachunit" + unitindex}>
                         {/* {index} */}
                     </div>
                 )
             })
             return (
-                <div key={"latentlayer" + index} className=" h100 flex flexfull flexjustifycenter ">
+                <div key={"latentlayer" + layerindex} className=" h100 flex flexfull flexjustifycenter ">
                     <div className="  ">
                         <div className="" >
-                            <div className="smalldesc mb3">{data} units</div>
+                            <div className="smalldesc mb3 unselectable">{data} units</div>
                             <div
                                 layergroup="latent"
-                                unitindex={index}
+                                unitindex={layerindex}
                                 buttonaction="add"
                                 onClick={this.updateUnits.bind(this)}
                                 className="updatebutton unselectable mb3 clickable">
@@ -230,7 +267,7 @@ class ComposeModel extends Component {
                             <div className="layerdiv  pt3 mb3">{eachLayer}</div>
                             <div
                                 layergroup="latent"
-                                unitindex={index}
+                                unitindex={layerindex}
                                 buttonaction="subtract"
                                 onClick={this.updateUnits.bind(this)}
                                 className="updatebutton unselectable  clickable">
@@ -257,7 +294,7 @@ class ComposeModel extends Component {
                 <div key={"enclayer" + layerindex} className="iblock  mr10 flex flexfull flexjustifycenter ">
                     <div className="iblock  ">
                         <div>
-                            <div className="smalldesc mb3">{data} units</div>
+                            <div className="smalldesc mb3 unselectable">{data} units</div>
                             <div
                                 layergroup="encoder"
                                 unitindex={layerindex}
@@ -320,28 +357,28 @@ class ComposeModel extends Component {
                 </div>
                 {/* Encoder, bottleneck, Decoder  */}
                 <div className="flex">
-                    <div className="iotextdata mr10 p5 border">
+                    <div className="iotextdata mr10 p5 ">
                         Input Data
                     </div>
-                    <div ref="encoderbox" className="encoder greyhighlight rad4 pl5 flex4 mr10 ">
+                    <div ref="encoderbox" className="encoder greyhighlight rad4 pl5 flex5 mr10 ">
                         <div className="layerbar flex  flexjustifycenter pb10 pt10">
                             {encLayers}
                         </div>
 
                     </div>
-                    <div ref="latentbox" className="bottlneck  flex2 mr10 ">
-                        <div className="layerbar  h100 rad4 border flex  flexjustifycenter  ">
+                    <div ref="latentbox" className="bottlneck  mr10 ">
+                        <div className="layerbar  h100  flex  flexjustifycenter  ">
 
                             {latentLayers}
                         </div>
                     </div>
-                    <div ref="decoderbox" className="decoder greyhighlight rad4 pl5 flex4 ">
+                    <div ref="decoderbox" className="decoder greyhighlight rad4 pl5 flex5 ">
                         <div className="layerbar flex   flexjustifycenter  pb10 pt10">
                             {decLayers}
                         </div>
                     </div>
 
-                    <div className="iotextdata ml10 p5 border">
+                    <div className="iotextdata ml10 p5 ">
                         Output Data
                     </div>
 

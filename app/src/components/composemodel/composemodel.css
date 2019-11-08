@@ -1,9 +1,10 @@
 .eachunitbox{
     height: 15px;
-    width: 25;
-    border: grey 1px solid;
+    width: 26px;
+    border: rgb(49, 49, 49) 2px solid;
     border-radius: 2px;
     margin: 0px 2px 3px 2px;
+    background: rgba(0, 98, 255, 0.8); 
 }
 
 .layerdiv{
@@ -32,4 +33,11 @@
     text-orientation: sideways;
     writing-mode: vertical-rl;
     text-align: center;
+    border: 2px solid rgba(0, 98, 255, 0.8);
+}
+
+.bottlneck{
+    border: 2px solid rgba(0, 98, 255, 0.8);
+    border-radius: 4px;
+    padding: 0px 15px 0px 15px;;
 }
