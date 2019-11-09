@@ -45,7 +45,7 @@ class Train extends Component {
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
             batchSize: 512,
-            numSteps: 60,
+            numSteps: 6,
             numEpochs: 1,
 
             trainMetrics: this.trainMetricHolder,
@@ -109,7 +109,7 @@ class Train extends Component {
         }
 
         this.createdModel = buildModel(modelParams)
-        // this.getPredictions()
+        this.getPredictions()
 
         // showToast("success", "Model successfully created")
         // console.log(tf.memory());
@@ -259,32 +259,7 @@ class Train extends Component {
         return (
             <div>
 
-                <div className="mb10">
-                    <Button
-                        className="mr5 iblock"
-                        renderIcon={this.state.isTraining ? PauseFilled16 : PlayFilled16}
-                        // disabled={(!this.state.isTraining) ? false : true}
-                        onClick={this.trainButtonClick.bind(this)}
-                    > {this.state.isTraining ? "Pause" : "Train"}
-                    </Button>
 
-                    <Button
-                        className="mr5 iblock displaynone"
-                        renderIcon={Reset16}
-                        disabled={(!this.state.isTraining) ? false : true}
-                        onClick={this.resetModelButtonClick.bind(this)}
-                    > Reset </Button>
-
-                    <Loading
-                        className="iblock mt10"
-                        active={(!this.state.isTraining) ? false : true}
-                        small={true}
-                        withOverlay={false}
-                    >
-
-                    </Loading>
-
-                </div>
 
                 {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
                 <div className="greyborder p10 mb10">
@@ -296,39 +271,59 @@ class Train extends Component {
                 </div>
 
                 {/* // Model Composer  */}
-                <div className="flex ">
-                    <div className="flex7 mr10 "> <ComposeModel></ComposeModel></div>
-                    <div className="flex3 flex h100 border flexjustifycenter">
+                <div className="flex mb10 ">
+                    <div className="flex7 mr10 border p10 rad4"> <ComposeModel></ComposeModel></div>
+                    <div className="flex3 flex h100   ">
+                        <div className="mb10">
+                            <Button
+                                className="mr5 iblock"
+                                renderIcon={this.state.isTraining ? PauseFilled16 : PlayFilled16}
+                                // disabled={(!this.state.isTraining) ? false : true}
+                                onClick={this.trainButtonClick.bind(this)}
+                            > {this.state.isTraining ? "Pause" : "Train"}
+                            </Button>
 
-                        <div className={"positionrelative h100" + (this.state.trainMetrics.length <= 0 ? " greyborder lightgreyhighlight " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
-                            {this.state.trainMetrics.length <= 0 &&
-                                <div className="notrainingdata">
-                                    No training loss data yet
-                                </div>
-                            }
-                            {this.state.trainMetrics.length > 0 &&
-                                <LossChart
-                                    data={{
-                                        data: this.state.trainMetrics,
-                                        chartWidth: this.chartWidth,
-                                        chartHeight: this.chartHeight,
-                                        epoch: this.state.CumulativeSteps
-                                    }}
+                            <Button
+                                className="mr5 iblock displaynone"
+                                renderIcon={Reset16}
+                                disabled={(!this.state.isTraining) ? false : true}
+                                onClick={this.resetModelButtonClick.bind(this)}
+                            > Reset </Button>
 
-                                ></LossChart>
-                            }
+                            <Loading
+                                className="iblock mt10"
+                                active={(!this.state.isTraining) ? false : true}
+                                small={true}
+                                withOverlay={false}
+                            >
+
+                            </Loading>
 
                         </div>
+
                     </div>
                 </div>
 
                 {true &&
                     <div>
+                        <div className="iblock mr10  h100 " >
+                            <div className={"positionrelative h100 " + (this.state.trainMetrics.length <= 0 ? " " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
+                                {this.state.trainMetrics.length <= 0 &&
+                                    <div className="notrainingdata">  No training loss data yet </div>
+                                }
+                                {this.state.trainMetrics.length > 0 &&
+                                    <LossChart
+                                        data={{
+                                            data: this.state.trainMetrics,
+                                            chartWidth: this.chartWidth,
+                                            chartHeight: this.chartHeight,
+                                            epoch: this.state.CumulativeSteps
+                                        }}
 
+                                    ></LossChart>
+                                }
 
-
-                        <div className="iblock mr10 " >
-
+                            </div>
                         </div>
 
                         <div className="iblock mr10 ">

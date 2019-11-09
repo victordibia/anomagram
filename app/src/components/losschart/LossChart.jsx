@@ -175,7 +175,7 @@ class LossChart extends Component {
         // console.log(this.props.data.data[his.props.data.data].loss.toFixed(2));
 
         return (
-            <div className="positionrelative">
+            <div className="positionrelative  ">
                 <div className="chartlegend p5 mediumdesc">
                     <div className="mb3">
                         <div className="legendcolorbox mr5  themeblue iblock"></div>
@@ -188,7 +188,7 @@ class LossChart extends Component {
                         <div className="iblock ">Validation Loss</div>
                     </div>
                 </div>
-                Training Loss Chart
+                <div className="charttitle">  Training Loss Chart</div>
 
                 <div className="losschart borders"> </div>
             </div>

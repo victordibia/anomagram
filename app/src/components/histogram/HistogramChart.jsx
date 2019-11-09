@@ -128,7 +128,7 @@ class HistogramChart extends Component {
 
         svg.select(".thresholdtext")
             .attr("x", this.xScale(thresholdVal))
-            .text("Anomaly Threshold - " + thresholdVal.toFixed(2));
+            .text("Anomaly Threshold - " + thresholdVal.toFixed);
 
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -225,7 +225,7 @@ class HistogramChart extends Component {
             .attr("y", this.yScale(this.yScale.domain()[1]))
             .attr("dy", ".95em")
             .attr("dx", ".35em")
-            .text("Anomaly Threshold - " + thresholdVal.toFixed(2));
+            .text("Anomaly Threshold - " + thresholdVal);
 
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -255,13 +255,13 @@ class HistogramChart extends Component {
 
     render() {
         return (
-            <div className="positionrelative ">
+            <div className="positionrelative mainchartbox ">
                 <div className="chartlegend p5 mediumdesc">
                     <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Normal </div>
                     <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Abnormal </div>
                 </div>
                 <div className="charttitle"> Histogram of Mean Square Error </div>
-                <div className="histogramchart"></div>
+                <div className="histogramchart "></div>
             </div>
         );
     }

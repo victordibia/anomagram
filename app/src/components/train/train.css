@@ -8,5 +8,38 @@
 }
 
 .charttitle{
-    
+    font-size: 1em;
+    font-weight: bold;
+    margin: 5px 0px 20px 0px;
+
+}
+
+
+
+.chartlegend{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    /* border: 1px solid grey; */
+    background: rgba(238, 238, 238, 0.677);
+    border-radius: 3px;
+}
+
+.legendcolorbox{
+    height: 10px;
+    width: 10px;
+}
+
+.themeblue{
+    background: rgba(0, 98, 255, 0.8); 
+}
+
+.themeorange{
+    background:rgba(255, 170, 0, 0.8);
+}
+
+.mainchartbox{
+    padding: 10px;
+    border: 1px solid grey;
+    border-radius: 3px;
 }

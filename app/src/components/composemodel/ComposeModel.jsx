@@ -10,10 +10,10 @@ class ComposeModel extends Component {
         super(props)
 
         this.state = {
-            encoderDims: [8, 7, 6, 5, 4],
+            encoderDims: [8, 7, 6, 5, 3],
             decoderDims: [7, 15],
             latentDim: [2],
-            maxLayers: 6,
+            maxLayers: 10,
             minLayers: 2,
             maxUnits: 12,
             minUnits: 2,
@@ -26,6 +26,8 @@ class ComposeModel extends Component {
         this.rightBottomAnchor = { x: "100%", y: "95%" }
         this.leftTopAnchor = { x: 0, y: "5%" }
         this.leftBottomAnchor = { x: "0%", y: "95%" }
+        this.rightMiddle = { x: "100%", y: "50%" }
+        this.leftMiddle = { x: "0%", y: "50%" }
     }
     componentDidMount() {
         this.drawAllLines();
@@ -47,15 +49,28 @@ class ComposeModel extends Component {
             this.drawLeaderLine(startEl, endEl, network === "encoder" ? this.rightTopAnchor : this.leftTopAnchor, network === "encoder" ? this.leftBottomAnchor : this.rightBottomAnchor, params)
             this.drawLeaderLine(startEl, endEl, network === "encoder" ? this.rightBottomAnchor : this.leftBottomAnchor, network === "encoder" ? this.leftTopAnchor : this.rightTopAnchor, params)
             this.drawLeaderLine(startEl, endEl, network === "encoder" ? this.rightBottomAnchor : this.leftBottomAnchor, network === "encoder" ? this.leftBottomAnchor : this.rightBottomAnchor, params)
+        } else {
+            let startId = "layerdiv" + layer;
+            let startEl = this.getElement(network, "layerdiv", startId)
+            let encoderDiv = document.getElementById("mainencoderdiv")
+            let latentDiv = document.getElementById("latentdiv")
+            let decoderDiv = document.getElementById("maindecoderdiv")
+
+            let params = { pathType: "arc", startId: startId, endId: "latent", network: network }
+            this.drawLeaderLine(startEl, latentDiv, network === "encoder" ? this.rightMiddle : this.leftMiddle, network === "encoder" ? this.leftMiddle : this.rightMiddle, params)
+
         }
     }
+    addEncDecLines(layer) {
+        this.addLayerLines("encoder", layer)
+        this.addLayerLines("decoder", layer)
+    }
     drawAllLines() {
+        // Add connector lines for encoder decoder 
         for (const layer in this.state.encoderDims) {
-            this.addLayerLines("encoder", layer)
-            this.addLayerLines("decoder", layer)
+            this.addEncDecLines(layer)
 
         }
-
     }
 
 
@@ -93,7 +108,7 @@ class ComposeModel extends Component {
 
     drawLeaderLine(startElement, endElement, startAnchor, endAnchor, params) {
 
-        let blueColor = "grey"
+        let blueColor = "rgba(0, 0, 255, 0.589)"
         let lineWidth = 1.5
         let plugType = "disc"
 
@@ -111,10 +126,11 @@ class ComposeModel extends Component {
 
         });
         // document.querySelector('.leader-line').style.zIndex = -100
-        animOptions.duration = 800
+        animOptions.duration = 400
         line.show("draw", animOptions)
         this.lineHolder.push({ line: line, startId: params.startId, endId: params.endId, network: params.network })
     }
+
 
     removeAllLines(line) {
         this.lineHolder.forEach(function (each) {
@@ -147,13 +163,19 @@ class ComposeModel extends Component {
 
         // Handle layer addition or removal 
         if (this.state.encoderDims.length > prevState.encoderDims.length) {
-            this.addLayerLines("encoder", this.state.encoderDims.length - 2)
-            this.addLayerLines("decoder", this.state.encoderDims.length - 2)
+            this.removeLayerLines("latent")
+            this.addEncDecLines(this.state.encoderDims.length - 2)
+            this.addEncDecLines(this.state.encoderDims.length - 1)
+
 
         } else if (this.state.encoderDims.length < prevState.encoderDims.length) {
             this.removeLayerLines("layerdiv" + this.state.encoderDims.length)
+            this.addEncDecLines(this.state.encoderDims.length - 1)
 
         }
+
+        // console.log(this.lineHolder.length);
+
 
 
     }
@@ -253,7 +275,7 @@ class ComposeModel extends Component {
             })
             return (
                 <div key={"latentlayer" + layerindex} className=" h100 flex flexfull flexjustifycenter ">
-                    <div className="  ">
+                    <div className=" mb5 mt5 ">
                         <div className="" >
                             <div className="smalldesc mb3 unselectable">{data} units</div>
                             <div
@@ -264,7 +286,7 @@ class ComposeModel extends Component {
                                 className="updatebutton unselectable mb3 clickable">
                                 <Add16 className="unclickable"></Add16>
                             </div>
-                            <div className="layerdiv  pt3 mb3">{eachLayer}</div>
+                            <div id="latentdiv" className="layerdiv  pt3 mb3">{eachLayer}</div>
                             <div
                                 layergroup="latent"
                                 unitindex={layerindex}
@@ -285,14 +307,12 @@ class ComposeModel extends Component {
             let eachLayer = _.range(data).map((unitindex) => {
                 // console.log("layerunit" + layerindex + unitindex)
                 return (
-                    <div nodeunit={"layerunit" + layerindex + unitindex} ref={"layerunit" + layerindex + unitindex} className="eachunitbox " key={"eachunit" + unitindex}>
-                        {/* <div className="smalldesc p5">dense</div> */}
-                    </div>
+                    <div nodeunit={"layerunit" + layerindex + unitindex} ref={"layerunit" + layerindex + unitindex} className="eachunitbox " key={"eachunit" + unitindex}></div>
                 )
             })
             return (
                 <div key={"enclayer" + layerindex} className="iblock  mr10 flex flexfull flexjustifycenter ">
-                    <div className="iblock  ">
+                    <div className="iblock  mb5 mt5">
                         <div>
                             <div className="smalldesc mb3 unselectable">{data} units</div>
                             <div
@@ -323,11 +343,14 @@ class ComposeModel extends Component {
         let decLayers = _.reverse(_.clone(encLayers));
 
         return (
-            <div className="mb10">
-                <div className="smalldesc mb5"> * we map the same configuration for both encoder and decoder </div>
+            <div className="mb10 ">
+
                 {/* Layer controls */}
-                <div className="flex flexjustifycenter">
-                    <div className="buttonbar mb5 iblock">
+
+                <div className="flex w100 mb5 ">
+                    {/* <div className="mediumdesc mb5 mt5 mr10"> * we map the same configuration for both encoder and decoder </div> */}
+                    <div className="flex5 "></div>
+                    <div className="buttonbar ">
                         <div
                             layergroup="encoder"
                             buttonaction="add"
@@ -342,15 +365,14 @@ class ComposeModel extends Component {
                             className="updatebutton unselectable mr5 clickable">
                             <Subtract16 className="unclickable"></Subtract16>
                         </div>
-
-                        <div className="ml10 iblock unselectable">
-                            {this.state.encoderDims.length} Layers
-                        </div>
+                    </div>
+                    <div className="unselectable flex5 iblock  pt5">
+                        {this.state.encoderDims.length} Layers
                     </div>
                 </div>
 
                 {/* Section titles */}
-                <div className="flex mb10">
+                <div className="flex mb10 displaynone">
                     <div className="flex4 textaligncenter mediumdesc boldtext"> Encoder </div>
                     <div className="flex2 textaligncenter  mediumdesc boldtext"> Bottleneck </div>
                     <div className="flex4 textaligncenter  mediumdesc boldtext"> Decoder </div>
@@ -360,7 +382,7 @@ class ComposeModel extends Component {
                     <div className="iotextdata mr10 p5 ">
                         Input Data
                     </div>
-                    <div ref="encoderbox" className="encoder greyhighlight rad4 pl5 flex5 mr10 ">
+                    <div id="mainencoderdiv" ref="encoderbox" className="encoder greyhighlight rad4 pl5 flex5 mr10 ">
                         <div className="layerbar flex  flexjustifycenter pb10 pt10">
                             {encLayers}
                         </div>
@@ -368,11 +390,10 @@ class ComposeModel extends Component {
                     </div>
                     <div ref="latentbox" className="bottlneck  mr10 ">
                         <div className="layerbar  h100  flex  flexjustifycenter  ">
-
                             {latentLayers}
                         </div>
                     </div>
-                    <div ref="decoderbox" className="decoder greyhighlight rad4 pl5 flex5 ">
+                    <div id="maindecoderdiv" ref="decoderbox" className="decoder greyhighlight rad4 pl5 flex5 ">
                         <div className="layerbar flex   flexjustifycenter  pb10 pt10">
                             {decLayers}
                         </div>

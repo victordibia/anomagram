@@ -329,6 +329,16 @@
     align-items:center;
 }
 
+.flexjustifyright{
+    justify-content: right;
+    align-items:right;
+}
+
+.flexjustifyleft{
+    justify-content: left;
+    align-items: left;
+}
+
 .flex {
     display: flex;
 }
@@ -541,25 +551,4 @@
     -webkit-transition: opacity 1.5s; 
     margin-bottom: 5px;
 
-}
-
-.chartlegend{
-    position: absolute;
-    top: 10px;
-    right: 0px;
-    /* border: 1px solid grey; */
-    background: rgba(238, 238, 238, 0.877);
-}
-
-.legendcolorbox{
-    height: 10px;
-    width: 10px;
-}
-
-.themeblue{
-    background: rgba(0, 98, 255, 0.8); 
-}
-
-.themeorange{
-    background:rgba(255, 170, 0, 0.8);
 }
