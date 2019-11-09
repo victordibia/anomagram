@@ -243,6 +243,9 @@
     margin-right: 5px;
 }
 
+.ml5 {
+    margin-left: 5px;
+}
 
 .mr20 {
     margin-right: 20px;
@@ -282,6 +285,11 @@
     transition: opacity .3s ease-in-out;
    -moz-transition: opacity .3s ease-in-out;
    -webkit-transition: opacity .3s ease-in-out;
+}
+
+.glowbar { 
+    height: 0.24em;
+    background: #0062FF ;
 }
 
 .transitionw6s{

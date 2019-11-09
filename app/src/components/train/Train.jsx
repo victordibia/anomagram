@@ -10,7 +10,7 @@ import ScatterPlot from "../scatterplot/ScatterPlot"
 import LossChart from "../losschart/LossChart"
 import ComposeModel from "../composemodel/ComposeModel"
 
-import { Reset16, PlayFilled16, PauseFilled16 } from '@carbon/icons-react';
+import { Reset16, PlayFilledAlt16, PlayFilled16, PauseFilled16 } from '@carbon/icons-react';
 import { buildModel } from "./models/ae"
 // import 
 
@@ -55,8 +55,6 @@ class Train extends Component {
 
         this.currentSteps = 0;
 
-
-
         this.xsTrain = []
         this.xsTest = []
         this.yTest = []
@@ -66,6 +64,8 @@ class Train extends Component {
 
         this.chartWidth = 350;
         this.chartHeight = 250;
+
+        this.warmupSampleSize = 1
 
     }
 
@@ -92,6 +92,9 @@ class Train extends Component {
         this.disposeModelTensors()
         this.xsTest.dispose()
         this.xsTrain.dispose()
+        this.xsWarmup.dispose()
+        // console.log(tf.memory());
+
     }
     createModel() {
 
@@ -111,10 +114,25 @@ class Train extends Component {
         this.createdModel = buildModel(modelParams)
         this.getPredictions()
 
+        // setTimeout(() => {
+        this.modelWarmUp()
+        // }, 5000);
+
         // showToast("success", "Model successfully created")
         // console.log(tf.memory());
     }
 
+    modelWarmUp() {
+        let startTime = new Date();
+        this.createdModel.fit(this.xsWarmup,
+            this.xsWarmup, { epochs: 1, verbose: 0, batchSize: this.warmupSampleSize }
+        ).then(res => {
+            let endTime = new Date();
+            let elapsedTime = (endTime - startTime) / 1000
+            console.log("Warmup done", elapsedTime);
+        });
+
+    }
     trainModel() {
         // for (let i = 0; i < this.numSteps; i++) {
 
@@ -223,6 +241,9 @@ class Train extends Component {
         this.setState({ trainDataShape: this.xsTrain.shape })
 
 
+        this.xsWarmup = tf.tensor2d(trainEcg.slice(0, this.warmupSampleSize).map(item => item.data
+        ), [this.warmupSampleSize, trainEcg[0].data.length])
+
         // test tensor  
         // create test data TENSOR from test data json array 
         this.xsTest = tf.tensor2d(this.testData.map(item => item.data
@@ -236,6 +257,7 @@ class Train extends Component {
     }
 
     trainButtonClick(e) {
+        let self = this
         // console.log("traain click")
         // showToast("info", "Training model ", 6000)
         if (this.state.isTraining) {
@@ -245,6 +267,14 @@ class Train extends Component {
             this.trainModel()
         }
 
+        this.refs["glowbar"].classList.add('notransition');
+        this.refs["glowbar"].style.width = "0%";
+
+        setTimeout(() => {
+            self.refs["glowbar"].classList.remove('notransition');
+            self.refs["glowbar"].style.width = "100%";
+
+        }, 150);
     }
 
     resetModelButtonClick(e) {
@@ -259,52 +289,57 @@ class Train extends Component {
         return (
             <div>
 
+                <div className="flex greyhighlight p10 rad3 ">
+                    <div
+                        onClick={this.trainButtonClick.bind(this)}
+                        className="iblock circlebutton mr5 flex flexjustifycenter clickable">
+                        {!this.state.isTraining && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
+                        {this.state.isTraining && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
+                    </div>
+
+                    <div
+                        onClick={this.resetModelButtonClick.bind(this)}
+                        className="iblock circlebutton mr5 flex flexjustifycenter clickable">
+                        <Reset16 style={{ fill: "white" }} className="unselectable unclickable" />
+
+                    </div>
+                    <div className="flex mr10 flexjustifycenter ">
+                        <Loading
+                            className="iblock "
+                            active={(!this.state.isTraining) ? false : true}
+                            small={true}
+                            withOverlay={false}
+                        > </Loading>
+
+                    </div>
+                    <div className="flexfull border flex flexjustifyleft flexjustifycenter ">
+                        <div className=" p10   iblock">
+                            <div className="iblock mr10"> Epochs: {this.state.CumulativeSteps}</div>
+                            <div className="iblock mr10"> Batch Size: {this.state.batchSize}</div>
+                            <div className="iblock mr10"> Learning Rate: {this.state.learningRate}</div>
+                            <div className="iblock mr10"> Train: {this.state.trainDataShape[0]}</div>
+                            <div className="iblock"> Test: {this.state.testDataShape[0]}</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div ref="glowbar" className="glowbar transitionw6s mb7 w0"></div>
 
 
                 {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
-                <div className="greyborder p10 mb10">
-                    <div className="iblock mr10"> Epochs: {this.state.CumulativeSteps}</div>
-                    <div className="iblock mr10"> Batch Size: {this.state.batchSize}</div>
-                    <div className="iblock mr10"> Learning Rate: {this.state.learningRate}</div>
-                    <div className="iblock mr10"> Train: {this.state.trainDataShape[0]}</div>
-                    <div className="iblock"> Test: {this.state.testDataShape[0]}</div>
-                </div>
+
 
                 {/* // Model Composer  */}
-                <div className="flex mb10 ">
-                    <div className="flex7 mr10 border p10 rad4"> <ComposeModel></ComposeModel></div>
-                    <div className="flex3 flex h100   ">
-                        <div className="mb10">
-                            <Button
-                                className="mr5 iblock"
-                                renderIcon={this.state.isTraining ? PauseFilled16 : PlayFilled16}
-                                // disabled={(!this.state.isTraining) ? false : true}
-                                onClick={this.trainButtonClick.bind(this)}
-                            > {this.state.isTraining ? "Pause" : "Train"}
-                            </Button>
+                <div className="flex mb10 h100">
+                    <div className="flex7 mr10 "> <ComposeModel></ComposeModel></div>
+                    <div className="flex3 flex h100 border flexjustifycenter">
 
-                            <Button
-                                className="mr5 iblock displaynone"
-                                renderIcon={Reset16}
-                                disabled={(!this.state.isTraining) ? false : true}
-                                onClick={this.resetModelButtonClick.bind(this)}
-                            > Reset </Button>
-
-                            <Loading
-                                className="iblock mt10"
-                                active={(!this.state.isTraining) ? false : true}
-                                small={true}
-                                withOverlay={false}
-                            >
-
-                            </Loading>
-
-                        </div>
 
                     </div>
                 </div>
 
-                {true &&
+                {false &&
                     <div>
                         <div className="iblock mr10  h100 " >
                             <div className={"positionrelative h100 " + (this.state.trainMetrics.length <= 0 ? " " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>

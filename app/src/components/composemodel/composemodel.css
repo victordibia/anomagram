@@ -23,11 +23,8 @@
     background: rgba(128, 128, 128, 0.763);
 }
 
-.modelsectiontitle{
-    /* border: 1px solid grey; */
-    /* border-bottom: 2px dashed grey; */
-    /* padding: 10px 0px 0px 0px;  */
-    text-align: center;
+.networktitle{
+     border-bottom: 1px solid grey;
 }
 
 .iotextdata{

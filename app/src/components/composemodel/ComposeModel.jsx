@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 // import { Button } from "carbon-components-react"
 import { LeaderLine, animOptions } from "../helperfunctions/HelperFunctions"
-import { Add16, Subtract16 } from '@carbon/icons-react';
+import { Add16, Subtract16, PlayFilledAlt16 } from '@carbon/icons-react';
 import "./composemodel.css"
 import * as _ from "lodash"
 
@@ -10,14 +10,17 @@ class ComposeModel extends Component {
         super(props)
 
         this.state = {
-            encoderDims: [8, 7, 6, 5, 3],
+            encoderDims: [8, 3],
             decoderDims: [7, 15],
             latentDim: [2],
             maxLayers: 10,
             minLayers: 2,
             maxUnits: 12,
             minUnits: 2,
-            defaultLayerDim: 3
+            defaultLayerDim: 3,
+            animateLines: false,
+            lineWidth: 2.5,
+            animationDuration: 350
         }
 
         this.lineHolder = []
@@ -108,8 +111,8 @@ class ComposeModel extends Component {
 
     drawLeaderLine(startElement, endElement, startAnchor, endAnchor, params) {
 
-        let blueColor = "rgba(0, 0, 255, 0.589)"
-        let lineWidth = 1.5
+        let blueColor = params.endId === "latent" ? "grey" : "rgba(0, 0, 255, 0.589)"
+        let lineWidth = params.endId === "latent" ? this.state.lineWidth : 1.5
         let plugType = "disc"
 
         let line = new LeaderLine(
@@ -122,11 +125,11 @@ class ComposeModel extends Component {
             path: params.pathType,
             size: lineWidth,
             hide: true,
-            dash: { gap: 2 }
+            dash: { gap: 2, animation: params.endId === "latent" ? this.state.animateLines : false }
 
         });
         // document.querySelector('.leader-line').style.zIndex = -100
-        animOptions.duration = 400
+        animOptions.duration = this.state.animationDuration
         line.show("draw", animOptions)
         this.lineHolder.push({ line: line, startId: params.startId, endId: params.endId, network: params.network })
     }
@@ -345,12 +348,16 @@ class ComposeModel extends Component {
         return (
             <div className="mb10 ">
 
+
+
                 {/* Layer controls */}
 
                 <div className="flex w100 mb5 ">
                     {/* <div className="mediumdesc mb5 mt5 mr10"> * we map the same configuration for both encoder and decoder </div> */}
-                    <div className="flex5 "></div>
-                    <div className="buttonbar ">
+                    <div className="flex5 ">
+                        <div className="mediumdesc networktitle boldtext p5"> Encoder </div>
+                    </div>
+                    <div className="buttonbar mr10 ml10 ">
                         <div
                             layergroup="encoder"
                             buttonaction="add"
@@ -362,12 +369,16 @@ class ComposeModel extends Component {
                             layergroup="encoder"
                             buttonaction="subtract"
                             onClick={this.updateLayerClick.bind(this)}
-                            className="updatebutton unselectable mr5 clickable">
+                            className="updatebutton unselectable  clickable">
                             <Subtract16 className="unclickable"></Subtract16>
                         </div>
                     </div>
-                    <div className="unselectable flex5 iblock  pt5">
-                        {this.state.encoderDims.length} Layers
+                    <div className="unselectable flex5     ">
+                        <div className="flex p5 networktitle  mediumdesc boldtext">
+                            <div className="flex flexjustifyleft "> {this.state.encoderDims.length} Layers</div>
+                            <div className="flex flexfull flexjustifycenter   "></div>
+                            <div className="  "> Decoder </div>
+                        </div>
                     </div>
                 </div>
 
@@ -379,7 +390,7 @@ class ComposeModel extends Component {
                 </div>
                 {/* Encoder, bottleneck, Decoder  */}
                 <div className="flex">
-                    <div className="iotextdata mr10 p5 ">
+                    <div className="iotextdata unselectable mr10 p5 ">
                         Input Data
                     </div>
                     <div id="mainencoderdiv" ref="encoderbox" className="encoder greyhighlight rad4 pl5 flex5 mr10 ">
@@ -399,7 +410,7 @@ class ComposeModel extends Component {
                         </div>
                     </div>
 
-                    <div className="iotextdata ml10 p5 ">
+                    <div className="iotextdata unselectable ml10 p5 ">
                         Output Data
                     </div>
 
