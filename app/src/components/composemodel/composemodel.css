@@ -5,6 +5,16 @@
     border-radius: 2px;
     margin: 0px 3px 3px 3px;
     background: rgba(0, 98, 255, 0.8); 
+    -webkit-transition:  background-color ease-in 0.4s;
+}
+
+.unitgrey{
+    background: rgb(197, 197, 197) ;
+   
+}
+
+.unitblue{
+    background: rgba(0, 98, 255, 0.8); 
 }
 
 .layerdiv{
@@ -24,7 +34,7 @@
 }
 
 .networktitle{
-     border-bottom: 1px solid grey;
+     /* border-bottom: 1px solid grey; */
 }
 
 .iotextdata{
@@ -36,6 +46,15 @@
 
 .bottlneck{
     border: 2px solid rgba(0, 98, 255, 0.8);
-    border-radius: 4px;
-    padding: 0px 15px 0px 15px;;
+    
+}
+
+.latentunittitle{
+     
+}
+
+.mwc{
+    min-width: 50px;
+    align-content: center;
+    /* border: 1px solid grey; */
 }

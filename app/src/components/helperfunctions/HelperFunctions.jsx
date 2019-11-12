@@ -19,6 +19,56 @@ export function showToast(type, message, duration = 4000) {
 
 }
 
+export function computeAccuracyGivenThreshold(data, threshold) {
+
+    let predVal = 0
+    let truePositive = 0
+    let trueNegative = 0
+    let falsePositive = 0
+    let falseNegative = 0
+
+    let ac = 0
+
+    data.forEach(each => {
+        predVal = each.mse > threshold ? 1 : 0
+
+        if (each.label === predVal) {
+            ac++
+        }
+        if ((each.label === 1) && (predVal === 1)) {
+            truePositive++
+        }
+        if ((each.label === 0) && (predVal === 0)) {
+            trueNegative++
+        }
+
+        if ((each.label === 0) && (predVal === 1)) {
+            falsePositive++
+        }
+
+        if ((each.label === 1) && (predVal === 0)) {
+            falseNegative++
+        }
+    });
+
+    let metricRow = {
+        acc: (truePositive + trueNegative) / data.length,
+        threshold: threshold,
+        tp: truePositive,
+        tn: trueNegative,
+        fp: falsePositive,
+        fn: falseNegative,
+        tpr: truePositive / (truePositive + falseNegative),
+        fpr: falsePositive / (trueNegative + falsePositive),
+        fnr: falseNegative / (truePositive + falseNegative),
+        tnr: trueNegative / (trueNegative + falsePositive),
+
+    }
+    let accuracy = ((ac / data.length) * 100).toFixed(2)
+    return metricRow
+
+}
+
 
 
 export function abbreviateString(value, maxLength) {

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import "./losschart.css"
+import "./rocchart.css"
 import * as d3 from "d3"
 
 
-class LossChart extends Component {
+class ROCChart extends Component {
 
     constructor(props) {
         super(props)
@@ -36,11 +36,11 @@ class LossChart extends Component {
     updateGraph(data) {
         let self = this
 
-        // d3.select("div.losschart").selectAll(".lossline").remove();
-        // d3.select("div.losschart").selectAll(".pointdot").remove();
+        // d3.select("div.ROCChart").selectAll(".lossline").remove();
+        // d3.select("div.ROCChart").selectAll(".pointdot").remove();
 
         this.setupScalesAxes(data)
-        let svg = d3.select("div.losschart").transition();
+        let svg = d3.select("div.ROCChart").transition();
 
         svg.select(".losstraincolor")
             .duration(self.animationDuration)
@@ -82,17 +82,14 @@ class LossChart extends Component {
         var n = data.length;
 
         this.xScale = d3.scaleLinear()
-            .domain([0, n - 1]) // input
+            .domain([d3.min(data, function (d) { return d.fpr }),
+            d3.max(data, function (d) { return d.fpr })]) // input 
             .range([0, this.chartWidth]); // output
 
 
         this.yScale = d3.scaleLinear()
-            .domain([d3.min(data, function (d) {
-                // console.log(Math.min(d.loss, d.val_loss))
-                return Math.min(d.loss, d.val_loss)
-            }), d3.max(data, function (d) {
-                return Math.max(d.loss, d.val_loss)
-            })]) // input 
+            .domain([d3.min(data, function (d) { return d.tpr }),
+            d3.max(data, function (d) { return d.tpr })]) // input 
             .range([this.chartHeight, 0])
 
         this.xAxis = d3.axisBottom(this.xScale)
@@ -107,38 +104,31 @@ class LossChart extends Component {
             .attr("class", "lossline losstraincolor") // Assign a class for styling  
             .attr("d", this.trainLine); // 11. Calls the line generator 
 
-        svg.append("path")
-            .datum(data) // 10. Binds data to the line 
-            .attr("class", "lossline lossvalcolor") // Assign a class for styling  
-            .attr("d", this.valLine); // 11. Calls the line generator 
-
     }
 
     drawGraph(data) {
         let self = this
 
+        // data = [
+        //     { "acc": 0.7, "threshold": 1.2428572177886963, "tp": 3, "tn": 4, "fp": 3, "fn": 0, "ton": 7, "top": 3, "tpr": 1, "fpr": 0.42857142857142855, "fnr": 0, "tnr": 0.5714285714285714 },
+        //     { "acc": 0.5, "threshold": 1.2, "tp": 3, "tn": 2, "fp": 5, "fn": 0, "ton": 7, "top": 3, "tpr": 1, "fpr": 0.7142857142857143, "fnr": 0, "tnr": 0.2857142857142857 },
+        //     { "acc": 1, "threshold": 1.3, "tp": 3, "tn": 7, "fp": 0, "fn": 0, "ton": 7, "top": 3, "tpr": 1, "fpr": 0, "fnr": 0, "tnr": 1 },
+        //     { "acc": 0.7, "threshold": 1.9, "tp": 0, "tn": 7, "fp": 0, "fn": 3, "ton": 7, "top": 3, "tpr": 0, "fpr": 0, "fnr": 1, "tnr": 1 },
+        //     { "acc": 0.8, "threshold": 1.25, "tp": 3, "tn": 5, "fp": 2, "fn": 0, "ton": 7, "top": 3, "tpr": 1, "fpr": 0.2857142857142857, "fnr": 0, "tnr": 0.7142857142857143 },
+        //     { "acc": 0.8, "threshold": 1.8, "tp": 1, "tn": 7, "fp": 0, "fn": 2, "ton": 7, "top": 3, "tpr": 0.3333333333333333, "fpr": 0, "fnr": 0.6666666666666666, "tnr": 1 },
+        //     { "acc": 0.9, "threshold": 1.75, "tp": 2, "tn": 7, "fp": 0, "fn": 1, "ton": 7, "top": 3, "tpr": 0.6666666666666666, "fpr": 0, "fnr": 0.3333333333333333, "tnr": 1 },
+        //     { "acc": 0.6, "threshold": 1.2428570985794067, "tp": 3, "tn": 3, "fp": 4, "fn": 0, "ton": 7, "top": 3, "tpr": 1, "fpr": 0.5714285714285714, "fnr": 0, "tnr": 0.42857142857142855 }]
 
-        // data = [{ epoch: 1, loss: 0.9578104019165039, val_loss: 0.9471035003662109, traintime: 2.247 },
-        // { epoch: 2, loss: 0.7673317790031433, val_loss: 0.8629779815673828, traintime: 0.146 },
-        // { epoch: 3, loss: 0.749285876750946, val_loss: 0.8709790110588074, traintime: 0.152 },
-        // { epoch: 4, loss: 0.7410370707511902, val_loss: 0.8575628995895386, traintime: 0.11 }]
-        // data = [{ epoch: this.CumulativeSteps, loss: 0, val_loss: 0, traintime: 0 }]
 
         this.setupScalesAxes(data)
 
         this.trainLine = d3.line()
-            .x(function (d, i) { return self.xScale(i); }) // set the x values for the line generator
-            .y(function (d) { return self.yScale(d.loss); }) // set the y values for the line generator 
-            .curve(d3.curveMonotoneX) // apply smoothing to the line
-
-        this.valLine = d3.line()
-            .x(function (d, i) { return self.xScale(i); }) // set the x values for the line generator
-            .y(function (d) { return self.yScale(d.val_loss); }) // set the y values for the line generator 
-            .curve(d3.curveMonotoneX) // apply smoothing to the line
+            .x(function (d, i) { return self.xScale(d.fpr); }) // set the x values for the line generator
+            .y(function (d) { return self.yScale(d.tpr); }) // set the y values for the line generator 
+        // .curve(d3.curveMonotoneX) // apply smoothing to the line
 
 
-
-        const svg = d3.select("div.losschart").append("svg")
+        const svg = d3.select("div.ROCChart").append("svg")
             .attr("width", this.chartWidth + this.chartMargin.left + this.chartMargin.right)
             .attr("height", this.chartHeight + this.chartMargin.top + this.chartMargin.bottom)
             .append("g")
@@ -175,12 +165,12 @@ class LossChart extends Component {
         // console.log(this.props.data.data[his.props.data.data].loss.toFixed(2));
 
         return (
-            <div className="positionrelative  ">
+            <div className="positionrelative border p10  ">
                 <div className="chartlegend p5 mediumdesc">
-                    <div className="mb3">
+                    <div className="mb3 displaynone">
                         <div className="legendcolorbox mr5  themeblue iblock"></div>
                         <div ref="trainlabel" className="iblock boldtext mr5">0.0</div>
-                        <div className="iblock ">Train Loss</div>
+                        <div className="iblock ">ROC Curve</div>
                     </div>
                     <div>
                         <div className="legendcolorbox mr5 themeorange iblock"></div>
@@ -188,13 +178,13 @@ class LossChart extends Component {
                         <div className="iblock ">Validation Loss</div>
                     </div>
                 </div>
-                <div className="charttitle">  Training Loss Chart</div>
+                <div className="charttitle">  ROC Curve Chart</div>
 
-                <div className="losschart borders"> </div>
+                <div className="ROCChart border"> </div>
             </div>
 
         );
     }
 }
 
-export default LossChart;    
+export default ROCChart;    

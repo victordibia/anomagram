@@ -16,6 +16,7 @@ import Footer from "./footer/Footer";
 import Viz from "./viz/Viz";
 import Train from "./train/Train"
 import ComposeModel from "./composemodel/ComposeModel"
+import Faq from "./faq/Faq"
 
 import { createBrowserHistory } from 'history';
 
@@ -72,7 +73,19 @@ class Main extends Component {
 
 
 
+
     render() {
+        const Composer = (props) => {
+            return (
+                <ComposeModel
+                    hiddenDims={[6, 5, 4, 3]}
+                    latentDim={[4]}
+                    isTraining={false}
+
+                />
+            );
+        }
+
         return (
             <HashRouter>
                 <AppHeader></AppHeader>
@@ -80,7 +93,8 @@ class Main extends Component {
                 <div className="container-fluid p10">
                     <Route exact path="/" component={Viz} />
                     <Route exact path="/train" component={Train} />
-                    <Route exact path="/compose" component={ComposeModel} />
+                    <Route exact path="/compose" component={Composer} />
+                    <Route exact path="/faq" component={Faq} />
 
                     <div id="notificatiionbox" className="notificationtopright p5  ">
 
