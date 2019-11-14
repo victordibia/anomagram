@@ -49,7 +49,7 @@ class Train extends Component {
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
             batchSize: 512,
-            numSteps: 100,
+            numSteps: 10,
             numEpochs: 1,
 
 
@@ -105,6 +105,12 @@ class Train extends Component {
         if (this.currentSteps === 0 && prevState.mseData[0] !== this.state.mseData[0]) {
             console.log("mse updated at 0");
             this.computeAccuracyMetrics(this.state.mseData)
+        }
+
+        if (this.state.CumulativeSteps !== prevState.CumulativeSteps) {
+            console.log(this.state.CumulativeSteps);
+            this.computeAccuracyMetrics(this.state.mseData)
+
         }
     }
 
@@ -463,9 +469,6 @@ class Train extends Component {
 
 
 
-                            <div className="iblock mr10"> Train: {this.state.trainDataShape[0]}</div>
-                            <div className="iblock mr10"> Test: {this.state.testDataShape[0]}</div>
-
                             <div>  </div>
                         </div>
                     </div>
@@ -543,6 +546,23 @@ class Train extends Component {
 
                 {true &&
                     <div>
+
+                        <div className="iblock p10">
+                            {this.state.rocData.length > 0 &&
+                                <ROCChart
+                                    data={{
+                                        chartWidth: 350,
+                                        chartHeight: 250,
+                                        data: this.state.rocData,
+                                        isTraining: this.state.isTraining,
+                                        epoch: this.state.CumulativeSteps
+
+                                    }}
+
+                                ></ROCChart>}
+                        </div>
+
+
                         <div className="iblock mr10  h100 " >
                             <div className={"positionrelative h100 " + (this.state.trainMetrics.length <= 0 ? " " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
                                 {this.state.trainMetrics.length <= 0 &&
@@ -589,19 +609,6 @@ class Train extends Component {
                             }
                         </div>
 
-                        <div className="iblock p10">
-                            {this.state.rocData.length > 0 &&
-                                <ROCChart
-                                    data={{
-                                        chartWidth: 350,
-                                        chartHeight: 250,
-                                        data: this.state.rocData,
-                                        isTraining: this.state.isTraining
-
-                                    }}
-
-                                ></ROCChart>}
-                        </div>
 
 
                     </div>

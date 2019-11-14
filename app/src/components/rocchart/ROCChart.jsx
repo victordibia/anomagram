@@ -23,29 +23,32 @@ class ROCChart extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if ((prevProps.data.epoch !== this.props.data.epoch) && this.props.data.data.length > 0) {
-            // console.log("props updated");
-            this.updateGraph(this.props.data.data)
 
+
+        // if ((prevProps.data.isTraining !== this.props.data.isTraining)) {
+        //     console.log("props updated");
+        //     this.updateGraph(this.props.data.data)
+        // }
+
+        if ((prevProps.data.epoch !== this.props.data.epoch) || this.props.data.epoch + "" === "0") {
+            this.updateGraph(this.props.data.data)
         }
     }
 
     updateGraph(data) {
         let self = this
 
-        // d3.select("div.ROCChart").selectAll(".lossline").remove();
-        // d3.select("div.ROCChart").selectAll(".pointdot").remove();
 
         this.setupScalesAxes(data)
         let svg = d3.select("div.ROCChart").transition();
 
         svg.select(".losstraincolor")
             .duration(self.animationDuration)
-            .attr("d", this.trainLine); // 11. Calls the line generator 
+            .attr("d", this.rocLine(data)); // 11. Calls the line generator 
 
-        svg.select(".lossvalcolor")
-            .duration(self.animationDuration)
-            .attr("d", this.valLine); // 11. Calls the line generator  
+        // svg.select(".lossvalcolor")
+        //     .duration(self.animationDuration)
+        //     .attr("d", this.valLine); // 11. Calls the line generator  
 
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -99,7 +102,7 @@ class ROCChart extends Component {
         svg.append("path")
             .datum(data) // 10. Binds data to the line 
             .attr("class", "lossline losstraincolor") // Assign a class for styling  
-            .attr("d", this.trainLine); // 11. Calls the line generator 
+            .attr("d", this.rocLine); // 11. Calls the line generator 
 
     }
 
@@ -119,7 +122,7 @@ class ROCChart extends Component {
 
         this.setupScalesAxes(data)
 
-        this.trainLine = d3.line()
+        this.rocLine = d3.line()
             .x(function (d, i) { return self.xScale(d.fpr); }) // set the x values for the line generator
             .y(function (d) { return self.yScale(d.tpr); }) // set the y values for the line generator 
         // .curve(d3.curveMonotoneX) // apply smoothing to the line

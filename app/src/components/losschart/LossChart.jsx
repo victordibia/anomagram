@@ -44,11 +44,11 @@ class LossChart extends Component {
 
         svg.select(".losstraincolor")
             .duration(self.animationDuration)
-            .attr("d", this.trainLine); // 11. Calls the line generator 
+            .attr("d", this.trainLine(data)); // 11. Calls the line generator 
 
         svg.select(".lossvalcolor")
             .duration(self.animationDuration)
-            .attr("d", this.valLine); // 11. Calls the line generator  
+            .attr("d", this.valLine(data)); // 11. Calls the line generator  
 
         function customYAxis(g) {
             g.call(self.yAxis);
