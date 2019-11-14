@@ -71,3 +71,7 @@
     pointer-events: none;
     border:grey;
 }
+
+.metricvalue{
+    font-size: 3em;
+}

@@ -26,9 +26,6 @@ class ROCChart extends Component {
         if ((prevProps.data.epoch !== this.props.data.epoch) && this.props.data.data.length > 0) {
             // console.log("props updated");
             this.updateGraph(this.props.data.data)
-            this.refs["trainlabel"].innerHTML = this.props.data.data[this.props.data.data.length - 1].loss.toFixed(4)
-            this.refs["validationlabel"].innerHTML = this.props.data.data[this.props.data.data.length - 1].val_loss.toFixed(4)
-            // console.log(this.props.data.data[0].loss, this.refs["trainlabel"]);
 
         }
     }
@@ -153,7 +150,8 @@ class ROCChart extends Component {
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + (self.chartHeight + 10) + ")")
-            .call(customXAxis); // Create an axis component with d3.axisBottom
+            .call(customXAxis);
+        // Create an axis component with d3.axisBottom
 
         // 4. Call the y axis in a group tag
         svg.append("g")
@@ -165,9 +163,9 @@ class ROCChart extends Component {
         // console.log(this.props.data.data[his.props.data.data].loss.toFixed(2));
 
         return (
-            <div className="positionrelative border p10  ">
-                <div className="chartlegend p5 mediumdesc">
-                    <div className="mb3 displaynone">
+            <div className="positionrelative mainchartbox  ">
+                <div className="chartlegend p5 mediumdesc displaynone">
+                    <div className="mb3 ">
                         <div className="legendcolorbox mr5  themeblue iblock"></div>
                         <div ref="trainlabel" className="iblock boldtext mr5">0.0</div>
                         <div className="iblock ">ROC Curve</div>
@@ -180,7 +178,7 @@ class ROCChart extends Component {
                 </div>
                 <div className="charttitle">  ROC Curve Chart</div>
 
-                <div className="ROCChart border"> </div>
+                <div className="ROCChart"> </div>
             </div>
 
         );

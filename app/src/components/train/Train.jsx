@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { Loading } from "carbon-components-react"
+import { Loading, Dropdown, Slider } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
 import { computeAccuracyGivenThreshold } from "../helperfunctions/HelperFunctions"
-
+import ROCChart from "../rocchart/ROCChart"
 // custom charts 
 import HistogramChart from "../histogram/HistogramChart"
 import ScatterPlot from "../scatterplot/ScatterPlot"
@@ -12,7 +12,7 @@ import ComposeModel from "../composemodel/ComposeModel"
 
 import { Reset16, PlayFilledAlt16, PauseFilled16 } from '@carbon/icons-react';
 import { buildModel } from "./models/ae"
-// import 
+import * as _ from "lodash"
 
 // const _ = require('lodash');
 class Train extends Component {
@@ -35,6 +35,7 @@ class Train extends Component {
             trainDataShape: [0, 0],
             testDataShape: [0, 0],
             mseData: [],
+            rocData: [],
             createdModel: null,
             encodedData: [],
             selectedData: 0,
@@ -43,19 +44,22 @@ class Train extends Component {
             numFeatures: this.testData[0].data.length,
             hiddenLayers: 2,
             latentDim: 2,
-            hiddenDim: [8, 4],
-            learningRate: 0.0015,
+            hiddenDim: [12, 10, 8, 6],
+            learningRate: 0.0100,
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
             batchSize: 512,
-            numSteps: 90,
+            numSteps: 100,
             numEpochs: 1,
 
 
             trainMetrics: this.trainMetricHolder,
             CumulativeSteps: 0,
-            trainDataSize: 400,
-            testDataSize: 300
+            trainDataSize: 500,
+            testDataSize: 400,
+
+            modelStale: true,
+            bestMetric: { acc: 0, fpr: 0, fnr: 0, threshold: 0 }
         }
 
 
@@ -73,6 +77,11 @@ class Train extends Component {
 
         this.warmupSampleSize = 1
 
+        this.epochOptions = [{ id: "opt1", text: "50" }, { id: "opt2", text: "100" }]
+        this.batchSizeOptions = [{ id: "opt1", text: "64" }, { id: "opt2", text: "128" }, { id: "opt3", text: "256" }]
+        this.learningRateOptions = [{ id: "opt1", text: "0.01" }, { id: "opt2", text: "0.001" }, { id: "opt3", text: "0.0001" }]
+        this.trainingDataOptions = [{ id: "opt1", text: "500" }, { id: "opt2", text: "1000" }, { id: "opt3", text: "2000" }]
+
     }
 
     componentDidMount() {
@@ -84,6 +93,14 @@ class Train extends Component {
         this.createModel()
 
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        if ((prevState.isTraining !== this.state.isTraining) && this.state.isTraining === false) {
+            console.log("training ended");
+            this.computeAccuracyMetrics(this.state.mseData)
+        }
+    }
+
 
     disposeModelTensors() {
         if (this.createdModel) {
@@ -118,7 +135,9 @@ class Train extends Component {
         }
 
         this.createdModel = buildModel(modelParams)
+        this.setState({ modelStale: false })
         this.getPredictions()
+
 
         // this.createdModel.summary()
 
@@ -188,6 +207,27 @@ class Train extends Component {
     }
 
 
+    computeAccuracyMetrics(data) {
+
+        let uniqueMse = _.uniq(_.map(data, 'mse'))
+        uniqueMse = _(uniqueMse).sortBy().value()
+
+
+        let rocMetricHolder = []
+
+        uniqueMse.forEach(each => {
+            rocMetricHolder.push(computeAccuracyGivenThreshold(data, each))
+        });
+        this.setState({ rocData: rocMetricHolder })
+        // console.log(rocMetricHolder);
+
+        let bestMetric = _.maxBy(rocMetricHolder, "acc")
+        console.log(bestMetric);
+        this.setState({ bestMetric: bestMetric })
+
+
+    }
+
 
     getPredictions() {
         let self = this;
@@ -241,6 +281,7 @@ class Train extends Component {
         // console.log(hiddenDims, latentDim);
         this.setState({ hiddenDim: hiddenDims })
         this.setState({ latentDim: latentDim[0] })
+        this.setState({ modelStale: true })
 
     }
 
@@ -300,16 +341,23 @@ class Train extends Component {
         this.setState({ trainMetrics: this.trainMetricHolder })
         this.createModel()
     }
+
+    updateBatchSize(e) {
+        console.log(e.target);
+
+    }
+
+
     render() {
         return (
             <div>
 
-                <div className="flex greyhighlight  p10 rad3  ">
-                    <div className="">
+                <div className="flex greyhighlight  pl10 rad3  ">
+                    <div className="  flex flexjustifycenter ">
                         <div className=" iblock ">
                             <div
                                 onClick={this.trainButtonClick.bind(this)}
-                                className={("iblock circlelarge circlebutton mr5 flexcolumn flex flexjustifycenter clickable ")}>
+                                className={("iblock circlelarge circlebutton mr5 flexcolumn flex flexjustifycenter clickable ") + (this.state.modelStale ? " disabled" : "")}>
                                 {!this.state.isTraining && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
                                 {this.state.isTraining && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
                             </div>
@@ -342,12 +390,37 @@ class Train extends Component {
                     </div>
                     <div className="flexfull unselectable  flex flexjustifyleft flexjustifycenter ">
                         <div className=" p10   iblock">
-                            <div className="iblock mr10"> Epochs: {this.state.CumulativeSteps}</div>
-                            <div className="iblock mr10"> Batch Size: {this.state.batchSize}</div>
-                            <div className="iblock mr10"> Learning Rate: {this.state.learningRate}</div>
+                            <div className="iblock mr10">
+                                <div className="mediumdesc pb5"> Epochs {this.state.CumulativeSteps} </div>
+                                <Dropdown
+                                    label="Epochs"
+                                    items={this.epochOptions}
+                                    itemToString={item => (item ? item.text : "")}
+                                />
+                            </div>
+
+                            <div className="iblock mr10">
+                                <div className="mediumdesc pb5"> Batchsize {this.state.batchSize} </div>
+                                <Dropdown
+                                    label="Batch Size"
+                                    items={this.batchSizeOptions}
+                                    itemToString={item => (item ? item.text : "")}
+                                />
+                            </div>
+
+                            <div className="iblock mr10">
+                                <div className="mediumdesc pb5"> Learning Rate {this.state.learningRate} </div>
+                                <Dropdown
+                                    label="Learning Rate"
+                                    items={this.learningRateOptions}
+                                    itemToString={item => (item ? item.text : "")}
+                                />
+                            </div>
+
+
                             <div className="iblock mr10"> Train: {this.state.trainDataShape[0]}</div>
-                            <div className="iblock"> Test: {this.state.testDataShape[0]}</div>
-                            <div className="iblock"> Dim: {this.state.hiddenDim}</div>
+                            <div className="iblock mr10"> Test: {this.state.testDataShape[0]}</div>
+
                             <div>  </div>
                         </div>
                     </div>
@@ -370,6 +443,44 @@ class Train extends Component {
                             updateModelDims={this.updateModelDims}
                         />
                     </div>
+
+                    {this.state.bestMetric &&
+
+                        <div className="iblock mt10 flex3">
+                            <div className="mb10 greyhighlight rad4 p10">
+                                <Slider
+                                    min={0}
+                                    max={1}
+                                    step={0.1}
+                                    minLabel={0}
+                                    maxLabel={""}
+                                    stepMuliplier={1}
+                                    labelText={"Threshold"}
+
+                                />
+                            </div>
+                            <div className="mb10">
+                                <div className="iblock mr10 p5 greyhighlight rad4 textaligncenter" >
+                                    <div className="metricvalue textaligncenter greyhighlight rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
+                                    <div className="metricdesc mediumdesc"> Accuracy </div>
+                                </div>
+                                <div className="iblock mr10 p5 greyhighlight rad4 textaligncenter">
+                                    <div className="metricvalue textaligncenter"> {(this.state.bestMetric.fpr * 100).toFixed(2)}  % </div>
+                                    <div className="metricdesc mediumdesc"> False Positive Rate </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="iblock mr10 p5 greyhighlight rad4 textaligncenter">
+                                    <div className="metricvalue"> {(this.state.bestMetric.fnr * 100).toFixed(2)} % </div>
+                                    <div className="metricdesc mediumdesc"> False Negative Rate </div>
+                                </div>
+                                <div className="iblock mr10 p5 greyhighlight rad4 textaligncenter">
+                                    <div className="metricvalue"> {(this.state.bestMetric.threshold).toFixed(2)} </div>
+                                    <div className="metricdesc mediumdesc"> Threshold </div>
+                                </div>
+                            </div>
+
+                        </div>}
 
                 </div>
 
@@ -420,6 +531,22 @@ class Train extends Component {
                                 ></ScatterPlot>
                             }
                         </div>
+
+                        <div className="iblock p10">
+                            {this.state.rocData.length > 0 &&
+                                <ROCChart
+                                    data={{
+                                        chartWidth: 350,
+                                        chartHeight: 250,
+                                        data: this.state.rocData,
+                                        isTraining: this.state.isTraining
+
+                                    }}
+
+                                ></ROCChart>}
+                        </div>
+
+
                     </div>
                 }
                 <br />
