@@ -59,7 +59,9 @@ class Train extends Component {
             testDataSize: 400,
 
             modelStale: true,
-            bestMetric: { acc: 0, fpr: 0, fnr: 0, threshold: 0 }
+            bestMetric: { acc: 0, fpr: 0, fnr: 0, threshold: 0 },
+            minThreshold: 0,
+            maxThreshold: 1
         }
 
 
@@ -212,6 +214,9 @@ class Train extends Component {
         let uniqueMse = _.uniq(_.map(data, 'mse'))
         uniqueMse = _(uniqueMse).sortBy().value()
 
+        console.log(_.min(uniqueMse));
+
+
 
         let rocMetricHolder = []
 
@@ -224,8 +229,8 @@ class Train extends Component {
         let bestMetric = _.maxBy(rocMetricHolder, "acc")
         console.log(bestMetric);
         this.setState({ bestMetric: bestMetric })
-
-
+        this.setState({ minThreshold: _.min(uniqueMse) })
+        this.setState({ maxThreshold: _.max(uniqueMse) })
     }
 
 
@@ -347,8 +352,19 @@ class Train extends Component {
 
     }
 
+    updateThreshold(e) {
+
+        let bestMetric = computeAccuracyGivenThreshold(this.state.mseData, e.value)
+        console.log(e.value);
+
+        this.setState({ bestMetric: bestMetric })
+
+    }
+
 
     render() {
+        console.log(this.state.minThreshold, this.state.maxThreshold);
+
         return (
             <div>
 
@@ -393,6 +409,7 @@ class Train extends Component {
                             <div className="iblock mr10">
                                 <div className="mediumdesc pb5"> Epochs {this.state.CumulativeSteps} </div>
                                 <Dropdown
+                                    id="epochsdropdown"
                                     label="Epochs"
                                     items={this.epochOptions}
                                     itemToString={item => (item ? item.text : "")}
@@ -402,6 +419,7 @@ class Train extends Component {
                             <div className="iblock mr10">
                                 <div className="mediumdesc pb5"> Batchsize {this.state.batchSize} </div>
                                 <Dropdown
+                                    id="batchsizedropdown"
                                     label="Batch Size"
                                     items={this.batchSizeOptions}
                                     itemToString={item => (item ? item.text : "")}
@@ -411,6 +429,7 @@ class Train extends Component {
                             <div className="iblock mr10">
                                 <div className="mediumdesc pb5"> Learning Rate {this.state.learningRate} </div>
                                 <Dropdown
+                                    id="learningratedropdown"
                                     label="Learning Rate"
                                     items={this.learningRateOptions}
                                     itemToString={item => (item ? item.text : "")}
@@ -446,37 +465,38 @@ class Train extends Component {
 
                     {this.state.bestMetric &&
 
-                        <div className="iblock mt10 flex3">
+                        <div className="iblock mb10 flex3">
+                            <div className="charttitle mn10">
+                                Model Evaluation Metrics
+                        </div>
                             <div className="mb10 greyhighlight rad4 p10">
                                 <Slider
-                                    min={0}
-                                    max={1}
+                                    min={(this.state.minThreshold.toFixed(2) * 1)}
+                                    max={(this.state.maxThreshold.toFixed(2) * 1)}
                                     step={0.1}
-                                    minLabel={0}
+                                    minLabel={""}
                                     maxLabel={""}
+                                    value={this.state.bestMetric.threshold}
                                     stepMuliplier={1}
-                                    labelText={"Threshold"}
-
+                                    disabled={this.state.isTraining ? true : false}
+                                    labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(2)}
+                                    hideTextInput={true}
+                                    onChange={this.updateThreshold.bind(this)}
                                 />
                             </div>
-                            <div className="mb10">
-                                <div className="iblock mr10 p5 greyhighlight rad4 textaligncenter" >
-                                    <div className="metricvalue textaligncenter greyhighlight rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
-                                    <div className="metricdesc mediumdesc"> Accuracy </div>
-                                </div>
-                                <div className="iblock mr10 p5 greyhighlight rad4 textaligncenter">
+                            <div className=" mb10 p5 greyhighlight rad4 textaligncenter" >
+                                <div className="metricvalue textaligncenter greyhighlight rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
+                                <div className="metricdesc mediumdesc"> Accuracy </div>
+                            </div>
+                            <div className="mb10 flex">
+
+                                <div className="flex5 mr10 p10 greyhighlight rad4 textaligncenter">
                                     <div className="metricvalue textaligncenter"> {(this.state.bestMetric.fpr * 100).toFixed(2)}  % </div>
                                     <div className="metricdesc mediumdesc"> False Positive Rate </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div className="iblock mr10 p5 greyhighlight rad4 textaligncenter">
+                                <div className="flex5 p10 greyhighlight rad4 textaligncenter">
                                     <div className="metricvalue"> {(this.state.bestMetric.fnr * 100).toFixed(2)} % </div>
                                     <div className="metricdesc mediumdesc"> False Negative Rate </div>
-                                </div>
-                                <div className="iblock mr10 p5 greyhighlight rad4 textaligncenter">
-                                    <div className="metricvalue"> {(this.state.bestMetric.threshold).toFixed(2)} </div>
-                                    <div className="metricdesc mediumdesc"> Threshold </div>
                                 </div>
                             </div>
 
