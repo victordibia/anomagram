@@ -73,5 +73,17 @@
 }
 
 .metricvalue{
-    font-size: 3em;
+    font-size: 2.5em;
+    min-width: 160px;
+    /* border: 1px solid grey; */
+}
+
+.perfmetrics{
+ /* border: 1px solid grey; */
+ /* opacity: 0.5; */
+}
+
+.permetrics.disabled {
+    opacity: 0.1;
+    pointer-events: none;
 }
