@@ -27,14 +27,8 @@ export function computeAccuracyGivenThreshold(data, threshold) {
     let falsePositive = 0
     let falseNegative = 0
 
-    let ac = 0
-
     data.forEach(each => {
         predVal = each.mse > threshold ? 1 : 0
-
-        if (each.label === predVal) {
-            ac++
-        }
         if ((each.label === 1) && (predVal === 1)) {
             truePositive++
         }
@@ -64,7 +58,7 @@ export function computeAccuracyGivenThreshold(data, threshold) {
         tnr: trueNegative / (trueNegative + falsePositive),
 
     }
-    let accuracy = ((ac / data.length) * 100).toFixed(2)
+
     return metricRow
 
 }

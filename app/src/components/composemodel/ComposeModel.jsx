@@ -162,7 +162,7 @@ class ComposeModel extends Component {
     }
 
     animateLines() {
-        let self = this
+        // let self = this
         let color = this.state.isTraining ? this.greyColor : this.blueColor
         // console.log(self.props.isTraining);
         let opt = {
@@ -207,7 +207,7 @@ class ComposeModel extends Component {
         }
 
         // Updaate parent state once dims change
-        if (this.state.hiddenDims.length != prevState.hiddenDims.length || this.state.latentDim[0] != prevState.latentDim[0]) {
+        if (this.state.hiddenDims.length !== prevState.hiddenDims.length || this.state.latentDim[0] !== prevState.latentDim[0]) {
             // console.log("latent or hidden changed");
 
             this.props.updateModelDims(this.state.hiddenDims, this.state.latentDim)

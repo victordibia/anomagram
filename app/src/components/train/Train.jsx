@@ -98,19 +98,17 @@ class Train extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         if ((prevState.isTraining !== this.state.isTraining) && this.state.isTraining === false) {
-            // console.log("training ended");
-
+            // console.log("training ended"); 
         }
 
         if (this.currentSteps === 0 && prevState.mseData[0] !== this.state.mseData[0]) {
-            console.log("mse updated at 0");
+            // console.log("mse updated at 0");
             this.computeAccuracyMetrics(this.state.mseData)
         }
 
         if (this.state.CumulativeSteps !== prevState.CumulativeSteps) {
             console.log(this.state.CumulativeSteps);
             this.computeAccuracyMetrics(this.state.mseData)
-
         }
     }
 
@@ -339,9 +337,6 @@ class Train extends Component {
     }
 
     trainButtonClick(e) {
-        let self = this
-        // console.log("traain click")
-        // showToast("info", "Training model ", 6000)
         if (this.state.isTraining) {
             this.setState({ isTraining: false })
         } else {
@@ -418,27 +413,29 @@ class Train extends Component {
                     <div className="flexfull unselectable  flex flexjustifyleft flexjustifycenter ">
                         <div className=" p10   iblock">
                             <div className="iblock mr10">
-                                <div className="mediumdesc pb5"> Epochs {this.state.CumulativeSteps} </div>
+                                <div className="mediumdesc pb7"> Epochs {this.state.CumulativeSteps} </div>
                                 <Dropdown
                                     id="epochsdropdown"
                                     label="Epochs"
                                     items={this.epochOptions}
+                                    initialSelectedItem={this.epochOptions[0]}
                                     itemToString={item => (item ? item.text : "")}
                                 />
                             </div>
 
                             <div className="iblock mr10">
-                                <div className="mediumdesc pb5"> Batchsize {this.state.batchSize} </div>
+                                <div className="mediumdesc pb7"> Batchsize {this.state.batchSize} </div>
                                 <Dropdown
                                     id="batchsizedropdown"
                                     label="Batch Size"
                                     items={this.batchSizeOptions}
+                                    initialSelectedItem={this.batchSizeOptions[2]}
                                     itemToString={item => (item ? item.text : "")}
                                 />
                             </div>
 
                             <div className="iblock mr10">
-                                <div className="mediumdesc pb5"> Learning Rate {this.state.learningRate} </div>
+                                <div className="mediumdesc pb7"> Learning Rate {this.state.learningRate} </div>
                                 <Dropdown
                                     id="learningratedropdown"
                                     label="Learning Rate"
@@ -448,7 +445,7 @@ class Train extends Component {
                             </div>
 
                             <div className="iblock mr10">
-                                <div className="mediumdesc pb5">Training Data Size {this.state.trainDataShape[0]} </div>
+                                <div className="mediumdesc pb7">Training Data Size {this.state.trainDataShape[0]} </div>
                                 <Dropdown
                                     id="trainingdatadropdown"
                                     label="Training Data"
@@ -458,7 +455,7 @@ class Train extends Component {
                             </div>
 
                             <div className="iblock mr10">
-                                <div className="mediumdesc pb5">Test Data Size {this.state.testDataShape[0]} </div>
+                                <div className="mediumdesc pb7">Test Data Size {this.state.testDataShape[0]} </div>
                                 <Dropdown
                                     id="testdatadropdown"
                                     label="Training Data"
@@ -494,8 +491,8 @@ class Train extends Component {
 
                     {this.state.bestMetric &&
 
-                        <div className={"iblock mb10 flex3 perfmetrics " + (this.state.isTraining ? " disabled " : " ")}>
-                            <div className="charttitle ">
+                        <div className={"iblock  flex3 perfmetrics " + (this.state.isTraining ? " disabled " : " ")}>
+                            <div className="boldtext pb10 pt10 ">
                                 Model Evaluation Metrics
                             </div>
                             <div className="mb10 greyhighlight rad4 p10">
@@ -514,7 +511,7 @@ class Train extends Component {
                                 />
                             </div>
                             <div className=" mb10 p5 greyhighlight rad4 textaligncenter" >
-                                <div className="metricvalue textaligncenter greyhighlight rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
+                                <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
                                 <div className="metricdesc mediumdesc p5"> Accuracy </div>
                             </div>
                             <div className="mb10 flex">

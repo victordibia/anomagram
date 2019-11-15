@@ -19,7 +19,6 @@ class HistogramChart extends Component {
     componentDidMount() {
 
         this.drawGraph(this.props.data.data)
-
         // console.log(this.props.data); 
     }
 

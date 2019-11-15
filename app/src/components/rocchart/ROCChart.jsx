@@ -79,7 +79,6 @@ class ROCChart extends Component {
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
-        var n = data.length;
 
         this.xScale = d3.scaleLinear()
             .domain([d3.min(data, function (d) { return d.fpr }),
