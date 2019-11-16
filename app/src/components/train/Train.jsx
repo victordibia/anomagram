@@ -246,7 +246,7 @@ class Train extends Component {
 
         uniqueMse = _(uniqueMse).sortBy().value()
         uniqueMse.reverse()
-        // console.log(uniqueMse);
+
 
 
 
@@ -258,16 +258,23 @@ class Train extends Component {
             let metric = computeAccuracyGivenThreshold(data, each)
 
             rocMetricHolder.push(metric)
-            if (i < uniqueMse.length - 1) {
-                rocSum += prevMetric.tpr * (metric.fpr - prevMetric.fpr)
-                // console.log(i, rocSum);
-            }
+            // if (i < uniqueMse.length) {
+            rocSum += (prevMetric.tpr) * (metric.fpr - prevMetric.fpr)
+            // rocSum += ((prevMetric.tpr + metric.tpr) / 2) * (metric.fpr - prevMetric.fpr)
+            // console.log(i, rocSum);
+            // }
             prevMetric = metric
 
         });
+
         // Add point (1,1) to compute AUC
-        rocMetricHolder.push({ fpr: 1, tpr: 1 })
-        rocSum += prevMetric.tpr * (1 - prevMetric.fpr)
+        // use trapezium area rule to calculate area
+        if (prevMetric.fpr !== 1) {
+            rocMetricHolder.push({ fpr: 1, tpr: prevMetric.tpr })
+            rocSum += ((prevMetric.tpr + 1) / 2) * (1 - prevMetric.fpr)
+            // rocSum += prevMetric.tpr * (1 - prevMetric.fpr)
+        }
+
 
         // console.log(rocSum, " Region under curve");
         // console.log(rocMetricHolder);

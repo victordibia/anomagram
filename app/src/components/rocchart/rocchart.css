@@ -11,3 +11,11 @@
     fill: rgba(196, 196, 196, 0.774);
     fill-rule: evenodd;
 }
+
+.diagonal{
+    stroke: red;
+    opacity: 1;
+    fill: none;
+    stroke-dasharray: 4px;
+    stroke-width: 1.2px;
+}

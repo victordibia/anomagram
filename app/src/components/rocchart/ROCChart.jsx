@@ -113,10 +113,18 @@ class ROCChart extends Component {
             .attr("class", "rocline roccolor") // Assign a class for styling  
             .attr("d", this.rocLine); // 11. Calls the line generator 
 
+
         svg.append("path")
             .datum(data)
             .attr("class", "rocarea")
             .attr("d", this.rocArea);
+
+        svg.append("line")
+            .attr("x1", this.xScale(0))  //<<== change your code here
+            .attr("y1", this.yScale(0))
+            .attr("x2", this.chartWidth)  //<<== and here
+            .attr("y2", this.yScale(this.yScale.domain()[1]))
+            .attr("class", "diagonal")
     }
 
     drawGraph(data) {
