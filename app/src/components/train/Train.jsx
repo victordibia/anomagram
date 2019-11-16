@@ -33,8 +33,9 @@ class Train extends Component {
         this.trainingDataOptions = [{ id: "opt1", text: "500", value: 500, type: "traindatasize" }, { id: "opt2", text: "1000", value: 1000, type: "traindatasize" }, { id: "opt3", text: "2000", value: 2000, type: "traindatasize" }]
         this.testDataOptions = [{ id: "opt1", text: "100", value: 100, type: "testdatasize" }, { id: "opt2", text: "200", value: 200, type: "testdatasize" }, { id: "opt3", text: "500", value: 500, type: "testdatasize" }]
 
-        this.selectedTestDataOption = 0
+
         this.selectedTrainDataOption = 0
+        this.selectedTestDataOption = 1
 
         this.trainMetricHolder = []
         this.CumulativeSteps = 0;
@@ -218,7 +219,7 @@ class Train extends Component {
             // console.log("Step loss", this.currentSteps, this.CumulativeSteps, res.history.loss[0], elapsedTime);
             this.getPredictions();
 
-            console.log(this.state.numSteps);
+            // console.log(this.state.numSteps);
 
             if (this.state.numSteps > this.currentSteps && this.state.isTraining) {
                 this.setState({ currentEpoch: this.currentSteps })
@@ -591,7 +592,7 @@ class Train extends Component {
                                     value={((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)) * 100}
                                     stepMuliplier={10}
                                     disabled={this.state.isTraining ? true : false}
-                                    labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(5)}
+                                    labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(5) + "[ " + ((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)) * 100 + " % ] "}
                                     hideTextInput={true}
                                     onChange={this.updateThreshold.bind(this)}
                                 />
@@ -636,22 +637,6 @@ class Train extends Component {
                 {true &&
                     <div>
 
-                        {this.state.showRocChart && <div className="iblock p10">
-                            {this.state.rocData.length > 0 &&
-                                <ROCChart
-                                    data={{
-                                        chartWidth: 350,
-                                        chartHeight: 250,
-                                        data: this.state.rocData,
-                                        isTraining: this.state.isTraining,
-                                        epoch: this.state.CumulativeSteps,
-                                        auc: this.state.auc
-
-                                    }}
-
-                                ></ROCChart>}
-                        </div>}
-
 
                         {this.state.showLossChart && <div className="iblock mr10  h100 " >
                             <div className={"positionrelative h100 " + (this.state.trainMetrics.length <= 0 ? " " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
@@ -672,6 +657,24 @@ class Train extends Component {
 
                             </div>
                         </div>}
+
+                        {this.state.showRocChart && <div className="iblock p10">
+                            {this.state.rocData.length > 0 &&
+                                <ROCChart
+                                    data={{
+                                        chartWidth: 350,
+                                        chartHeight: 250,
+                                        data: this.state.rocData,
+                                        isTraining: this.state.isTraining,
+                                        epoch: this.state.CumulativeSteps,
+                                        auc: this.state.auc
+
+                                    }}
+
+                                ></ROCChart>}
+                        </div>}
+
+
 
                         {this.state.showMseHistogram && <div className="iblock mr10 ">
                             {this.state.mseData.length > 0 &&
