@@ -1,0 +1,13 @@
+.roccolor{
+    stroke: rgba(0, 98, 255, 0.8);  
+}
+ 
+.rocline{ 
+   fill:none;
+    stroke-width: 2;
+}
+ 
+.rocarea{
+    fill: rgba(196, 196, 196, 0.774);
+    fill-rule: evenodd;
+}

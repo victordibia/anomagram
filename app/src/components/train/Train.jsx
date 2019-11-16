@@ -20,10 +20,18 @@ class Train extends Component {
     constructor(props) {
         super(props)
 
+        // Load sameple data
         this.testData = require("../../data/ecg/test.json")
         this.trainData = require("../../data/ecg/train.json")
 
+        // Model update method passed to model composer component
         this.updateModelDims = this.updateModelDims.bind(this)
+
+        this.stepOptions = [{ id: "opt1", text: "50", value: 50, type: "steps" }, { id: "opt2", text: "100", value: 100, type: "steps" }]
+        this.batchSizeOptions = [{ id: "opt1", text: "64", value: 64, type: "batchsize" }, { id: "opt2", text: "128", value: 128, type: "batchsize" }, { id: "opt3", text: "256", value: 256, type: "batchsize" }, { id: "opt3", text: "512", value: 512, type: "batchsize" }, { id: "opt3", text: "1024", value: 1024, type: "batchsize" }]
+        this.learningRateOptions = [{ id: "opt1", text: "0.01", value: 0.01, type: "learningrate" }, { id: "opt2", text: "0.001", value: 0.001, type: "learningrate" }, { id: "opt3", text: "0.0001", value: 0.0001, type: "learningrate" }]
+        this.trainingDataOptions = [{ id: "opt1", text: "500", value: 500, type: "traindatasize" }, { id: "opt2", text: "1000", value: 1000, type: "traindatasize" }, { id: "opt3", text: "2000", value: 2000, type: "traindatasize" }]
+        this.testDataOptions = [{ id: "opt1", text: "100", value: 100, type: "testdatasize" }, { id: "opt2", text: "200", value: 200, type: "testdatasize" }, { id: "opt3", text: "500", value: 500, type: "testdatasize" }]
 
 
         this.trainMetricHolder = []
@@ -45,23 +53,29 @@ class Train extends Component {
             hiddenLayers: 2,
             latentDim: 2,
             hiddenDim: [12, 10, 8, 6],
-            learningRate: 0.0100,
+            learningRate: this.learningRateOptions[0].value,
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
-            batchSize: 512,
-            numSteps: 10,
+            batchSize: this.batchSizeOptions[3].value,
+            numSteps: this.stepOptions[0].value,
             numEpochs: 1,
 
 
             trainMetrics: this.trainMetricHolder,
             CumulativeSteps: 0,
-            trainDataSize: 500,
-            testDataSize: 400,
+            trainDataSize: this.trainingDataOptions[0].value,
+            testDataSize: this.testDataOptions[0].value,
 
             modelStale: true,
             bestMetric: { acc: 0, fpr: 0, fnr: 0, tnr: 0, tpr: 0, threshold: 0 },
             minThreshold: 0,
-            maxThreshold: 1
+            maxThreshold: 1,
+
+
+            showRocChart: true,
+            showLossChart: true,
+            showBottleneckScatterPlot: true,
+            showMseHistogram: true,
         }
 
 
@@ -79,11 +93,7 @@ class Train extends Component {
 
         this.warmupSampleSize = 1
 
-        this.epochOptions = [{ id: "opt1", text: "50" }, { id: "opt2", text: "100" }]
-        this.batchSizeOptions = [{ id: "opt1", text: "64" }, { id: "opt2", text: "128" }, { id: "opt3", text: "256" }]
-        this.learningRateOptions = [{ id: "opt1", text: "0.01" }, { id: "opt2", text: "0.001" }, { id: "opt3", text: "0.0001" }]
-        this.trainingDataOptions = [{ id: "opt1", text: "500" }, { id: "opt2", text: "1000" }, { id: "opt3", text: "2000" }]
-        this.testDataOptions = [{ id: "opt1", text: "100" }, { id: "opt2", text: "200" }, { id: "opt3", text: "500" }]
+
     }
 
     componentDidMount() {
@@ -107,8 +117,13 @@ class Train extends Component {
         }
 
         if (this.state.CumulativeSteps !== prevState.CumulativeSteps) {
-            console.log(this.state.CumulativeSteps);
+            // console.log(this.state.CumulativeSteps);
             this.computeAccuracyMetrics(this.state.mseData)
+        }
+
+        // if train or test size updated, regenerate tensors
+        if (this.state.trainDataSize !== prevState.trainDataSize || this.state.testDataSize !== prevState.testDataSize) {
+            this.generateDataTensors()
         }
     }
 
@@ -157,7 +172,7 @@ class Train extends Component {
         // }, 5000);
 
         // showToast("success", "Model successfully created")
-        // console.log(tf.memory());
+        console.log(tf.memory());
     }
 
     // modelWarmUp() {
@@ -197,6 +212,8 @@ class Train extends Component {
             // this.setState({ trainMetrics: this.trainMetricHolder });
             // console.log("Step loss", this.currentSteps, this.CumulativeSteps, res.history.loss[0], elapsedTime);
             this.getPredictions();
+
+            console.log(this.state.numSteps);
 
             if (this.state.numSteps > this.currentSteps && this.state.isTraining) {
                 this.setState({ currentEpoch: this.currentSteps })
@@ -325,12 +342,12 @@ class Train extends Component {
 
         // test tensor  
         // create test data TENSOR from test data json array 
-        this.testData = this.testData.slice(0, this.state.testDataSize)
-        this.xsTest = tf.tensor2d(this.testData.map(item => item.data
-        ), [this.testData.length, this.testData[0].data.length])
+        let testData = this.testData.slice(0, this.state.testDataSize)
+        this.xsTest = tf.tensor2d(testData.map(item => item.data
+        ), [testData.length, testData[0].data.length])
 
         // create yLabel Tensor
-        this.yTest = this.testData.map(item => item.target + "" === 1 + "" ? 0 : 1)
+        this.yTest = testData.map(item => item.target + "" === 1 + "" ? 0 : 1)
 
         this.setState({ testDataShape: this.xsTest.shape })
 
@@ -347,6 +364,7 @@ class Train extends Component {
 
     resetModelButtonClick(e) {
         this.setState({ isTraining: false })
+        this.CumulativeSteps = 0
         this.setState({ CumulativeSteps: 0 })
         // this.setState({ mseData: [] })
         this.trainMetricHolder = []
@@ -354,10 +372,33 @@ class Train extends Component {
         this.createModel()
     }
 
-    updateBatchSize(e) {
-        console.log(e.target);
+    updateModelParam(e) {
+        console.log(e);
+        switch (e.selectedItem.type) {
+            case "steps":
+                this.setState({ numSteps: e.selectedItem.value })
+                break
+            case "batchsize":
+                this.setState({ batchSize: e.selectedItem.value })
+
+                break
+            case "learningrate":
+                this.setState({ learningRate: e.selectedItem.value })
+                break
+            case "traindatasize":
+                this.setState({ trainDataSize: e.selectedItem.value })
+
+                break
+            case "testdatasize":
+                this.setState({ testDataSize: e.selectedItem.value })
+                break
+            default:
+                break
+        }
+
 
     }
+
 
     updateThreshold(e) {
         let threshVal = this.state.minThreshold + (e.value / 100) * (this.state.maxThreshold - this.state.minThreshold)
@@ -413,13 +454,14 @@ class Train extends Component {
                     <div className="flexfull unselectable  flex flexjustifyleft flexjustifycenter ">
                         <div className=" p10   iblock">
                             <div className="iblock mr10">
-                                <div className="mediumdesc pb7"> Epochs {this.state.CumulativeSteps} </div>
+                                <div className="mediumdesc pb7"> Steps {this.state.numSteps} - {this.state.CumulativeSteps} </div>
                                 <Dropdown
                                     id="epochsdropdown"
-                                    label="Epochs"
-                                    items={this.epochOptions}
-                                    initialSelectedItem={this.epochOptions[0]}
+                                    label="Steps"
+                                    items={this.stepOptions}
+                                    initialSelectedItem={this.stepOptions[0]}
                                     itemToString={item => (item ? item.text : "")}
+                                    onChange={this.updateModelParam.bind(this)}
                                 />
                             </div>
 
@@ -429,8 +471,9 @@ class Train extends Component {
                                     id="batchsizedropdown"
                                     label="Batch Size"
                                     items={this.batchSizeOptions}
-                                    initialSelectedItem={this.batchSizeOptions[2]}
+                                    initialSelectedItem={this.batchSizeOptions[3]}
                                     itemToString={item => (item ? item.text : "")}
+                                    onChange={this.updateModelParam.bind(this)}
                                 />
                             </div>
 
@@ -441,6 +484,8 @@ class Train extends Component {
                                     label="Learning Rate"
                                     items={this.learningRateOptions}
                                     itemToString={item => (item ? item.text : "")}
+                                    initialSelectedItem={this.learningRateOptions[0]}
+                                    onChange={this.updateModelParam.bind(this)}
                                 />
                             </div>
 
@@ -450,7 +495,9 @@ class Train extends Component {
                                     id="trainingdatadropdown"
                                     label="Training Data"
                                     items={this.trainingDataOptions}
+                                    initialSelectedItem={this.trainingDataOptions[0]}
                                     itemToString={item => (item ? item.text : "")}
+                                    onChange={this.updateModelParam.bind(this)}
                                 />
                             </div>
 
@@ -458,9 +505,11 @@ class Train extends Component {
                                 <div className="mediumdesc pb7">Test Data Size {this.state.testDataShape[0]} </div>
                                 <Dropdown
                                     id="testdatadropdown"
-                                    label="Training Data"
+                                    label="Test Data"
                                     items={this.testDataOptions}
                                     itemToString={item => (item ? item.text : "")}
+                                    initialSelectedItem={this.testDataOptions[0]}
+                                    onChange={this.updateModelParam.bind(this)}
                                 />
                             </div>
 
@@ -502,7 +551,7 @@ class Train extends Component {
                                     step={5}
                                     minLabel={"%"}
                                     maxLabel={"%"}
-                                    value={0}
+                                    value={((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)) * 100}
                                     stepMuliplier={10}
                                     disabled={this.state.isTraining ? true : false}
                                     labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(5)}

@@ -42,9 +42,13 @@ class ROCChart extends Component {
         this.setupScalesAxes(data)
         let svg = d3.select("div.ROCChart").transition();
 
-        svg.select(".losstraincolor")
+        svg.select(".rocline")
             .duration(self.animationDuration)
             .attr("d", this.rocLine(data)); // 11. Calls the line generator 
+
+        svg.select(".rocarea")
+            .duration(self.animationDuration)
+            .attr("d", this.rocArea(data)); // 11. Calls the line generator 
 
         // svg.select(".lossvalcolor")
         //     .duration(self.animationDuration)
@@ -100,9 +104,13 @@ class ROCChart extends Component {
 
         svg.append("path")
             .datum(data) // 10. Binds data to the line 
-            .attr("class", "lossline losstraincolor") // Assign a class for styling  
+            .attr("class", "rocline roccolor") // Assign a class for styling  
             .attr("d", this.rocLine); // 11. Calls the line generator 
 
+        svg.append("path")
+            .datum(data)
+            .attr("class", "rocarea")
+            .attr("d", this.rocArea);
     }
 
     drawGraph(data) {
@@ -126,6 +134,10 @@ class ROCChart extends Component {
             .y(function (d) { return self.yScale(d.tpr); }) // set the y values for the line generator 
         // .curve(d3.curveMonotoneX) // apply smoothing to the line
 
+        this.rocArea = d3.area()
+            .x(function (d) { return self.xScale(d.fpr); })
+            .y0(this.chartHeight)
+            .y1(function (d) { return self.yScale(d.tpr); });
 
         const svg = d3.select("div.ROCChart").append("svg")
             .attr("width", this.chartWidth + this.chartMargin.left + this.chartMargin.right)
