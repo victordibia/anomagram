@@ -592,7 +592,7 @@ class Train extends Component {
                                     value={((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)) * 100}
                                     stepMuliplier={10}
                                     disabled={this.state.isTraining ? true : false}
-                                    labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(5) + "[ " + ((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)) * 100 + " % ] "}
+                                    labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(5) + "[ " + (((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)).toFixed(2) * 100) + " % ] "}
                                     hideTextInput={true}
                                     onChange={this.updateThreshold.bind(this)}
                                 />
