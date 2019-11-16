@@ -596,9 +596,15 @@ class Train extends Component {
                                     onChange={this.updateThreshold.bind(this)}
                                 />
                             </div>
-                            <div className=" mb10 p5 greyhighlight rad4 textaligncenter" >
-                                <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
-                                <div className="metricdesc mediumdesc p5"> Accuracy </div>
+                            <div className="flex">
+                                <div className=" mb10 p5 greyhighlight rad4 textaligncenter mr10 flex5" >
+                                    <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
+                                    <div className="metricdesc mediumdesc p5"> Best Accuracy </div>
+                                </div>
+                                <div className=" mb10 p5 greyhighlight rad4 textaligncenter flex5" >
+                                    <div className="metricvalue textaligncenter  rad4"> {(this.state.auc).toFixed(2)} </div>
+                                    <div className="metricdesc mediumdesc p5"> AUC </div>
+                                </div>
                             </div>
                             <div className="mb10 flex">
 
