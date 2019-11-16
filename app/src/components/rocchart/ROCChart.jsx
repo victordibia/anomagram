@@ -84,15 +84,21 @@ class ROCChart extends Component {
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
 
+        // this.xScale = d3.scaleLinear()
+        //     .domain([d3.min(data, function (d) { return d.fpr }),
+        //     d3.max(data, function (d) { return d.fpr })]) // input 
+        //     .range([0, this.chartWidth]); // output
         this.xScale = d3.scaleLinear()
-            .domain([d3.min(data, function (d) { return d.fpr }),
-            d3.max(data, function (d) { return d.fpr })]) // input 
+            .domain([0, 1]) // input 
             .range([0, this.chartWidth]); // output
 
 
+        // this.yScale = d3.scaleLinear()
+        //     .domain([d3.min(data, function (d) { return d.tpr }),
+        //     d3.max(data, function (d) { return d.tpr })]) // input 
+        //     .range([this.chartHeight, 0])
         this.yScale = d3.scaleLinear()
-            .domain([d3.min(data, function (d) { return d.tpr }),
-            d3.max(data, function (d) { return d.tpr })]) // input 
+            .domain([0, 1]) // input 
             .range([this.chartHeight, 0])
 
         this.xAxis = d3.axisBottom(this.xScale)
@@ -190,7 +196,7 @@ class ROCChart extends Component {
                         <div className="iblock ">Validation Loss</div>
                     </div>
                 </div>
-                <div className="charttitle">  ROC Curve Chart</div>
+                <div className="charttitle">  ROC Curve Chart [ AUC : {this.props.data.auc.toFixed(2)} ] </div>
 
                 <div className="ROCChart"> </div>
             </div>

@@ -33,6 +33,8 @@ class Train extends Component {
         this.trainingDataOptions = [{ id: "opt1", text: "500", value: 500, type: "traindatasize" }, { id: "opt2", text: "1000", value: 1000, type: "traindatasize" }, { id: "opt3", text: "2000", value: 2000, type: "traindatasize" }]
         this.testDataOptions = [{ id: "opt1", text: "100", value: 100, type: "testdatasize" }, { id: "opt2", text: "200", value: 200, type: "testdatasize" }, { id: "opt3", text: "500", value: 500, type: "testdatasize" }]
 
+        this.selectedTestDataOption = 0
+        this.selectedTrainDataOption = 0
 
         this.trainMetricHolder = []
         this.CumulativeSteps = 0;
@@ -63,8 +65,8 @@ class Train extends Component {
 
             trainMetrics: this.trainMetricHolder,
             CumulativeSteps: 0,
-            trainDataSize: this.trainingDataOptions[0].value,
-            testDataSize: this.testDataOptions[0].value,
+            trainDataSize: this.trainingDataOptions[this.selectedTrainDataOption].value,
+            testDataSize: this.testDataOptions[this.selectedTestDataOption].value,
 
             modelStale: true,
             bestMetric: { acc: 0, fpr: 0, fnr: 0, tnr: 0, tpr: 0, threshold: 0 },
@@ -76,6 +78,9 @@ class Train extends Component {
             showLossChart: true,
             showBottleneckScatterPlot: true,
             showMseHistogram: true,
+            validateOnStep: true,
+
+            auc: 0
         }
 
 
@@ -172,7 +177,7 @@ class Train extends Component {
         // }, 5000);
 
         // showToast("success", "Model successfully created")
-        console.log(tf.memory());
+        // console.log(tf.memory());
     }
 
     // modelWarmUp() {
@@ -238,14 +243,38 @@ class Train extends Component {
     computeAccuracyMetrics(data) {
 
         let uniqueMse = _.uniq(_.map(data, 'mse'))
+
         uniqueMse = _(uniqueMse).sortBy().value()
+        uniqueMse.reverse()
+        // console.log(uniqueMse);
+
+
 
         let rocMetricHolder = []
+        let rocSum = 0
+        let prevMetric = { fpr: 0, tpr: 0 }
 
-        uniqueMse.forEach(each => {
-            rocMetricHolder.push(computeAccuracyGivenThreshold(data, each))
+        uniqueMse.forEach((each, i) => {
+            let metric = computeAccuracyGivenThreshold(data, each)
+
+            rocMetricHolder.push(metric)
+            if (i < uniqueMse.length - 1) {
+                rocSum += prevMetric.tpr * (metric.fpr - prevMetric.fpr)
+                // console.log(i, rocSum);
+            }
+            prevMetric = metric
+
         });
+        // Add point (1,1) to compute AUC
+        rocMetricHolder.push({ fpr: 1, tpr: 1 })
+        rocSum += prevMetric.tpr * (1 - prevMetric.fpr)
+
+        // console.log(rocSum, " Region under curve");
+        // console.log(rocMetricHolder);
+
+
         this.setState({ rocData: rocMetricHolder })
+        this.setState({ auc: rocSum })
         // console.log("mse initial", _.min(uniqueMse), _.max(uniqueMse));
 
         let bestMetric = _.maxBy(rocMetricHolder, "acc")
@@ -288,6 +317,7 @@ class Train extends Component {
         // Generate encoder output 
         this.encoder = tf.model({ inputs: this.createdModel.inputs, outputs: this.createdModel.getLayer("encoder").getOutputAt(1) });
         let encoderPredictions = this.encoder.predict(this.xsTest)
+
 
         let encPredHolder = []
         encoderPredictions.array().then(array => {
@@ -373,7 +403,7 @@ class Train extends Component {
     }
 
     updateModelParam(e) {
-        console.log(e);
+        // console.log(e);
         switch (e.selectedItem.type) {
             case "steps":
                 this.setState({ numSteps: e.selectedItem.value })
@@ -495,7 +525,7 @@ class Train extends Component {
                                     id="trainingdatadropdown"
                                     label="Training Data"
                                     items={this.trainingDataOptions}
-                                    initialSelectedItem={this.trainingDataOptions[0]}
+                                    initialSelectedItem={this.trainingDataOptions[this.selectedTrainDataOption]}
                                     itemToString={item => (item ? item.text : "")}
                                     onChange={this.updateModelParam.bind(this)}
                                 />
@@ -508,7 +538,7 @@ class Train extends Component {
                                     label="Test Data"
                                     items={this.testDataOptions}
                                     itemToString={item => (item ? item.text : "")}
-                                    initialSelectedItem={this.testDataOptions[0]}
+                                    initialSelectedItem={this.testDataOptions[this.selectedTestDataOption]}
                                     onChange={this.updateModelParam.bind(this)}
                                 />
                             </div>
@@ -593,7 +623,7 @@ class Train extends Component {
                 {true &&
                     <div>
 
-                        <div className="iblock p10">
+                        {this.state.showRocChart && <div className="iblock p10">
                             {this.state.rocData.length > 0 &&
                                 <ROCChart
                                     data={{
@@ -601,15 +631,16 @@ class Train extends Component {
                                         chartHeight: 250,
                                         data: this.state.rocData,
                                         isTraining: this.state.isTraining,
-                                        epoch: this.state.CumulativeSteps
+                                        epoch: this.state.CumulativeSteps,
+                                        auc: this.state.auc
 
                                     }}
 
                                 ></ROCChart>}
-                        </div>
+                        </div>}
 
 
-                        <div className="iblock mr10  h100 " >
+                        {this.state.showLossChart && <div className="iblock mr10  h100 " >
                             <div className={"positionrelative h100 " + (this.state.trainMetrics.length <= 0 ? " " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
                                 {this.state.trainMetrics.length <= 0 &&
                                     <div className="notrainingdata">  No training loss data yet </div>
@@ -627,9 +658,9 @@ class Train extends Component {
                                 }
 
                             </div>
-                        </div>
+                        </div>}
 
-                        <div className="iblock mr10 ">
+                        {this.state.showMseHistogram && <div className="iblock mr10 ">
                             {this.state.mseData.length > 0 &&
                                 <HistogramChart
                                     data={{
@@ -640,8 +671,10 @@ class Train extends Component {
                                     }}
                                 ></HistogramChart>
                             }
-                        </div>
-                        <div className="iblock mr10  ">
+                        </div>}
+
+
+                        {this.state.showBottleneckScatterPlot && <div className="iblock mr10  ">
                             {this.state.encodedData.length > 0 &&
                                 <ScatterPlot
                                     data={{
@@ -653,7 +686,7 @@ class Train extends Component {
 
                                 ></ScatterPlot>
                             }
-                        </div>
+                        </div>}
 
 
 
