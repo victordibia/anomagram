@@ -15,7 +15,7 @@ class ROCChart extends Component {
         this.minChartHeight = this.props.data.chartHeight
 
         this.numTicks = 40
-        this.dotRadius = 3.5
+        this.dotRadius = 1
     }
 
     componentDidMount() {
@@ -38,6 +38,7 @@ class ROCChart extends Component {
     updateGraph(data) {
         let self = this
 
+        d3.select("div.ROCChart").selectAll(".rocnode > *").remove();
 
         this.setupScalesAxes(data)
         let svg = d3.select("div.ROCChart").transition();
@@ -49,6 +50,19 @@ class ROCChart extends Component {
         svg.select(".rocarea")
             .duration(self.animationDuration)
             .attr("d", this.rocArea(data)); // 11. Calls the line generator 
+
+        d3.select("div.ROCChart")
+            .select(".rocnode")
+            .selectAll("rocdot")
+            .data(data)
+            .join("circle")
+            .attr("cx", function (d) { return self.xScale(d.fpr); })
+            .attr("cy", function (d) { return self.yScale(d.tpr); })
+            .attr("r", this.dotRadius)
+            .attr("class", "rocdot")
+
+
+
 
         // svg.select(".lossvalcolor")
         //     .duration(self.animationDuration)
@@ -106,7 +120,7 @@ class ROCChart extends Component {
             .tickSize(this.minChartWidth)
     }
     drawLines(svg, data) {
-
+        let self = this
 
         svg.append("path")
             .datum(data) // 10. Binds data to the line 
@@ -125,6 +139,26 @@ class ROCChart extends Component {
             .attr("x2", this.chartWidth)  //<<== and here
             .attr("y2", this.yScale(this.yScale.domain()[1]))
             .attr("class", "diagonal")
+
+        svg.append('g')
+            .attr("class", "rocnode")
+            .selectAll("rocdot")
+            .data(data)
+            .join("circle")
+            .attr("cx", function (d, i) { return self.xScale(d.fpr) })
+            .attr("cy", function (d) { return self.yScale(d.tpr) })
+            .attr("r", this.dotRadius)
+
+
+        // svg.selectAll(".rocdot")
+        //     .data(data)
+        //     .join("circle") // Uses the enter().append() method
+        //     .attr("class", "rocdot") // Assign a class for styling
+        //     .attr("cx", function (d, i) { return self.xScale(d.fpr) })
+        //     .attr("cy", function (d) { return self.yScale(d.tpr) })
+        //     .attr("r", 5)
+
+
     }
 
     drawGraph(data) {
@@ -152,6 +186,12 @@ class ROCChart extends Component {
             .x(function (d) { return self.xScale(d.fpr); })
             .y0(this.chartHeight)
             .y1(function (d) { return self.yScale(d.tpr); });
+
+        // this.rocCircle = d3.geoCircle()
+        this.rocCircle = d3.geoCircle()
+            .x
+
+
 
         const svg = d3.select("div.ROCChart").append("svg")
             .attr("width", this.chartWidth + this.chartMargin.left + this.chartMargin.right)
@@ -192,16 +232,16 @@ class ROCChart extends Component {
 
         return (
             <div className="positionrelative mainchartbox  ">
-                <div className="chartlegend p5 mediumdesc displaynone">
+                <div className="chartlegend p5 mediumdesc ">
                     <div className="mb3 ">
                         <div className="legendcolorbox mr5  themeblue iblock"></div>
-                        <div ref="trainlabel" className="iblock boldtext mr5">0.0</div>
-                        <div className="iblock ">ROC Curve</div>
+                        <div ref="trainlabel" className="iblock boldtext mr5"> Area : {this.props.data.auc.toFixed(2)}  </div>
+                        <div className="iblock "> </div>
                     </div>
                     <div>
-                        <div className="legendcolorbox mr5 themeorange iblock"></div>
-                        <div ref="validationlabel" className="iblock boldtext mr5">0.0</div>
-                        <div className="iblock ">Validation Loss</div>
+                        <div className="legendcolorbox mr5 redchance iblock"></div>
+                        <div ref="validationlabel" className="iblock boldtext mr5"> Chance</div>
+                        <div className="iblock "></div>
                     </div>
                 </div>
                 <div className="charttitle">  ROC Curve Chart [ AUC : {this.props.data.auc.toFixed(2)} ] </div>

@@ -19,3 +19,12 @@
     stroke-dasharray: 4px;
     stroke-width: 1.2px;
 }
+
+.redchance{
+    border: 1px dashed red;
+}
+
+.rocdot{
+    fill: rgba(53, 53, 53, 0.863) ;
+    /* stroke: white; */
+}

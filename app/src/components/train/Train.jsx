@@ -260,8 +260,8 @@ class Train extends Component {
 
             rocMetricHolder.push(metric)
             // if (i < uniqueMse.length) {
-            rocSum += (prevMetric.tpr) * (metric.fpr - prevMetric.fpr)
-            // rocSum += ((prevMetric.tpr + metric.tpr) / 2) * (metric.fpr - prevMetric.fpr)
+            // rocSum += (prevMetric.tpr) * (metric.fpr - prevMetric.fpr)
+            rocSum += ((prevMetric.tpr + metric.tpr) / 2) * (metric.fpr - prevMetric.fpr)
             // console.log(i, rocSum);
             // }
             prevMetric = metric
@@ -592,7 +592,7 @@ class Train extends Component {
                                     value={((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)) * 100}
                                     stepMuliplier={10}
                                     disabled={this.state.isTraining ? true : false}
-                                    labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(5) + "[ " + (((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)).toFixed(2) * 100) + " % ] "}
+                                    labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(4) + " [ " + (((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)).toFixed(2) * 100) + " % ] "}
                                     hideTextInput={true}
                                     onChange={this.updateThreshold.bind(this)}
                                 />
