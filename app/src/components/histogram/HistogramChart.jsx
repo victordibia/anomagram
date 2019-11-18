@@ -92,7 +92,7 @@ class HistogramChart extends Component {
     updateGraph(data) {
         let self = this
         // console.log(data[0]);
-        console.log(this.props.data.threshold);
+
 
 
 
@@ -123,14 +123,14 @@ class HistogramChart extends Component {
 
         // Remove previous threshold line
         // d3.select(".thresholdline").transition().duration(5500).style("opacity", 0).remove()
-        let thresholdVal = this.getThreshold(data)
+        // let thresholdVal = this.getThreshold(data)
         svg.select(".thresholdline")
-            .attr("x1", this.xScale(thresholdVal))
-            .attr("x2", this.xScale(thresholdVal))
+            .attr("x1", this.xScale(this.props.data.threshold))
+            .attr("x2", this.xScale(this.props.data.threshold))
 
         svg.select(".thresholdtext")
-            .attr("x", this.xScale(thresholdVal))
-            .text("Anomaly Threshold - " + thresholdVal.toFixed(3));
+            .attr("x", this.xScale(this.props.data.threshold))
+            .text("Threshold - " + this.props.data.threshold.toFixed(3));
 
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -213,23 +213,23 @@ class HistogramChart extends Component {
             .attr("height", d => self.yScale(0) - self.yScale(d.length));
 
         //add threshold line
-        let thresholdVal = this.getThreshold(data)
+        // let thresholdVal = this.getThreshold(data)
 
         // threshold line
         svg.append("line")
             .attr("class", "thresholdline")
-            .attr("x1", this.xScale(thresholdVal))  //<<== change your code here
+            .attr("x1", this.xScale(this.props.data.threshold))  //<<== change your code here
             .attr("y1", this.yScale(0))
-            .attr("x2", this.xScale(thresholdVal))  //<<== and here
+            .attr("x2", this.xScale(this.props.data.threshold))  //<<== and here
             .attr("y2", this.yScale(this.yScale.domain()[1]))
         // threshold label
         svg.append("text")
             .attr("class", "thresholdtext")
-            .attr("x", this.xScale(thresholdVal))
+            .attr("x", this.xScale(this.props.data.threshold))
             .attr("y", this.yScale(this.yScale.domain()[1]))
             .attr("dy", ".95em")
             .attr("dx", ".35em")
-            .text("Anomaly Threshold - " + thresholdVal.toFixed(3));
+            .text("Threshold - " + this.props.data.threshold.toFixed(3));
 
         function customYAxis(g) {
             g.call(self.yAxis);
