@@ -24,7 +24,7 @@ class HistogramChart extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         // console.log(prevProps.data.epoch, this.props.data.epoch)
-        if ((prevProps.data.epoch !== this.props.data.epoch) || this.props.data.epoch + "" === "0") {
+        if ((prevProps.data.epoch !== this.props.data.epoch) || (this.props.data.epoch + "" === "0" && this.props.data.threshold !== prevProps.data.threshold)) {
             // console.log("props updated");
             this.updateGraph(this.props.data.data)
         }
@@ -92,6 +92,8 @@ class HistogramChart extends Component {
     updateGraph(data) {
         let self = this
         // console.log(data[0]);
+        console.log(this.props.data.threshold);
+
 
 
         this.setupScalesAxes(data)
@@ -154,6 +156,7 @@ class HistogramChart extends Component {
     }
 
     getThreshold(data) {
+
         let meanNormal = d3.mean(data, function (d) {
             if (d.label + "" === "0") {
                 return d.mse
@@ -211,6 +214,7 @@ class HistogramChart extends Component {
 
         //add threshold line
         let thresholdVal = this.getThreshold(data)
+
         // threshold line
         svg.append("line")
             .attr("class", "thresholdline")

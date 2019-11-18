@@ -63,6 +63,27 @@ export function computeAccuracyGivenThreshold(data, threshold) {
 
 }
 
+export function percentToRGB(percent) {
+    percent = 100 - percent
+    if (percent === 100) {
+        percent = 99
+    }
+    let r, g, b;
+
+    if (percent < 50) {
+        // green to yellow
+        r = Math.floor(255 * (percent / 50));
+        g = 255;
+
+    } else {
+        // yellow to red
+        r = 255;
+        g = Math.floor(255 * ((50 - percent % 50) / 50));
+    }
+    b = 0;
+
+    return "rgb(" + r + "," + g + "," + b + ")";
+}
 
 
 export function abbreviateString(value, maxLength) {

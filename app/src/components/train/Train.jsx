@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Loading, Dropdown, Slider } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
-import { computeAccuracyGivenThreshold } from "../helperfunctions/HelperFunctions"
+import { computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions"
 import ROCChart from "../rocchart/ROCChart"
 // custom charts 
 import HistogramChart from "../histogram/HistogramChart"
@@ -586,45 +586,45 @@ class Train extends Component {
                                 <Slider
                                     min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
                                     max={100}//{(this.state.maxThreshold.toFixed(4) * 1)}
-                                    step={5}
+                                    step={2}
                                     minLabel={"%"}
                                     maxLabel={"%"}
                                     value={((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)) * 100}
                                     stepMuliplier={10}
                                     disabled={this.state.isTraining ? true : false}
-                                    labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(4) + " [ " + (((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)).toFixed(2) * 100) + " % ] "}
+                                    labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(4) + " [ " + (((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)) * 100).toFixed(0) + " % ] "}
                                     hideTextInput={true}
                                     onChange={this.updateThreshold.bind(this)}
                                 />
                             </div>
                             <div className="flex">
-                                <div className=" mb10 p5 greyhighlight rad4 textaligncenter mr10 flex5" >
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.acc * 100)) }} className="metricguage mb10 p5 greyhighlight rad4 textaligncenter mr10 flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
                                     <div className="metricdesc mediumdesc p5"> Best Accuracy </div>
                                 </div>
-                                <div className=" mb10 p5 greyhighlight rad4 textaligncenter flex5" >
+                                <div style={{ borderLeftColor: percentToRGB((this.state.auc * 100)) }} className="metricguage mb10 p5 greyhighlight rad4 textaligncenter flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.auc).toFixed(2)} </div>
                                     <div className="metricdesc mediumdesc p5"> AUC </div>
                                 </div>
                             </div>
                             <div className="mb10 flex">
 
-                                <div className="flex5 mr10 p10 greyhighlight rad4 textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fpr * 100)) }} className="metricguage flex5 mr10 p10 greyhighlight rad4 textaligncenter">
                                     <div className="metricvalue textaligncenter"> {(this.state.bestMetric.fpr * 100).toFixed(2)}  % </div>
                                     <div className="metricdesc mediumdesc p5"> False Positive Rate </div>
                                 </div>
-                                <div className="flex5  p10 greyhighlight rad4 textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fnr * 100)) }} className="metricguage flex5  p10 greyhighlight rad4 textaligncenter">
                                     <div className="metricvalue"> {(this.state.bestMetric.fnr * 100).toFixed(2)} % </div>
                                     <div className="metricdesc displayblock mediumdesc p5"> False Negative Rate </div>
                                 </div>
 
                             </div>
                             <div className="flex">
-                                <div className="flex5 p10 mr10 greyhighlight rad4 textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tpr * 100)) }} className="metricguage flex5 p10 mr10 greyhighlight rad4 textaligncenter">
                                     <div className="metricvalue"> {(this.state.bestMetric.tpr * 100).toFixed(2)} % </div>
                                     <div className="metricdesc mr10 mediumdesc p5"> True Positive Rate </div>
                                 </div>
-                                <div className="flex5 p10 greyhighlight rad4 textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tnr * 100)) }} className="metricguage flex5 p10 greyhighlight rad4 textaligncenter">
                                     <div className="metricvalue"> {(this.state.bestMetric.tnr * 100).toFixed(2)} % </div>
                                     <div className="metricdesc mediumdesc p5"> True Negative Rate </div>
                                 </div>
@@ -683,7 +683,8 @@ class Train extends Component {
                                         data: this.state.mseData,
                                         chartWidth: this.chartWidth,
                                         chartHeight: this.chartHeight,
-                                        epoch: this.state.CumulativeSteps
+                                        epoch: this.state.CumulativeSteps,
+                                        threshold: this.state.bestMetric.threshold
                                     }}
                                 ></HistogramChart>
                             }
