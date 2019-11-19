@@ -126,7 +126,7 @@ class Viz extends Component {
 
                 <div className="mynotif h100 lh10  lightbluehightlight maxh16  mb10">
                     {this.state.apptitle} is an interactive visualization tool for exploring
-                    deep learning models applied to the task of anomaly detection (on non-time series data).
+                    deep learning models applied to the task of anomaly detection (on stationary data).
 
                 </div>
 
@@ -139,7 +139,7 @@ class Viz extends Component {
 
 
 
-                <div className="flex">
+                <div className="flex  " >
                     <div className="flexfull p10  ">
                         <div className="mb10 boldtext">
                             ECG {this.state.testData.length}
@@ -158,7 +158,7 @@ class Viz extends Component {
                         <div className="mb10 boldtext"> Model Output
 
                         </div>
-                        <div>
+                        <div className="">
 
                             {this.state.testData.length > 0 &&
                                 <div>
@@ -194,14 +194,88 @@ class Viz extends Component {
 
                                         > </LineChart>
                                     </div>
-
                                 </div>
-
                             }
                             {/* {this.state.testData[0].index} */}
                         </div>
+
+                        <div>
+                            
+
+                        </div>
+
+
                     </div>
+
+
                 </div>
+                <div className="lh10 p10">
+                    We have trained a two layer autoencoder with 2600 samples of normal ECG signal data.
+                    Each ECG signal contains 140 recordings of the electrical signal of the heart, corresponding to a heartbeat.
+                    Our test set (above) contains both normal and abormal ECG signals, and our model is tasked with distinguishing normal from abnormal signal.
+
+                </div>
+
+
+                <div className="sectiontitle mt10 mb5"> An Introduction to Autoencoders </div>
+                <div className="">
+                    <div className="flex">
+                        <div className="flex6 lh10 mb10 pr10">
+                        An autoencoder is a neural network that learns to map input data to a low dimension representation
+                            and then reconstruct the original input from this low dimension representation. The part of the network which learn the input to 
+                            low dimension mapping is termed an encoder, while the section that maps from low dimension back to original input is termed the decoder.
+                        This capability of producing a low dimension representation is reminiscent dimensionality reduction approaches (e.g. PCA), and indeed
+                        Autoencoders have been typically used for dimensionbality reduction and compression use cases. For an indepth treatment of autoencoders, please see ... 
+                        
+                        However, while 
+                        </div>
+
+                        <div className="border rad4 p10 flex4" style={{ height:"200px"}}>
+                            small autoencoder viz
+                        </div>
+                       </div>
+
+                </div>
+
+
+                <div className="sectiontitle mt10 mb5"> Modeling Normal Data  </div>
+                <div className="">
+                    <div className="flex">
+                        <div className="flex6 lh10 mb10 pr10">
+                        Most approaches to anomaly detection (and there are many) begin by constructing a model of 
+                        normal behaviour and then exploit this model to identify deviations from normal (anomalies or abnormal data).
+                    Here is how we can use an autoencoder to model normal behaviour. If you recall, an autoencoder learns to compress 
+                    and reconstruct data. Notably this learned mapping is specific to the data type/distribution distribution of the training data.
+                    In other words an autoencoder trained using 15 px images of dogs is unlikely to correctly reconstruct 20px images of the surface 
+                    of the moon.
+                        </div>
+
+                        <div className="border rad4 p10 flex4" style={{ height:"200px"}}>
+                            small autoencoder viz
+                        </div>
+                       </div>
+
+                </div>
+
+                <div className="sectiontitle mt10 mb5"> Model Evaluation: Accuracy is NOT Enough </div>
+                <div className="">
+                    <div className="flex">
+                        <div className="flex6 lh10 mb10 pr10">
+                        Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
+                        Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value. 
+
+                        </div>
+
+                        <div className="border rad4 p10 flex4" style={{ height:"200px"}}>
+                            ROC curve and some metrics
+                        </div>
+                       </div>
+
+                </div>
+                
+                 
+ 
+
 
 
                 <div>
@@ -212,7 +286,10 @@ class Viz extends Component {
 
 
 
-
+                <br />
+                <br />
+                <br />
+                <br/>
             </div>
         )
     }
