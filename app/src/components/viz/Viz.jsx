@@ -272,6 +272,43 @@ class Viz extends Component {
                        </div>
 
                 </div>
+
+                <div className="sectiontitle mt10 mb10"> Effect of Model Parameters </div>
+                <div className="flex">
+                    <div className="flex3 mr10">
+                        <div className="flex6 lh10 mb10 pr10">
+                            <div className="pb5 boldtext"> Learning Rate </div>
+                        Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
+                        Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value. 
+
+                        </div>
+
+                         
+                    </div>
+                    
+                    <div className="flex3 mr10">
+                        <div className="flex6 lh10 mb10 pr10">
+                        <div className="pb5 boldtext"> Regularization </div>
+                        Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
+                        Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value. 
+
+                        </div>
+
+                         
+                    </div>
+                    
+                    <div className="flex4 mr10">
+                        <div className="flex6 lh10 mb10 pr10">
+                        <div className="pb5 boldtext"> Batch Size </div>
+                        Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
+                        Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value. 
+
+                        </div>
+
+                         
+                    </div>
+
+                </div>
                 
                  
  
