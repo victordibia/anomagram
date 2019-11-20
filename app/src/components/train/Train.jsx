@@ -58,7 +58,7 @@ class Train extends Component {
             numFeatures: this.testData[0].data.length,
             hiddenLayers: 2,
             latentDim: 2,
-            hiddenDim: [6, 3],
+            hiddenDim: [12, 3],
             learningRate: this.learningRateOptions[0].value,
             regularizer: this.regularizerOptions[this.selectedRegularizer].value,
             adamBeta1: 0.5,
@@ -150,6 +150,7 @@ class Train extends Component {
     }
 
     componentWillUnmount() {
+        this.setState({ isTraining: false })
         this.disposeModelTensors()
         this.xsTest.dispose()
         this.xsTrain.dispose()
@@ -552,7 +553,7 @@ class Train extends Component {
                             </div>
 
                             <div className="iblock mr10">
-                                <div className="mediumdesc pb7">Training Data Size {this.state.trainDataShape[0]} </div>
+                                <div className="mediumdesc pb7">Train Size {this.state.trainDataShape[0]} </div>
                                 <Dropdown
                                     id="trainingdatadropdown"
                                     label="Training Data"
@@ -564,7 +565,7 @@ class Train extends Component {
                             </div>
 
                             <div className="iblock mr10">
-                                <div className="mediumdesc pb7">Test Data Size {this.state.testDataShape[0]} </div>
+                                <div className="mediumdesc pb7">Test Size {this.state.testDataShape[0]} </div>
                                 <Dropdown
                                     id="testdatadropdown"
                                     label="Test Data"

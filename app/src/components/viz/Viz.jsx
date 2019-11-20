@@ -242,16 +242,31 @@ class Viz extends Component {
                 <div className="">
                     <div className="flex">
                         <div className="flex6 lh10 mb10 pr10">
-                        Most approaches to anomaly detection (and there are many) begin by constructing a model of 
+                            <div className="flex">
+                                <div className="flex5 mr10">
+                                <div className="pb5 boldtext"> Data Standardization  </div>
+                                Most approaches to anomaly detection (and there are many) begin by constructing a model of 
+                            normal behaviour and then exploit this model to identify deviations from normal (anomalies or abnormal data).
+                        Here is how we can use an autoencoder to model normal behaviour. If you recall, an autoencoder learns to compress 
+                        and reconstruct data. Notably this learned mapping is specific to the data type/distribution distribution of the training data.
+                        In other words an autoencoder trained using 15 px images of dogs is unlikely to correctly reconstruct 20px images of the surface 
+                        of the moon.
+                                </div>
+                                
+                                <div className="flex5 mr10">
+                                <div className="pb5 boldtext"> Model Training </div>
+                                Most approaches to anomaly detection (and there are many) begin by constructing a model of 
                         normal behaviour and then exploit this model to identify deviations from normal (anomalies or abnormal data).
                     Here is how we can use an autoencoder to model normal behaviour. If you recall, an autoencoder learns to compress 
                     and reconstruct data. Notably this learned mapping is specific to the data type/distribution distribution of the training data.
                     In other words an autoencoder trained using 15 px images of dogs is unlikely to correctly reconstruct 20px images of the surface 
                     of the moon.
+                                </div>
+                         </div>
                         </div>
 
                         <div className="border rad4 p10 flex4" style={{ height:"200px"}}>
-                            small autoencoder viz
+                            small histogram viz
                         </div>
                        </div>
 
