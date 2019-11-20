@@ -14,8 +14,20 @@ export function buildModel(params) {
     const latentDim = params.latentDim
     const hiddenDim = params.hiddenDim
     const outputActivation = params.outputActivation
+    const regularizationRate = params.regularizationRate
+    let layerRegularizer = null
+    // const
+    if (params.regularizer === "l1") {
+        layerRegularizer = tf.regularizers.l1({ l1: regularizationRate })
 
-    // console.log(numFeatures);
+    } else if (params.regularizer === "l2") {
+        layerRegularizer = tf.regularizers.l2({ l2: regularizationRate })
+
+    } else if (params.regularizer === "l1l2") {
+        layerRegularizer = tf.regularizers.l1l2({ l1: regularizationRate, l2: regularizationRate })
+    }
+
+    console.log(params.regularizer);
 
 
     // Specify encoder 
@@ -26,10 +38,10 @@ export function buildModel(params) {
     // const encoder = tf.model({ inputs: input, outputs: z_, name: "encoder" })
 
     const input = tf.input({ shape: [numFeatures] })
-    let encoderHidden = tf.layers.dense({ units: hiddenDim[0], activation: "relu" }).apply(input);
+    let encoderHidden = tf.layers.dense({ units: hiddenDim[0], activation: "relu", kernelRegularizer: layerRegularizer }).apply(input);
     let i = 1
     while (i < hiddenDim.length) {
-        encoderHidden = tf.layers.dense({ units: hiddenDim[i], activation: "relu" }).apply(encoderHidden);
+        encoderHidden = tf.layers.dense({ units: hiddenDim[i], activation: "relu", kernelRegularizer: layerRegularizer }).apply(encoderHidden);
         i++
     }
     const z_ = tf.layers.dense({ units: latentDim }).apply(encoderHidden);
@@ -38,11 +50,11 @@ export function buildModel(params) {
 
 
     const latentInput = tf.input({ shape: [latentDim] })
-    let decoderHidden = tf.layers.dense({ units: hiddenDim[hiddenDim.length - 1], activation: "relu" }).apply(latentInput);
+    let decoderHidden = tf.layers.dense({ units: hiddenDim[hiddenDim.length - 1], activation: "relu", kernelRegularizer: layerRegularizer }).apply(latentInput);
     let j = hiddenDim.length - 1
     while (j > 0) {
         j--;
-        decoderHidden = tf.layers.dense({ units: hiddenDim[j], activation: "relu" }).apply(decoderHidden);
+        decoderHidden = tf.layers.dense({ units: hiddenDim[j], activation: "relu", kernelRegularizer: layerRegularizer }).apply(decoderHidden);
 
     }
 

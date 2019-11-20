@@ -28,6 +28,7 @@ class Train extends Component {
         this.updateModelDims = this.updateModelDims.bind(this)
 
         this.stepOptions = [{ id: "opt1", text: "50", value: 50, type: "steps" }, { id: "opt2", text: "100", value: 100, type: "steps" }]
+        this.regularizerOptions = [{ id: "opt1", text: "None", value: "none", type: "regularizer" }, { id: "opt1", text: "l1", value: "l1", type: "regularizer" }, { id: "opt2", text: "l2", value: "l2", type: "regularizer" }, { id: "opt2", text: "l1l2", value: "l1l2", type: "regularizer" }]
         this.batchSizeOptions = [{ id: "opt1", text: "64", value: 64, type: "batchsize" }, { id: "opt2", text: "128", value: 128, type: "batchsize" }, { id: "opt3", text: "256", value: 256, type: "batchsize" }, { id: "opt3", text: "512", value: 512, type: "batchsize" }, { id: "opt3", text: "1024", value: 1024, type: "batchsize" }]
         this.learningRateOptions = [{ id: "opt1", text: "0.01", value: 0.01, type: "learningrate" }, { id: "opt2", text: "0.001", value: 0.001, type: "learningrate" }, { id: "opt3", text: "0.0001", value: 0.0001, type: "learningrate" }]
         this.trainingDataOptions = [{ id: "opt1", text: "500", value: 500, type: "traindatasize" }, { id: "opt2", text: "1000", value: 1000, type: "traindatasize" }, { id: "opt3", text: "2000", value: 2000, type: "traindatasize" }]
@@ -36,6 +37,8 @@ class Train extends Component {
 
         this.selectedTrainDataOption = 0
         this.selectedTestDataOption = 1
+
+        this.selectedRegularizer = 0
 
         this.trainMetricHolder = []
         this.CumulativeSteps = 0;
@@ -55,8 +58,9 @@ class Train extends Component {
             numFeatures: this.testData[0].data.length,
             hiddenLayers: 2,
             latentDim: 2,
-            hiddenDim: [12, 10, 8, 6],
+            hiddenDim: [6, 3],
             learningRate: this.learningRateOptions[0].value,
+            regularizer: this.regularizerOptions[this.selectedRegularizer].value,
             adamBeta1: 0.5,
             outputActivation: "sigmoid",
             batchSize: this.batchSizeOptions[3].value,
@@ -104,6 +108,8 @@ class Train extends Component {
 
     componentDidMount() {
         // this.loadSavedModel()
+        console.log("did mount");
+
 
         this.generateDataTensors()
 
@@ -163,7 +169,9 @@ class Train extends Component {
             latentDim: this.state.latentDim,
             hiddenDim: this.state.hiddenDim,
             optimizer: this.optimizer,
-            outputActivation: "sigmoid"
+            outputActivation: "sigmoid",
+            regularizer: this.state.regularizer,
+            regularizationRate: this.state.learningRate
         }
 
         this.createdModel = buildModel(modelParams)
@@ -178,7 +186,7 @@ class Train extends Component {
         // }, 5000);
 
         // showToast("success", "Model successfully created")
-        // console.log(tf.memory());
+        console.log(tf.memory());
     }
 
     // modelWarmUp() {
@@ -430,6 +438,10 @@ class Train extends Component {
             case "testdatasize":
                 this.setState({ testDataSize: e.selectedItem.value })
                 break
+            case "regularizer":
+                this.setState({ regularizer: e.selectedItem.value })
+                this.setState({ modelStale: true })
+                break
             default:
                 break
         }
@@ -528,6 +540,18 @@ class Train extends Component {
                             </div>
 
                             <div className="iblock mr10">
+                                <div className="mediumdesc pb7"> Regularlizer {this.state.regularizer} </div>
+                                <Dropdown
+                                    id="regularizeerdropdown"
+                                    label="Regularizer"
+                                    items={this.regularizerOptions}
+                                    itemToString={item => (item ? item.text : "")}
+                                    initialSelectedItem={this.regularizerOptions[this.selectedRegularizer]}
+                                    onChange={this.updateModelParam.bind(this)}
+                                />
+                            </div>
+
+                            <div className="iblock mr10">
                                 <div className="mediumdesc pb7">Training Data Size {this.state.trainDataShape[0]} </div>
                                 <Dropdown
                                     id="trainingdatadropdown"
@@ -550,6 +574,8 @@ class Train extends Component {
                                     onChange={this.updateModelParam.bind(this)}
                                 />
                             </div>
+
+
 
 
 
