@@ -27,8 +27,6 @@ export function buildModel(params) {
         layerRegularizer = tf.regularizers.l1l2({ l1: regularizationRate, l2: regularizationRate })
     }
 
-    console.log(params.regularizer);
-
 
     // Specify encoder 
     // const input = tf.input({ shape: [numFeatures] })

@@ -368,7 +368,7 @@ class ComposeModel extends Component {
                                 unitindex={layerindex}
                                 buttonaction="subtract"
                                 onClick={this.updateUnits.bind(this)}
-                                className="updatebutton unselectable  clickable">
+                                className={"updatebutton unselectable mb3 clickable " + (data === this.state.minUnits ? " disabled unclickable " : "")}>
                                 <Subtract16 className="unclickable"></Subtract16>
                             </div>
 
@@ -398,14 +398,14 @@ class ComposeModel extends Component {
                             layergroup="encoder"
                             buttonaction="add"
                             onClick={this.updateLayerClick.bind(this)}
-                            className="updatebutton unselectable mr5 clickable">
+                            className={"updatebutton unselectable mr5 clickable " + (this.state.hiddenDims.length === this.state.maxLayers ? " disabled unclickable " : "")}>
                             <Add16 className="unclickable"></Add16>
                         </div>
                         <div
                             layergroup="encoder"
                             buttonaction="subtract"
                             onClick={this.updateLayerClick.bind(this)}
-                            className="updatebutton unselectable  clickable">
+                            className={"updatebutton unselectable  clickable " + (this.state.hiddenDims.length === this.state.minLayers ? " disabled unclickable " : "")}>
                             <Subtract16 className="unclickable"></Subtract16>
                         </div>
                     </div>
