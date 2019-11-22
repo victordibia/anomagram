@@ -218,7 +218,7 @@ class Viz extends Component {
 
 
                 { 
-                <div className="displaynone"> 
+                <div className=" "> 
                     <div className="sectiontitle mt10 mb5"> An Introduction to Autoencoders </div>
                     <div className="">
                         <div className="flex">
