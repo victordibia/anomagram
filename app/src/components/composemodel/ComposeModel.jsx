@@ -359,8 +359,8 @@ class ComposeModel extends Component {
                                 unitindex={layerindex}
                                 buttonaction="add"
                                 onClick={this.updateUnits.bind(this)}
-                                className="updatebutton unselectable mb3 clickable">
-                                <Add16 className="unclickable"></Add16>
+                                className={"updatebutton unselectable mb3 clickable " + (data === this.state.maxUnits ? " disabled unclickable " : "")}>
+                                <Add16 className="unclickable"> </Add16>
                             </div>
                             <div layerdiv={"layerdiv" + layerindex} className="layerdiv  pt3 mb3">{eachLayer}</div>
                             <div
@@ -374,7 +374,7 @@ class ComposeModel extends Component {
 
                         </div>
                     </div>
-                </div>
+                </div >
             )
         })
 

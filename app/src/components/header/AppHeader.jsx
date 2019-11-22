@@ -41,7 +41,7 @@ class AppHeader extends Component {
                         {/* <HeaderMenuItem  element={Link} to="/models" className="navbarlink "> Models</HeaderMenuItem> */}
                         <div className="navbarlinks  "><NavLink exact to="/"> Introduction </NavLink></div>
                         <div className="navbarlinks "><NavLink to="/train"> Train a Model </NavLink></div>
-                        <div className="navbarlinks "><NavLink to="/faq"> FAQ </NavLink></div>
+                        {/* <div className="navbarlinks "><NavLink to="/faq"> FAQ </NavLink></div> */}
                         {/* <div className="navbarlinks "><NavLink to="/algebra"> Image Algebra </NavLink></div> */}
                         {/* <div className="navbarlinks "><NavLink to="/energy"> Energy Explorer </NavLink></div> */}
                     </HeaderNavigation>

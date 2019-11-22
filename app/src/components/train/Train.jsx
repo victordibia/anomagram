@@ -83,8 +83,10 @@ class Train extends Component {
             showLossChart: true,
             showBottleneckScatterPlot: true,
             showMseHistogram: true,
-            validateOnStep: true,
 
+
+
+            validateOnStep: true,
             auc: 0
         }
 
@@ -431,6 +433,7 @@ class Train extends Component {
                 break
             case "learningrate":
                 this.setState({ learningRate: e.selectedItem.value })
+                this.setState({ modelStale: true })
                 break
             case "traindatasize":
                 this.setState({ trainDataSize: e.selectedItem.value })
@@ -467,7 +470,7 @@ class Train extends Component {
             <div>
 
                 <div className="flex greyhighlight  pl10 rad3  ">
-                    <div className="  flex flexjustifycenter ">
+                    <div className="  flex flexjustifycenter pt10 ">
                         <div className=" iblock ">
                             <div
                                 onClick={this.trainButtonClick.bind(this)}
@@ -475,15 +478,20 @@ class Train extends Component {
                                 {!this.state.isTraining && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
                                 {this.state.isTraining && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
                             </div>
+                            <div className="smalldesc textaligncenter pt5 pb5 "> Train &nbsp; </div>
                         </div>
-                        <div className="iblock">
-                            <div className="iblock  flex flexjustifycenter  ">
-                                <div
-                                    onClick={this.resetModelButtonClick.bind(this)}
-                                    className={"iblock circlesmall circlebutton mr5 flex flexjustifycenter clickable" + (this.state.isTraining ? "  disabled" : "")}>
-                                    <Reset16 style={{ fill: "white" }} className="unselectable unclickable" />
+                        <div className="iblock h100 ">
+                            <div className="  flex flexjustifycenter h100  ">
+                                <div className="">
+                                    <div
+                                        onClick={this.resetModelButtonClick.bind(this)}
+                                        className={" circlesmall circlebutton mr5 flex flexjustifycenter clickable" + (this.state.isTraining ? "  disabled" : "")}>
+                                        <Reset16 style={{ fill: "white" }} className="unselectable unclickable" />
 
+                                    </div>
+                                    <div className=" displayblock smalldesc textaligncenter pt5 "> Reset &nbsp; </div>
                                 </div>
+
                             </div>
 
                         </div>
@@ -517,7 +525,7 @@ class Train extends Component {
                             </div>
 
                             <div className="iblock mr10">
-                                <div className="mediumdesc pb7"> Batchsize {this.state.batchSize} </div>
+                                <div className="mediumdesc pb7 "> Batchsize {this.state.batchSize} </div>
                                 <Dropdown
                                     id="batchsizedropdown"
                                     label="Batch Size"
@@ -541,7 +549,7 @@ class Train extends Component {
                             </div>
 
                             <div className="iblock mr10">
-                                <div className="mediumdesc pb7"> Regularlizer {this.state.regularizer} </div>
+                                <div className="mediumdesc pb7 pt5"> Regularlizer {this.state.regularizer} </div>
                                 <Dropdown
                                     id="regularizeerdropdown"
                                     label="Regularizer"

@@ -33,6 +33,9 @@
     background: rgba(128, 128, 128, 0.763);
 }
 
+.updatebutton.disabled{
+    opacity: 0.4;
+}
 .networktitle{
      /* border-bottom: 1px solid grey; */
 }
