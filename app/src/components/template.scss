@@ -23,3 +23,12 @@ $feature-flags: (
     // border: 10px solid green;
 }
 
+.bx--checkbox-label-text{
+    font-size: 0.9em;
+    padding: 0px;
+}
+
+.maxh16{
+    // max-height:  12em;
+    overflow: scroll;
+}

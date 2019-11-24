@@ -37,7 +37,7 @@ class HistogramChart extends Component {
 
         let self = this
 
-        this.chartMargin = { top: 10, right: 5, bottom: 40, left: 20 }
+        this.chartMargin = { top: 10, right: 5, bottom: 55, left: 45 }
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
@@ -244,6 +244,27 @@ class HistogramChart extends Component {
             g.selectAll(".tick line").attr("x", 100)
             g.selectAll(".tick text").attr("y", 15)
         }
+
+        // text label for the x axis
+        svg.append("text")
+            .attr("transform",
+                "translate(" + (this.chartWidth / 2) + " ," +
+                (this.chartHeight + this.chartMargin.top + 43) + ")")
+            .style("text-anchor", "middle")
+            .attr("class", "axislabel x")
+            .text("Mean Square Error");
+
+
+        // text label for the y axis
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - this.chartMargin.left)
+            .attr("x", 0 - (this.chartHeight / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .attr("class", "axislabel y")
+            .text("Frequency");
+
         // 3. Call the x axis in a group tag
         svg.append("g")
             .attr("class", "x axis")

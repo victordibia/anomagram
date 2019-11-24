@@ -75,7 +75,7 @@ class LossChart extends Component {
         // console.log(data);
 
         // let self = this 
-        this.chartMargin = { top: 10, right: 10, bottom: 40, left: 30 }
+        this.chartMargin = { top: 10, right: 10, bottom: 57, left: 50 }
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
@@ -138,6 +138,7 @@ class LossChart extends Component {
 
 
 
+
         const svg = d3.select("div.losschart").append("svg")
             .attr("width", this.chartWidth + this.chartMargin.left + this.chartMargin.right)
             .attr("height", this.chartHeight + this.chartMargin.top + this.chartMargin.bottom)
@@ -145,6 +146,26 @@ class LossChart extends Component {
             .attr("transform", "translate(" + this.chartMargin.left + "," + this.chartMargin.top + ")");
 
         this.drawLines(svg, data)
+
+        // text label for the x axis
+        svg.append("text")
+            .attr("transform",
+                "translate(" + (this.chartWidth / 2) + " ," +
+                (this.chartHeight + this.chartMargin.top + 43) + ")")
+            .style("text-anchor", "middle")
+            .attr("class", "axislabel x")
+            .text("Training Steps");
+
+
+        // text label for the y axis
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - this.chartMargin.left)
+            .attr("x", 0 - (this.chartHeight / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .attr("class", "axislabel y")
+            .text("Loss");
 
         function customYAxis(g) {
             g.call(self.yAxis);

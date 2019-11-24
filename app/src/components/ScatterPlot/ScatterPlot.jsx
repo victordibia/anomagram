@@ -89,7 +89,7 @@ class ScatterPlot extends Component {
 
         // let self = this
 
-        this.chartMargin = { top: 10, right: 5, bottom: 40, left: 20 }
+        this.chartMargin = { top: 10, right: 5, bottom: 55, left: 45 }
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
@@ -138,6 +138,27 @@ class ScatterPlot extends Component {
                     return "anormcolor"
                 }
             })
+
+
+        // text label for the x axis
+        svg.append("text")
+            .attr("transform",
+                "translate(" + (this.chartWidth / 2) + " ," +
+                (this.chartHeight + this.chartMargin.top + 43) + ")")
+            .style("text-anchor", "middle")
+            .attr("class", "axislabel x")
+            .text("Dimension 1");
+
+
+        // text label for the y axis
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - this.chartMargin.left)
+            .attr("x", 0 - (this.chartHeight / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .attr("class", "axislabel y")
+            .text("Dimension 0");
 
 
         function customYAxis(g) {

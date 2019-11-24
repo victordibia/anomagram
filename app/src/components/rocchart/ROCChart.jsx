@@ -93,7 +93,7 @@ class ROCChart extends Component {
         // console.log(data);
 
         // let self = this 
-        this.chartMargin = { top: 10, right: 10, bottom: 40, left: 30 }
+        this.chartMargin = { top: 10, right: 10, bottom: 55, left: 55 }
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
@@ -187,9 +187,6 @@ class ROCChart extends Component {
             .y0(this.chartHeight)
             .y1(function (d) { return self.yScale(d.tpr); });
 
-        // this.rocCircle = d3.geoCircle()
-        this.rocCircle = d3.geoCircle()
-            .x
 
 
 
@@ -220,6 +217,28 @@ class ROCChart extends Component {
             .attr("transform", "translate(0," + (self.chartHeight + 10) + ")")
             .call(customXAxis);
         // Create an axis component with d3.axisBottom
+
+        // text label for the x axis
+        svg.append("text")
+            .attr("transform",
+                "translate(" + (this.chartWidth / 2) + " ," +
+                (this.chartHeight + this.chartMargin.top + 43) + ")")
+            .style("text-anchor", "middle")
+            .attr("class", "axislabel x")
+            .text("False Positive Rate");
+
+
+        // text label for the y axis
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - this.chartMargin.left)
+            .attr("x", 0 - (this.chartHeight / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .attr("class", "axislabel y")
+            .text("True Positive Rate");
+
+
 
         // 4. Call the y axis in a group tag
         svg.append("g")

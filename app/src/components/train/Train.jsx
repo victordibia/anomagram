@@ -81,11 +81,11 @@ class Train extends Component {
 
 
             showModelComposer: true,
-            showRocChart: false,
-            showLossChart: false,
-            showBottleneckScatterPlot: false,
+            showRocChart: true,
+            showLossChart: true,
+            showBottleneckScatterPlot: true,
             showMseHistogram: true,
-
+            showModelEvaluationMetrics: true,
 
 
             validateOnStep: true,
@@ -98,6 +98,7 @@ class Train extends Component {
             { label: "Error Histogram", action: "histogram", checked: this.state.showMseHistogram },
             { label: "ROC Curve", action: "roc", checked: this.state.showRocChart },
             { label: "Bottleneck Scatterplot", action: "bottleneck", checked: this.state.showBottleneckScatterPlot },
+            { label: "Evaluation Metrics", action: "evaluation", checked: this.state.showModelEvaluationMetrics },
 
         ]
 
@@ -485,6 +486,11 @@ class Train extends Component {
             case "roc":
                 this.setState({ showRocChart: e.target.checked })
                 break
+            case "evaluation":
+                this.setState({ showModelEvaluationMetrics: e.target.checked })
+                break
+            default:
+                break
         }
 
     }
@@ -496,7 +502,7 @@ class Train extends Component {
 
         let showCheckBoxes = this.showOptions.map((data) => {
             return (
-                <div key={data.label + "checkbox"} className="mediumdesc">
+                <div key={data.label + "checkbox"} className="mediumdesc iblock mr10">
                     <Checkbox
                         defaultChecked={data.checked}
                         wrapperClassName={"mediumdesc"}
@@ -513,16 +519,33 @@ class Train extends Component {
         return (
             <div>
 
+                <div className="">
+                    <div className="flex">
+                        <div className="flex5">
+                            <div className="mynotif  lh10  lightbluehightlight maxh16  mr10">
+                                <div className="boldtext"> Model Architecture</div>
+                                <div>
+                                    Use the model composer below to modify the parameters of the model
+                                    (number of layers, number of units in each layer)
+                                    </div>
+                            </div>
+                        </div>
+                        <div className="flex5 greyhighlight p10 rad4 mb5 ">
+                            <div className="boldtext pb5 iblock mr10"> Advanced Options </div>
+                            {showCheckBoxes}
+                        </div>
+                    </div>
+                </div>
                 {/* start of top bar */}
                 <div className="topbar flex">
-                    <div className="flexfull modelconfigbar mr10">
-                        <div className="flex">
+                    <div className="flexfull modelconfigbar ">
+                        <div className="flex displaynone">
                             <div className="flex35 mr10">
                                 <div className="mynotif  lh10  lightbluehightlight maxh16  mb10">
                                     <div className="boldtext"> Training Parameters</div>
                                     <div>
-                                        Use the model training parameters panel below to modify the parameters of the model
-                                        (training steps, batchsize, learning rate, dataset size etc).
+                                        Set model parameters
+                                         (training steps, batchsize, learning rate, dataset size etc).
                                     </div>
                                 </div>
 
@@ -675,14 +698,9 @@ class Train extends Component {
                         <div ref="glowbar" className={"glowbar w0 "} style={{ width: Math.floor((this.currentSteps / this.state.numSteps) * 100) + "%" }}></div>
 
                     </div>
-
-                    <div className="greyhighlight p10 rad4 ">
-                        <div className="boldtext pb5"> Advanced Options </div>
-                        <div className="mr10 mt5">
-                            {showCheckBoxes}
-                        </div>
-                    </div>
                 </div>
+
+
 
 
                 {/* end of top bar */}
@@ -695,7 +713,7 @@ class Train extends Component {
                 {/* // Model Composer  */}
                 <div className="flex mt10 mb10 h100">
                     {this.state.showModelComposer &&
-                        <div className="flexfull mr10 ">
+                        <div className="flex7 mr10 ">
                             <ComposeModel
                                 hiddenDims={this.state.hiddenDim}
                                 latentDim={[this.state.latentDim]}
@@ -704,9 +722,9 @@ class Train extends Component {
                             />
                         </div>}
 
-                    {this.state.bestMetric &&
+                    {(this.state.bestMetric && this.state.showModelEvaluationMetrics) &&
 
-                        <div className={"iblock  flex3 perfmetrics " + (this.state.isTraining ? " disabled " : " ")}>
+                        < div className={"iblock  flex3 perfmetrics " + (this.state.isTraining ? " disabled " : " ")}>
                             <div className="boldtext pb10 pt10 ">
                                 Model Evaluation Metrics
                             </div>
@@ -762,7 +780,8 @@ class Train extends Component {
 
                 </div>
 
-                {true &&
+                {
+                    true &&
                     <div>
 
 
@@ -841,7 +860,7 @@ class Train extends Component {
                 <br />
                 <br />
 
-            </div>
+            </div >
         );
     }
 }

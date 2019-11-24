@@ -13,7 +13,7 @@ class ComposeModel extends Component {
             hiddenDims: this.props.hiddenDims,
             latentDim: this.props.latentDim,
             maxLayers: 10,
-            minLayers: 2,
+            minLayers: 1,
             maxUnits: 12,
             minUnits: 2,
             defaultLayerDim: 3,
