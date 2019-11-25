@@ -520,9 +520,9 @@ class Train extends Component {
             <div>
 
                 <div className="">
-                    <div className="flex">
-                        <div className="flex5">
-                            <div className="mynotif  lh10  lightbluehightlight maxh16  mr10">
+                    <div className="flex h100">
+                        <div className="flex5  h100">
+                            <div className="mynotif   h100 lh10  lightbluehightlight maxh16  mr10">
                                 <div className="boldtext"> Model Architecture</div>
                                 <div>
                                     Use the model composer below to modify the parameters of the model
