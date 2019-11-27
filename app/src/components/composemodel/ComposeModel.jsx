@@ -147,6 +147,12 @@ class ComposeModel extends Component {
         this.lineHolder = []
     }
 
+    redrawAllLines() {
+        this.lineHolder.forEach(function (each) {
+            each.line.position();
+        })
+    }
+
 
     redrawLine(lineId) {
         this.lineHolder.forEach(function (each) {
@@ -176,6 +182,7 @@ class ComposeModel extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+
         // Handle addition of a new node/unit in a layer 
         for (const i in this.state.hiddenDims) {
             if (this.state.hiddenDims[i] !== prevState.hiddenDims[i]) {
@@ -214,6 +221,12 @@ class ComposeModel extends Component {
         }
 
         // console.log(this.lineHolder.length);
+
+        if (prevProps.adv !== this.props.adv) {
+            this.redrawAllLines();
+        }
+
+
 
 
 

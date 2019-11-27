@@ -33,11 +33,20 @@ class Train extends Component {
         this.learningRateOptions = [{ id: "opt1", text: "0.01", value: 0.01, type: "learningrate" }, { id: "opt2", text: "0.001", value: 0.001, type: "learningrate" }, { id: "opt3", text: "0.0001", value: 0.0001, type: "learningrate" }]
         this.trainingDataOptions = [{ id: "opt1", text: "500", value: 500, type: "traindatasize" }, { id: "opt2", text: "1000", value: 1000, type: "traindatasize" }, { id: "opt3", text: "2000", value: 2000, type: "traindatasize" }]
         this.testDataOptions = [{ id: "opt1", text: "100", value: 100, type: "testdatasize" }, { id: "opt2", text: "200", value: 200, type: "testdatasize" }, { id: "opt3", text: "500", value: 500, type: "testdatasize" }]
+        this.optimizerOptions = [
+            { id: "opt1", text: "Adam", value: "adam", type: "optimizer" },
+            { id: "opt3", text: "Adamax", value: "adamax", type: "optimizer" },
+            { id: "opt4", text: "Adadelta", value: "adadelta", type: "optimizer" },
+            { id: "opt5", text: "Rmsprop", value: "rmsprop", type: "optimizer" },
+            { id: "opt6", text: "Momentum", value: "momentum", type: "optimizer" },
+            { id: "opt7", text: "sgd", value: "sgd", type: "optimizer" },
+        ]
 
 
 
         this.selectedTrainDataOption = 0
         this.selectedTestDataOption = 2
+        this.selectedOptimizer = 0
 
         this.selectedRegularizer = 0
 
@@ -63,6 +72,7 @@ class Train extends Component {
             learningRate: this.learningRateOptions[0].value,
             regularizer: this.regularizerOptions[this.selectedRegularizer].value,
             adamBeta1: 0.5,
+            optimizer: this.optimizerOptions[this.selectedOptimizer].value,
             outputActivation: "sigmoid",
             batchSize: this.batchSizeOptions[3].value,
             numSteps: this.stepOptions[0].value,
@@ -82,23 +92,25 @@ class Train extends Component {
 
             showModelComposer: true,
             showModelEvaluationMetrics: true,
-            showRocChart: true,
-            showLossChart: true,
-            showBottleneckScatterPlot: true,
-            showMseHistogram: true,
+            showRocChart: false,
+            showLossChart: false,
+            showBottleneckScatterPlot: false,
+            showMseHistogram: false,
 
 
             validateOnStep: true,
-            auc: 0
+            auc: 0,
+
+
+            showAdvanced: true,
         }
 
         this.showOptions = [
             { label: "Model Composer", action: "composer", checked: this.state.showModelComposer },
-            { label: "Training Loss", action: "loss", checked: this.state.showLossChart },
+            { label: "Model Metrics", action: "evaluation", checked: this.state.showModelEvaluationMetrics }, { label: "Training Loss", action: "loss", checked: this.state.showLossChart },
             { label: "Error Histogram", action: "histogram", checked: this.state.showMseHistogram },
             { label: "ROC Curve", action: "roc", checked: this.state.showRocChart },
-            { label: "Bottleneck Scatterplot", action: "bottleneck", checked: this.state.showBottleneckScatterPlot },
-            { label: "Evaluation Metrics", action: "evaluation", checked: this.state.showModelEvaluationMetrics },
+            { label: "Bottleneck Plot", action: "bottleneck", checked: this.state.showBottleneckScatterPlot },
 
         ]
 
@@ -115,7 +127,8 @@ class Train extends Component {
         this.chartWidth = 350;
         this.chartHeight = 250;
 
-        this.warmupSampleSize = 1
+
+        this.momentum = 0.9
 
 
     }
@@ -126,7 +139,7 @@ class Train extends Component {
         this.generateDataTensors()
 
         setTimeout(() => {
-            this.createModel()
+            // this.createModel()
         }, 2000);
 
 
@@ -174,10 +187,36 @@ class Train extends Component {
     }
     createModel() {
 
+
+
         // dispose of existing model to release tensors from memory
         this.disposeModelTensors()
+
+
         //construct model
-        this.optimizer = tf.train.adam(this.state.learningRate, this.state.adamBeta1)
+        switch (this.state.optimizer) {
+            case "adam":
+                this.optimizer = tf.train.adam(this.state.learningRate, this.state.adamBeta1)
+                break
+            case "adamax":
+                this.optimizer = tf.train.adamax(this.state.learningRate, this.state.adamBeta1)
+                break
+            case "adadelta":
+                this.optimizer = tf.train.adadelta(this.state.learningRate)
+                break
+            case "rmsprop":
+                this.optimizer = tf.train.rmsprop(this.state.learningRate)
+                break
+            case "momentum":
+                this.optimizer = tf.train.momentum(this.state.learningRate, this.momentum)
+                break
+            case "sgd":
+                this.optimizer = tf.train.sgd(this.state.learningRate)
+                break
+        }
+
+        console.log(this.optimizer);
+
         let modelParams = {
             numFeatures: this.state.numFeatures,
             hiddenLayers: this.state.hiddenLayers,
@@ -450,6 +489,9 @@ class Train extends Component {
             case "testdatasize":
                 this.setState({ testDataSize: e.selectedItem.value })
                 break
+            case "optimizer":
+                this.setState({ optimizer: e.selectedItem.value })
+                break
             case "regularizer":
                 this.setState({ regularizer: e.selectedItem.value })
                 this.setState({ modelStale: true })
@@ -499,6 +541,10 @@ class Train extends Component {
 
     }
 
+    toggleAdvancedDrawer(e) {
+        this.setState({ showAdvanced: !(this.state.showAdvanced) })
+    }
+
     render() {
         // console.log(this.state.minThreshold, this.state.maxThreshold);
 
@@ -520,189 +566,219 @@ class Train extends Component {
             )
         })
 
+        let trainResetButtons = (
+            <div>
+                <div className="  flex flexjustifycenter pt10 ">
+                    <div className=" iblock ">
+                        <div
+                            onClick={this.trainButtonClick.bind(this)}
+                            className={("iblock circlelarge circlebutton mr5 flexcolumn flex flexjustifycenter clickable ") + (this.state.modelStale ? " disabled" : "")}>
+                            {!this.state.isTraining && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
+                            {this.state.isTraining && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
+                        </div>
+                        <div className="smalldesc textaligncenter pt5 pb5 "> Train &nbsp; </div>
+                    </div>
+                    <div className="iblock h100 ">
+                        <div className="  flex flexjustifycenter h100  ">
+                            <div className="">
+                                <div
+                                    onClick={this.resetModelButtonClick.bind(this)}
+                                    className={" circlesmall circlebutton mr5 flex flexjustifycenter clickable" + (this.state.isTraining ? "  disabled" : "")}>
+                                    <Reset16 style={{ fill: "white" }} className="unselectable unclickable" />
+
+                                </div>
+                                <div className=" displayblock smalldesc textaligncenter pt5 "> Reset &nbsp; </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div className="flex  flexjustifycenter mr10 ">
+                        <div ref="activeloaderdiv" >
+                            <Loading
+                                className=" "
+                                active={this.state.isTraining ? true : false}
+                                small={true}
+                                withOverlay={false}
+                            > </Loading>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        )
+        let configBar = (
+            <div className="w100  unselectable greyhighlight  flex flexjustifyleft flexjustifycenter ">
+                <div className=" p10   iblock">
+                    <div className="iblock mr10">
+                        <div className="mediumdesc pb7 pt5"> Steps {this.state.numSteps} - {this.state.CumulativeSteps} </div>
+                        <Dropdown
+                            id="epochsdropdown"
+                            label="Steps"
+                            items={this.stepOptions}
+                            initialSelectedItem={this.stepOptions[0]}
+                            itemToString={item => (item ? item.text : "")}
+                            onChange={this.updateModelParam.bind(this)}
+                        />
+                    </div>
+
+                    <div className="iblock mr10">
+                        <div className="mediumdesc pb7 pt5"> Batchsize {this.state.batchSize} </div>
+                        <Dropdown
+                            id="batchsizedropdown"
+                            label="Batch Size"
+                            items={this.batchSizeOptions}
+                            initialSelectedItem={this.batchSizeOptions[3]}
+                            itemToString={item => (item ? item.text : "")}
+                            onChange={this.updateModelParam.bind(this)}
+                        />
+                    </div>
+
+                    <div className="iblock mr10">
+                        <div className="mediumdesc pb7 pt5"> Learning Rate {this.state.learningRate} </div>
+                        <Dropdown
+                            id="learningratedropdown"
+                            label="Learning Rate"
+                            items={this.learningRateOptions}
+                            itemToString={item => (item ? item.text : "")}
+                            initialSelectedItem={this.learningRateOptions[0]}
+                            onChange={this.updateModelParam.bind(this)}
+                        />
+                    </div>
+
+                    <div className="iblock mr10">
+                        <div className="mediumdesc pb7 pt5"> Regularlizer {this.state.regularizer} </div>
+                        <Dropdown
+                            id="regularizeerdropdown"
+                            label="Regularizer"
+                            items={this.regularizerOptions}
+                            itemToString={item => (item ? item.text : "")}
+                            initialSelectedItem={this.regularizerOptions[this.selectedRegularizer]}
+                            onChange={this.updateModelParam.bind(this)}
+                        />
+                    </div>
+
+                    <div className="iblock mr10">
+                        <div className="mediumdesc pb7 pt5">Train Size {this.state.trainDataShape[0]} </div>
+                        <Dropdown
+                            id="trainingdatadropdown"
+                            label="Training Data"
+                            items={this.trainingDataOptions}
+                            initialSelectedItem={this.trainingDataOptions[this.selectedTrainDataOption]}
+                            itemToString={item => (item ? item.text : "")}
+                            onChange={this.updateModelParam.bind(this)}
+                        />
+                    </div>
+
+                    <div className="iblock mr10">
+                        <div className="mediumdesc pb7 pt5">Test Size {this.state.testDataShape[0]} </div>
+                        <Dropdown
+                            id="testdatadropdown"
+                            label="Test Data"
+                            items={this.testDataOptions}
+                            itemToString={item => (item ? item.text : "")}
+                            initialSelectedItem={this.testDataOptions[this.selectedTestDataOption]}
+                            onChange={this.updateModelParam.bind(this)}
+                        />
+                    </div>
+
+                    <div className="iblock mr10">
+                        <div className="mediumdesc pb7 pt5"> Optimizer {this.state.optimizer} </div>
+                        <Dropdown
+                            id="optimizerdropdown"
+                            label="Optimizer"
+                            items={this.optimizerOptions}
+                            itemToString={item => (item ? item.text : "")}
+                            initialSelectedItem={this.optimizerOptions[this.selectedOptimizer]}
+                            onChange={this.updateModelParam.bind(this)}
+                        />
+                    </div>
+
+                </div>
+            </div>
+        )
+
         return (
             <div>
 
+                {/* show advanced options pannel */}
+                <div style={{ zIndex: 100 }} onClick={this.toggleAdvancedDrawer.bind(this)} className="unselectable mt10 p10 clickable  flex greymoreinfo">
+                    <div className="iblock flexfull minwidth485">
+                        <strong>
+                            {!this.state.showAdvanced && <span>&#x25BC;  </span>} {this.state.showAdvanced && <span>&#x25B2;  </span>}
+                        </strong>
+                        Select model configuration and visualization charts.
+                    </div>
+                    <div className="iblock   ">
+                        <div className="iblock mr5"> <span className="boldtext"> {} </span></div>
+                        <div className="iblock">
+                            <div className="smalldesc"> {this.state.hiddenDim.length} Layer Autoencoder </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                {(this.state.showAdvanced) &&
+                    <div className=" modelconfigdiv p10 mb10">
+
+                        <div className="flex">
+                            <div>
+                                {trainResetButtons}
+                            </div>
+
+                            <div className="flexfull  ">
+                                {configBar}
+                            </div>
+                        </div>
+
+                        <div className="p10 border">
+                            bingo
+                            <div className="boldtext pb5 iblock mr10"> Advanced Options </div>
+                            {showCheckBoxes}
+                        </div>
+
+                    </div>
+                }
+
                 <div className="">
                     <div className="flex h100">
-                        <div className="flex5  h100">
-                            <div className="mynotif   h100 lh10  lightbluehightlight maxh16  mr10">
+                        <div className="flexfull mr10 h100">
+                            <div className="mynotif displaynone   h100 lh10  lightbluehightlight maxh16  mr10">
                                 <div className="boldtext"> Model Architecture</div>
                                 <div>
                                     Use the model composer below to modify the parameters of the model
                                     (number of layers, number of units in each layer)
                                     </div>
                             </div>
+
+                            <div className="topbar flex ">
+                                <div className="flexfull modelconfigbar ">
+
+                                    <div className="modelconfigbar flex  ">
+                                        <div className=" mr10 greyhighlight rad4 p10 iblock flex flexcolumn">
+                                            <div className="flexfull textaligncenter">{this.state.CumulativeSteps}</div>
+                                            <div> Total train steps</div>
+                                        </div>
+                                        <div className="flex flexfull greyhighlight   pl10 rad3  ">
+
+
+                                        </div>
+                                    </div>
+                                    <div ref="glowbar" className={"glowbar w0 "} style={{ width: Math.floor((this.currentSteps / this.state.numSteps) * 100) + "%" }}></div>
+
+                                </div>
+                            </div>
+
+
                         </div>
-                        <div className="flex5 greyhighlight p10 rad4 mb5 ">
-                            <div className="boldtext pb5 iblock mr10"> Advanced Options </div>
-                            {showCheckBoxes}
+                        <div className=" greyhighlight p10  mb5 ">
+
                         </div>
                     </div>
                 </div>
                 {/* start of top bar */}
-                <div className="topbar flex">
-                    <div className="flexfull modelconfigbar ">
-                        <div className="flex displaynone">
-                            <div className="flex35 mr10">
-                                <div className="mynotif  lh10  lightbluehightlight maxh16  mb10">
-                                    <div className="boldtext"> Training Parameters</div>
-                                    <div>
-                                        Set model parameters
-                                         (training steps, batchsize, learning rate, dataset size etc).
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div className="flex35 mr10">
-                                <div className="mynotif  lh10  lightbluehightlight maxh16  mb10">
-                                    <div className="boldtext"> Model Architecture</div>
-                                    <div>
-                                        Use the model composer below to modify the parameters of the model
-                                        (number of layers, number of units in each layer)
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div className="flex3 ">
-                                <div className="mynotif  lh10  lightbluehightlight maxh16  mb10">
-                                    <div className="boldtext"> Train and Evaluate </div>
-                                    <div>
-                                        Use the traiining loss chart, histogram of erorrs chart, receiver
-                                         chart etc to evaluate model quality!.
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className="modelconfigbar flex  ">
-                            <div className=" mr10 greyhighlight rad4 p10 iblock flex flexcolumn">
-                                <div className="flexfull textaligncenter">{this.state.CumulativeSteps}</div>
-                                <div> Total train steps</div>
-                            </div>
-                            <div className="flex flexfull greyhighlight   pl10 rad3  ">
-                                <div className="  flex flexjustifycenter pt10 ">
-                                    <div className=" iblock ">
-                                        <div
-                                            onClick={this.trainButtonClick.bind(this)}
-                                            className={("iblock circlelarge circlebutton mr5 flexcolumn flex flexjustifycenter clickable ") + (this.state.modelStale ? " disabled" : "")}>
-                                            {!this.state.isTraining && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
-                                            {this.state.isTraining && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
-                                        </div>
-                                        <div className="smalldesc textaligncenter pt5 pb5 "> Train &nbsp; </div>
-                                    </div>
-                                    <div className="iblock h100 ">
-                                        <div className="  flex flexjustifycenter h100  ">
-                                            <div className="">
-                                                <div
-                                                    onClick={this.resetModelButtonClick.bind(this)}
-                                                    className={" circlesmall circlebutton mr5 flex flexjustifycenter clickable" + (this.state.isTraining ? "  disabled" : "")}>
-                                                    <Reset16 style={{ fill: "white" }} className="unselectable unclickable" />
-
-                                                </div>
-                                                <div className=" displayblock smalldesc textaligncenter pt5 "> Reset &nbsp; </div>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-
-
-
-                                <div className="flex  flexjustifycenter ">
-                                    <div ref="activeloaderdiv" >
-                                        <Loading
-                                            className=" "
-                                            active={this.state.isTraining ? true : false}
-                                            small={true}
-                                            withOverlay={false}
-                                        > </Loading>
-                                    </div>
-
-                                </div>
-                                <div className="flexfull unselectable  flex flexjustifyleft flexjustifycenter ">
-                                    <div className=" p10   iblock">
-                                        <div className="iblock mr10">
-                                            <div className="mediumdesc pb7 pt5"> Steps {this.state.numSteps} - {this.state.CumulativeSteps} </div>
-                                            <Dropdown
-                                                id="epochsdropdown"
-                                                label="Steps"
-                                                items={this.stepOptions}
-                                                initialSelectedItem={this.stepOptions[0]}
-                                                itemToString={item => (item ? item.text : "")}
-                                                onChange={this.updateModelParam.bind(this)}
-                                            />
-                                        </div>
-
-                                        <div className="iblock mr10">
-                                            <div className="mediumdesc pb7 pt5"> Batchsize {this.state.batchSize} </div>
-                                            <Dropdown
-                                                id="batchsizedropdown"
-                                                label="Batch Size"
-                                                items={this.batchSizeOptions}
-                                                initialSelectedItem={this.batchSizeOptions[3]}
-                                                itemToString={item => (item ? item.text : "")}
-                                                onChange={this.updateModelParam.bind(this)}
-                                            />
-                                        </div>
-
-                                        <div className="iblock mr10">
-                                            <div className="mediumdesc pb7 pt5"> Learning Rate {this.state.learningRate} </div>
-                                            <Dropdown
-                                                id="learningratedropdown"
-                                                label="Learning Rate"
-                                                items={this.learningRateOptions}
-                                                itemToString={item => (item ? item.text : "")}
-                                                initialSelectedItem={this.learningRateOptions[0]}
-                                                onChange={this.updateModelParam.bind(this)}
-                                            />
-                                        </div>
-
-                                        <div className="iblock mr10">
-                                            <div className="mediumdesc pb7 pt5"> Regularlizer {this.state.regularizer} </div>
-                                            <Dropdown
-                                                id="regularizeerdropdown"
-                                                label="Regularizer"
-                                                items={this.regularizerOptions}
-                                                itemToString={item => (item ? item.text : "")}
-                                                initialSelectedItem={this.regularizerOptions[this.selectedRegularizer]}
-                                                onChange={this.updateModelParam.bind(this)}
-                                            />
-                                        </div>
-
-                                        <div className="iblock mr10">
-                                            <div className="mediumdesc pb7 pt5">Train Size {this.state.trainDataShape[0]} </div>
-                                            <Dropdown
-                                                id="trainingdatadropdown"
-                                                label="Training Data"
-                                                items={this.trainingDataOptions}
-                                                initialSelectedItem={this.trainingDataOptions[this.selectedTrainDataOption]}
-                                                itemToString={item => (item ? item.text : "")}
-                                                onChange={this.updateModelParam.bind(this)}
-                                            />
-                                        </div>
-
-                                        <div className="iblock mr10">
-                                            <div className="mediumdesc pb7 pt5">Test Size {this.state.testDataShape[0]} </div>
-                                            <Dropdown
-                                                id="testdatadropdown"
-                                                label="Test Data"
-                                                items={this.testDataOptions}
-                                                itemToString={item => (item ? item.text : "")}
-                                                initialSelectedItem={this.testDataOptions[this.selectedTestDataOption]}
-                                                onChange={this.updateModelParam.bind(this)}
-                                            />
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div ref="glowbar" className={"glowbar w0 "} style={{ width: Math.floor((this.currentSteps / this.state.numSteps) * 100) + "%" }}></div>
-
-                    </div>
-                </div>
 
 
 
@@ -720,7 +796,7 @@ class Train extends Component {
                         <div className="flex7 mr10 ">
                             <div>
                                 <div className="charttitle mb5 ">
-                                    Model Composer [Autoencoder ]
+                                    Model Composer
                             </div>
                                 <div>
                                     <ComposeModel
@@ -728,6 +804,7 @@ class Train extends Component {
                                         latentDim={[this.state.latentDim]}
                                         isTraining={this.state.isTraining}
                                         updateModelDims={this.updateModelDims}
+                                        adv={this.state.showAdvanced}
                                     />
                                 </div>
                             </div>
