@@ -250,8 +250,8 @@ class ROCChart extends Component {
         // console.log(this.props.data.data[his.props.data.data].loss.toFixed(2));
 
         return (
-            <div className="positionrelative mainchartbox  ">
-                <div className="chartlegend p5 mediumdesc ">
+            <div className="positionrelative mainchartbox ">
+                <div className="chartlegend legendtopright p5 mediumdesc ">
                     <div className="mb3 ">
                         <div className="legendcolorbox mr5  themeblue iblock"></div>
                         <div ref="trainlabel" className="iblock boldtext mr5"> Area : {this.props.data.auc.toFixed(2)}  </div>
@@ -263,9 +263,9 @@ class ROCChart extends Component {
                         <div className="iblock "></div>
                     </div>
                 </div>
-                <div className="charttitle">  ROC Curve Chart [ AUC : {this.props.data.auc.toFixed(2)} ] </div>
 
-                <div className="ROCChart"> </div>
+
+                <div className="ROCChart chartsvg"> </div>
             </div>
 
         );

@@ -292,6 +292,7 @@ class Viz extends Component {
 
                     <div className="sectiontitle mt10 mb10"> Effect of Model Parameters </div>
                     <div className="flex">
+                        
                             <div className="flex3 mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                     <div className="pb5 boldtext"> Learning Rate </div>
@@ -322,6 +323,27 @@ class Viz extends Component {
 
                                 </div> 
                             </div> 
+                        </div>
+                        
+
+                    <div className="sectiontitle mt10 mb5"> Lottery Tickets: Winning Initializations </div>
+                    <div className="">
+                        <div className="flex">
+                            <div className="flex6 lh10 mb10 pr10">
+                                Ever heard of a weird thing with neural networks called a lottery ticket?
+                                    While the problem in this example is relatively too simple (140 features, not so complex patters)
+                                An observation of what happens each time the autoencoder is initialized can provide insights into the
+                                how luck some nerual network initializations can be.
+                                In essence, there are initializationsss that immeidately result in a high performance (good AUC) mpodel
+                                and require very littl     
+                                while others are just plain bad.
+                            </div>
+
+                            <div className="border rad4 p10 flex4" style={{ height:"200px"}}>
+                                ROC curve and some metrics
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 }

@@ -9,20 +9,36 @@
 
 .charttitle{
     font-size: 1em;
-    font-weight: bold;
-    margin: 5px 0px 20px 0px;
-
+    font-weight: bold; 
+    /* border: 1px solid grey; */
+    /* background:  #0263ff;  */
+    /* color: white; */
+    padding: 5px 5px 8px 0px;
+    border-bottom: 2px solid #0263ff;
 }
 
 
 
 .chartlegend{
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    /* border: 1px solid grey; */
-    background: rgba(238, 238, 238, 0.677);
+    position: absolute; 
+    border: 1px solid rgb(228, 223, 223);
+    background: rgba(248, 248, 248, 0.822);
     border-radius: 3px;
+    /* padding-bottom: 5px; */
+}
+.legendbottomright{
+    bottom:0px;
+    right:0px;
+}
+
+.legendtopleft{
+    top: 8px;
+    left: 0px;
+}
+
+.legendtopright{
+    top:8px;
+    right:0px;
 }
 
 .legendcolorbox{
@@ -40,9 +56,12 @@
 
 .mainchartbox{
     padding: 10px;
-    border: 1px solid grey;
+    /* border: 1px solid grey; */
     border-radius: 3px;
-    margin: 10px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+.chartsvg{
+    margin-top:0px;
 }
 
 
@@ -73,7 +92,7 @@
 }
 
 .metricvalue{
-    font-size: 2.5em;
+    font-size: 2.1em;
     min-width: 160px;
     /* border: 1px solid grey; */
 }

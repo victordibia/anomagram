@@ -281,12 +281,12 @@ class HistogramChart extends Component {
     render() {
         return (
             <div className="positionrelative mainchartbox ">
-                <div className="chartlegend p5 mediumdesc">
+                <div className="chartlegend legendtopleft p5 mediumdesc">
                     <div className="mb3"> <div className="legendcolorbox mr5  themeblue iblock"></div> Normal </div>
                     <div> <div className="legendcolorbox mr5 themeorange iblock"></div> Abnormal </div>
                 </div>
-                <div className="charttitle"> Histogram of Mean Square Error </div>
-                <div className="histogramchart "></div>
+
+                <div className="histogramchart chartsvg"></div>
             </div>
         );
     }

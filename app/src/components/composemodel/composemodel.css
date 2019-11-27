@@ -27,7 +27,7 @@
     display: inline-block;
     background: rgba(128, 128, 128, 0.463);
     padding: 4px 8px 4px 8px;
-    border-radius: 4px;
+    /* border-radius: 4px; */
 }
 .updatebutton:hover{
     background: rgba(128, 128, 128, 0.763);

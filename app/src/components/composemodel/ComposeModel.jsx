@@ -426,27 +426,27 @@ class ComposeModel extends Component {
                 </div>
                 {/* Encoder, bottleneck, Decoder  */}
                 <div className="flex">
-                    <div className="iotextdata unselectable mr10 p5 rad4 ">
+                    <div className="iotextdata unselectable mr10 p5  ">
                         Input Data
                     </div>
-                    <div id="mainencoderdiv" ref="encoderbox" className="encoder greyhighlight rad4 pl5 flex5 mr10 ">
+                    <div id="mainencoderdiv" ref="encoderbox" className="encoder greyhighlight  pl5 flex5 mr10 ">
                         <div className="layerbar flex  flexjustifycenter pb10 pt10">
                             {encLayers}
                         </div>
 
                     </div>
-                    <div ref="latentbox" className="bottlneck pr5 pl5 rad4  mr10 ">
+                    <div ref="latentbox" className="bottlneck pr5 pl5   mr10 ">
                         <div className="layerbar  h100  flex  flexjustifycenter  ">
                             {latentLayers}
                         </div>
                     </div>
-                    <div id="maindecoderdiv" ref="decoderbox" className="decoder greyhighlight rad4 pl5 flex5 ">
+                    <div id="maindecoderdiv" ref="decoderbox" className="decoder greyhighlight  pl5 flex5 ">
                         <div className="layerbar flex   flexjustifycenter  pb10 pt10">
                             {decLayers}
                         </div>
                     </div>
 
-                    <div className="iotextdata unselectable ml10 p5  rad4">
+                    <div className="iotextdata unselectable ml10 p5  ">
                         Output Data
                     </div>
 

@@ -37,7 +37,7 @@ class Train extends Component {
 
 
         this.selectedTrainDataOption = 0
-        this.selectedTestDataOption = 1
+        this.selectedTestDataOption = 2
 
         this.selectedRegularizer = 0
 
@@ -59,7 +59,7 @@ class Train extends Component {
             numFeatures: this.testData[0].data.length,
             hiddenLayers: 2,
             latentDim: 2,
-            hiddenDim: [12, 3],
+            hiddenDim: [8, 3],
             learningRate: this.learningRateOptions[0].value,
             regularizer: this.regularizerOptions[this.selectedRegularizer].value,
             adamBeta1: 0.5,
@@ -81,11 +81,11 @@ class Train extends Component {
 
 
             showModelComposer: true,
+            showModelEvaluationMetrics: true,
             showRocChart: true,
             showLossChart: true,
             showBottleneckScatterPlot: true,
             showMseHistogram: true,
-            showModelEvaluationMetrics: true,
 
 
             validateOnStep: true,
@@ -125,8 +125,10 @@ class Train extends Component {
 
         this.generateDataTensors()
 
+        setTimeout(() => {
+            this.createModel()
+        }, 2000);
 
-        this.createModel()
 
     }
 
@@ -461,10 +463,12 @@ class Train extends Component {
 
 
     updateThreshold(e) {
-        let threshVal = this.state.minThreshold + (e.value / 100) * (this.state.maxThreshold - this.state.minThreshold)
-        let bestMetric = computeAccuracyGivenThreshold(this.state.mseData, threshVal)
-        // console.log(e.value, threshVal); 
-        this.setState({ bestMetric: bestMetric })
+        if (this.state.mseData.length > 0) {
+            let threshVal = this.state.minThreshold + (e.value / 100) * (this.state.maxThreshold - this.state.minThreshold)
+            let bestMetric = computeAccuracyGivenThreshold(this.state.mseData, threshVal)
+            // console.log(e.value, this.state.mseData);
+            this.setState({ bestMetric: bestMetric })
+        }
 
     }
 
@@ -714,22 +718,30 @@ class Train extends Component {
                 <div className="flex mt10 mb10 h100">
                     {this.state.showModelComposer &&
                         <div className="flex7 mr10 ">
-                            <ComposeModel
-                                hiddenDims={this.state.hiddenDim}
-                                latentDim={[this.state.latentDim]}
-                                isTraining={this.state.isTraining}
-                                updateModelDims={this.updateModelDims}
-                            />
+                            <div>
+                                <div className="charttitle mb5 ">
+                                    Model Composer [Autoencoder ]
+                            </div>
+                                <div>
+                                    <ComposeModel
+                                        hiddenDims={this.state.hiddenDim}
+                                        latentDim={[this.state.latentDim]}
+                                        isTraining={this.state.isTraining}
+                                        updateModelDims={this.updateModelDims}
+                                    />
+                                </div>
+                            </div>
                         </div>}
 
                     {(this.state.bestMetric && this.state.showModelEvaluationMetrics) &&
 
                         < div className={"iblock  flex3 perfmetrics " + (this.state.isTraining ? " disabled " : " ")}>
-                            <div className="boldtext pb10 pt10 ">
+                            <div className="charttitle mb5 ">
                                 Model Evaluation Metrics
                             </div>
-                            <div className="mb10 greyhighlight rad4 p10">
+                            <div className="mb5 greyhighlight p10">
                                 <Slider
+                                    className="w100 border"
                                     min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
                                     max={100}//{(this.state.maxThreshold.toFixed(4) * 1)}
                                     step={2}
@@ -744,33 +756,33 @@ class Train extends Component {
                                 />
                             </div>
                             <div className="flex">
-                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.acc * 100)) }} className="metricguage mb10 p5 greyhighlight rad4 textaligncenter mr10 flex5" >
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.acc * 100)) }} className="metricguage mb5 p5 greyhighlight  textaligncenter mr5 flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
                                     <div className="metricdesc mediumdesc p5"> Best Accuracy </div>
                                 </div>
-                                <div style={{ borderLeftColor: percentToRGB((this.state.auc * 100)) }} className="metricguage mb10 p5 greyhighlight rad4 textaligncenter flex5" >
+                                <div style={{ borderLeftColor: percentToRGB((this.state.auc * 100)) }} className="metricguage mb5 p5 greyhighlight  textaligncenter flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.auc).toFixed(2)} </div>
                                     <div className="metricdesc mediumdesc p5"> AUC </div>
                                 </div>
                             </div>
-                            <div className="mb10 flex">
+                            <div className="mb5 flex">
 
-                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fpr * 100)) }} className="metricguage flex5 mr10 p10 greyhighlight rad4 textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fpr * 100)) }} className="metricguage flex5 mr5 p10 greyhighlight  textaligncenter">
                                     <div className="metricvalue textaligncenter"> {(this.state.bestMetric.fpr * 100).toFixed(2)}  % </div>
                                     <div className="metricdesc mediumdesc p5"> False Positive Rate </div>
                                 </div>
-                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fnr * 100)) }} className="metricguage flex5  p10 greyhighlight rad4 textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fnr * 100)) }} className="metricguage flex5  p10 greyhighlight  textaligncenter">
                                     <div className="metricvalue"> {(this.state.bestMetric.fnr * 100).toFixed(2)} % </div>
                                     <div className="metricdesc displayblock mediumdesc p5"> False Negative Rate </div>
                                 </div>
 
                             </div>
                             <div className="flex">
-                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tpr * 100)) }} className="metricguage flex5 p10 mr10 greyhighlight rad4 textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tpr * 100)) }} className="metricguage flex5 p10 mr5 greyhighlight  textaligncenter">
                                     <div className="metricvalue"> {(this.state.bestMetric.tpr * 100).toFixed(2)} % </div>
                                     <div className="metricdesc mr10 mediumdesc p5"> True Positive Rate </div>
                                 </div>
-                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tnr * 100)) }} className="metricguage flex5 p10 greyhighlight rad4 textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tnr * 100)) }} className="metricguage flex5 p10 greyhighlight  textaligncenter">
                                     <div className="metricvalue"> {(this.state.bestMetric.tnr * 100).toFixed(2)} % </div>
                                     <div className="metricdesc mediumdesc p5"> True Negative Rate </div>
                                 </div>
@@ -791,15 +803,25 @@ class Train extends Component {
                                     <div className="notrainingdata">  No training loss data yet </div>
                                 }
                                 {this.state.trainMetrics.length > 0 &&
-                                    <LossChart
-                                        data={{
-                                            data: this.state.trainMetrics,
-                                            chartWidth: this.chartWidth,
-                                            chartHeight: this.chartHeight,
-                                            epoch: this.state.CumulativeSteps
-                                        }}
 
-                                    ></LossChart>
+                                    <div>
+                                        <div className="charttitle ">
+                                            Train Loss
+                                        </div>
+
+                                        <div>
+                                            <LossChart
+                                                data={{
+                                                    data: this.state.trainMetrics,
+                                                    chartWidth: this.chartWidth,
+                                                    chartHeight: this.chartHeight,
+                                                    epoch: this.state.CumulativeSteps
+                                                }}
+
+                                            ></LossChart>
+                                        </div>
+                                    </div>
+
                                 }
 
                             </div>
@@ -807,48 +829,74 @@ class Train extends Component {
 
                         {this.state.showRocChart && <div className="iblock p10">
                             {this.state.rocData.length > 0 &&
-                                <ROCChart
-                                    data={{
-                                        chartWidth: 350,
-                                        chartHeight: 250,
-                                        data: this.state.rocData,
-                                        isTraining: this.state.isTraining,
-                                        epoch: this.state.CumulativeSteps,
-                                        auc: this.state.auc
+                                <div>
+                                    <div className="charttitle ">
+                                        ROC Curve Chart [ AUC : {this.state.auc.toFixed(2)} ]
+                                    </div>
 
-                                    }}
+                                    <div>
+                                        <ROCChart
+                                            data={{
+                                                chartWidth: 350,
+                                                chartHeight: 250,
+                                                data: this.state.rocData,
+                                                isTraining: this.state.isTraining,
+                                                epoch: this.state.CumulativeSteps,
+                                                auc: this.state.auc
 
-                                ></ROCChart>}
+                                            }}
+
+                                        ></ROCChart>
+                                    </div>
+                                </div>
+                            }
                         </div>}
 
 
 
                         {this.state.showMseHistogram && <div className="iblock mr10 ">
                             {this.state.mseData.length > 0 &&
-                                <HistogramChart
-                                    data={{
-                                        data: this.state.mseData,
-                                        chartWidth: this.chartWidth,
-                                        chartHeight: this.chartHeight,
-                                        epoch: this.state.CumulativeSteps,
-                                        threshold: this.state.bestMetric.threshold
-                                    }}
-                                ></HistogramChart>
+
+                                <div>
+                                    <div className="charttitle"> Histogram of Mean Square Error </  div>
+
+                                    <div>
+                                        <HistogramChart
+                                            data={{
+                                                data: this.state.mseData,
+                                                chartWidth: this.chartWidth,
+                                                chartHeight: this.chartHeight,
+                                                epoch: this.state.CumulativeSteps,
+                                                threshold: this.state.bestMetric.threshold
+                                            }}
+                                        ></HistogramChart>
+                                    </div>
+                                </div>
+
+
                             }
                         </div>}
 
 
                         {this.state.showBottleneckScatterPlot && <div className="iblock mr10  ">
                             {this.state.encodedData.length > 0 &&
-                                <ScatterPlot
-                                    data={{
-                                        data: this.state.encodedData,
-                                        chartWidth: this.chartWidth,
-                                        chartHeight: this.chartHeight,
-                                        epoch: this.state.CumulativeSteps
-                                    }}
 
-                                ></ScatterPlot>
+                                <div>
+                                    <div className="charttitle"> Bottleneck Scatterplot </  div>
+
+                                    <div>
+                                        <ScatterPlot
+                                            data={{
+                                                data: this.state.encodedData,
+                                                chartWidth: this.chartWidth,
+                                                chartHeight: this.chartHeight,
+                                                epoch: this.state.CumulativeSteps
+                                            }}
+
+                                        ></ScatterPlot>
+                                    </div>
+                                </div>
+
                             }
                         </div>}
 
