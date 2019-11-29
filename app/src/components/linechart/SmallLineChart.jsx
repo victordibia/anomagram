@@ -14,11 +14,14 @@ class SmallLineChart extends Component {
         this.miniChartWidth = this.props.data.chartWidth
         this.miniChartHeight = this.props.data.chartHeight
 
+
+
+
     }
 
     componentDidMount() {
         // console.log("Line component mounted")
-        let canvas = this.refs.canvas
+        let canvas = this.refs.smalllinecanvas
         canvas.width = this.miniChartWidth
         canvas.height = this.miniChartHeight;
         this.drawGraph()
@@ -40,6 +43,8 @@ class SmallLineChart extends Component {
 
         let data = this.state.chart.data.data
         var n = data.length;
+        // console.log(data, n);
+
 
         this.xScale = d3.scaleLinear()
             .domain([0, n - 1]) // input
@@ -53,7 +58,7 @@ class SmallLineChart extends Component {
         // console.log(data);
 
 
-        let canvas = this.refs.canvas,
+        let canvas = this.refs.smalllinecanvas,
             context = canvas.getContext('2d')
 
 
@@ -104,7 +109,7 @@ class SmallLineChart extends Component {
 
         return (
             <div className="iblock mt2">
-                <canvas ref="canvas" id="canvas"></canvas>
+                <canvas ref="smalllinecanvas" id="smalllinecanvas"></canvas>
             </div>
         )
     }

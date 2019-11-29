@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Loading, Dropdown, Slider, Checkbox } from "carbon-components-react"
+import { Loading, Dropdown, Slider, Checkbox, Tooltip } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
 import { computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions"
@@ -23,6 +23,7 @@ class Train extends Component {
         // Load sameple data
         this.testData = require("../../data/ecg/test.json")
         this.trainData = require("../../data/ecg/train.json")
+        // this.dummyMSe = require("../../data/dummy/mse.json")
 
         // Model update method passed to model composer component
         this.updateModelDims = this.updateModelDims.bind(this)
@@ -31,6 +32,11 @@ class Train extends Component {
         this.regularizerOptions = [{ id: "opt1", text: "None", value: "none", type: "regularizer" }, { id: "opt1", text: "l1", value: "l1", type: "regularizer" }, { id: "opt2", text: "l2", value: "l2", type: "regularizer" }, { id: "opt2", text: "l1l2", value: "l1l2", type: "regularizer" }]
         this.batchSizeOptions = [{ id: "opt1", text: "64", value: 64, type: "batchsize" }, { id: "opt2", text: "128", value: 128, type: "batchsize" }, { id: "opt3", text: "256", value: 256, type: "batchsize" }, { id: "opt3", text: "512", value: 512, type: "batchsize" }, { id: "opt3", text: "1024", value: 1024, type: "batchsize" }]
         this.learningRateOptions = [{ id: "opt1", text: "0.01", value: 0.01, type: "learningrate" }, { id: "opt2", text: "0.001", value: 0.001, type: "learningrate" }, { id: "opt3", text: "0.0001", value: 0.0001, type: "learningrate" }]
+        // this.regularizationRateOptions = [ 
+        //     { id: "opt3", text: "0.01", value: 0.01, type: "regularizationrate" },
+        //     { id: "opt1", text: "0.001", value: 0.001, type: "regularizationrate" },
+        //     { id: "opt2", text: "0.0001", value: 0.0001, type: "regularizationrate" }, 
+        // ]
         this.trainingDataOptions = [{ id: "opt1", text: "500", value: 500, type: "traindatasize" }, { id: "opt2", text: "1000", value: 1000, type: "traindatasize" }, { id: "opt3", text: "2000", value: 2000, type: "traindatasize" }]
         this.testDataOptions = [{ id: "opt1", text: "100", value: 100, type: "testdatasize" }, { id: "opt2", text: "200", value: 200, type: "testdatasize" }, { id: "opt3", text: "500", value: 500, type: "testdatasize" }]
         this.optimizerOptions = [
@@ -41,6 +47,8 @@ class Train extends Component {
             { id: "opt6", text: "Momentum", value: "momentum", type: "optimizer" },
             { id: "opt7", text: "sgd", value: "sgd", type: "optimizer" },
         ]
+
+        
 
 
 
@@ -92,10 +100,10 @@ class Train extends Component {
 
             showModelComposer: true,
             showModelEvaluationMetrics: true,
-            showRocChart: false,
-            showLossChart: false,
+            showRocChart: true,
+            showLossChart: true,
+            showMseHistogram: true,
             showBottleneckScatterPlot: false,
-            showMseHistogram: false,
 
 
             validateOnStep: true,
@@ -103,6 +111,7 @@ class Train extends Component {
 
 
             showAdvanced: true,
+            showIntroduction: true,
         }
 
         this.showOptions = [
@@ -137,6 +146,7 @@ class Train extends Component {
         // this.loadSavedModel() 
 
         this.generateDataTensors()
+        // this.computeAccuracyMetrics(this.dummyMSe)
 
         setTimeout(() => {
             // this.createModel()
@@ -213,9 +223,11 @@ class Train extends Component {
             case "sgd":
                 this.optimizer = tf.train.sgd(this.state.learningRate)
                 break
+            default:
+                break;
         }
 
-        console.log(this.optimizer);
+
 
         let modelParams = {
             numFeatures: this.state.numFeatures,
@@ -380,6 +392,9 @@ class Train extends Component {
                 // console.log(mseDataHolder.length)
             });
             self.setState({ mseData: mseDataHolder })
+
+            // console.log(mseDataHolder);
+
         });
 
 
@@ -476,7 +491,7 @@ class Train extends Component {
                 break
             case "batchsize":
                 this.setState({ batchSize: e.selectedItem.value })
-
+                this.setState({ modelStale: true })
                 break
             case "learningrate":
                 this.setState({ learningRate: e.selectedItem.value })
@@ -491,6 +506,7 @@ class Train extends Component {
                 break
             case "optimizer":
                 this.setState({ optimizer: e.selectedItem.value })
+                this.setState({ modelStale: true })
                 break
             case "regularizer":
                 this.setState({ regularizer: e.selectedItem.value })
@@ -545,6 +561,10 @@ class Train extends Component {
         this.setState({ showAdvanced: !(this.state.showAdvanced) })
     }
 
+    toggleIntroDrawer(e) {
+        this.setState({ showIntroduction: !(this.state.showIntroduction) })
+    }
+
     render() {
         // console.log(this.state.minThreshold, this.state.maxThreshold);
 
@@ -569,32 +589,8 @@ class Train extends Component {
         let trainResetButtons = (
             <div>
                 <div className="  flex flexjustifycenter pt10 ">
-                    <div className=" iblock ">
-                        <div
-                            onClick={this.trainButtonClick.bind(this)}
-                            className={("iblock circlelarge circlebutton mr5 flexcolumn flex flexjustifycenter clickable ") + (this.state.modelStale ? " disabled" : "")}>
-                            {!this.state.isTraining && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
-                            {this.state.isTraining && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
-                        </div>
-                        <div className="smalldesc textaligncenter pt5 pb5 "> Train &nbsp; </div>
-                    </div>
-                    <div className="iblock h100 ">
-                        <div className="  flex flexjustifycenter h100  ">
-                            <div className="">
-                                <div
-                                    onClick={this.resetModelButtonClick.bind(this)}
-                                    className={" circlesmall circlebutton mr5 flex flexjustifycenter clickable" + (this.state.isTraining ? "  disabled" : "")}>
-                                    <Reset16 style={{ fill: "white" }} className="unselectable unclickable" />
 
-                                </div>
-                                <div className=" displayblock smalldesc textaligncenter pt5 "> Reset &nbsp; </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div className="flex  flexjustifycenter mr10 ">
+                    {/* <div className="flex  flexjustifycenter mr10 ">
                         <div ref="activeloaderdiv" >
                             <Loading
                                 className=" "
@@ -604,14 +600,42 @@ class Train extends Component {
                             > </Loading>
                         </div>
 
+                    </div> */}
+
+                    <div className="iblock h100 mr5 ">
+                        <div className="  flex flexjustifycenter h100  ">
+                            <div className="">
+                                <div
+                                    onClick={this.resetModelButtonClick.bind(this)}
+                                    className={" circlesmall circlebutton mr5 flex flexjustifycenter clickable " + (this.state.isTraining ? "  disabled" : "") + " " + (this.state.modelStale ? " pulse" : "")}>
+                                    <Reset16 style={{ fill: "white" }} className="unselectable unclickable" />
+
+                                </div>
+                                <div className=" displayblock smalldesc textaligncenter pt5 "> Initialize  </div>
+                            </div>
+
+                        </div>
+
                     </div>
+
+                    <div className=" iblock mr10">
+                        <div
+                            onClick={this.trainButtonClick.bind(this)}
+                            className={("iblock circlelarge circlebutton mr5 flexcolumn flex flexjustifycenter clickable ") + (this.state.modelStale ? " disabled" : "")}>
+                            {!this.state.isTraining && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
+                            {this.state.isTraining && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
+                        </div>
+                        <div className="smalldesc textaligncenter pt5 pb5 "> Train &nbsp; </div>
+                    </div>
+
+
 
                 </div>
             </div>
         )
         let configBar = (
-            <div className="w100  unselectable greyhighlight  flex flexjustifyleft flexjustifycenter ">
-                <div className=" p10   iblock">
+            <div style={{ zIndex: 100 }} className="w100   unselectable greyhighlight  flex flexjustifyleft flexjustifycenter  ">
+                <div className=" p10  iblock">
                     <div className="iblock mr10">
                         <div className="mediumdesc pb7 pt5"> Steps {this.state.numSteps} - {this.state.CumulativeSteps} </div>
                         <Dropdown
@@ -660,6 +684,19 @@ class Train extends Component {
                         />
                     </div>
 
+                    <div style={{ zIndex: 5000 }} className="iblock mr10">
+                        <div className="mediumdesc pb7 pt5"> Optimizer {this.state.optimizer} </div>
+                        <Dropdown
+                            style={{ zIndex: 100 }}
+                            id="optimizerdropdown"
+                            label="Optimizer"
+                            items={this.optimizerOptions}
+                            itemToString={item => (item ? item.text : "")}
+                            initialSelectedItem={this.optimizerOptions[this.selectedOptimizer]}
+                            onChange={this.updateModelParam.bind(this)}
+                        />
+                    </div>
+
                     <div className="iblock mr10">
                         <div className="mediumdesc pb7 pt5">Train Size {this.state.trainDataShape[0]} </div>
                         <Dropdown
@@ -684,115 +721,16 @@ class Train extends Component {
                         />
                     </div>
 
-                    <div className="iblock mr10">
-                        <div className="mediumdesc pb7 pt5"> Optimizer {this.state.optimizer} </div>
-                        <Dropdown
-                            id="optimizerdropdown"
-                            label="Optimizer"
-                            items={this.optimizerOptions}
-                            itemToString={item => (item ? item.text : "")}
-                            initialSelectedItem={this.optimizerOptions[this.selectedOptimizer]}
-                            onChange={this.updateModelParam.bind(this)}
-                        />
-                    </div>
+                   
 
                 </div>
             </div>
         )
 
-        return (
+        let modelComposerBlock = (
             <div>
-
-                {/* show advanced options pannel */}
-                <div style={{ zIndex: 100 }} onClick={this.toggleAdvancedDrawer.bind(this)} className="unselectable mt10 p10 clickable  flex greymoreinfo">
-                    <div className="iblock flexfull minwidth485">
-                        <strong>
-                            {!this.state.showAdvanced && <span>&#x25BC;  </span>} {this.state.showAdvanced && <span>&#x25B2;  </span>}
-                        </strong>
-                        Select model configuration and visualization charts.
-                    </div>
-                    <div className="iblock   ">
-                        <div className="iblock mr5"> <span className="boldtext"> {} </span></div>
-                        <div className="iblock">
-                            <div className="smalldesc"> {this.state.hiddenDim.length} Layer Autoencoder </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                {(this.state.showAdvanced) &&
-                    <div className=" modelconfigdiv p10 mb10">
-
-                        <div className="flex">
-                            <div>
-                                {trainResetButtons}
-                            </div>
-
-                            <div className="flexfull  ">
-                                {configBar}
-                            </div>
-                        </div>
-
-                        <div className="p10 border">
-                            bingo
-                            <div className="boldtext pb5 iblock mr10"> Advanced Options </div>
-                            {showCheckBoxes}
-                        </div>
-
-                    </div>
-                }
-
-                <div className="">
-                    <div className="flex h100">
-                        <div className="flexfull mr10 h100">
-                            <div className="mynotif displaynone   h100 lh10  lightbluehightlight maxh16  mr10">
-                                <div className="boldtext"> Model Architecture</div>
-                                <div>
-                                    Use the model composer below to modify the parameters of the model
-                                    (number of layers, number of units in each layer)
-                                    </div>
-                            </div>
-
-                            <div className="topbar flex ">
-                                <div className="flexfull modelconfigbar ">
-
-                                    <div className="modelconfigbar flex  ">
-                                        <div className=" mr10 greyhighlight rad4 p10 iblock flex flexcolumn">
-                                            <div className="flexfull textaligncenter">{this.state.CumulativeSteps}</div>
-                                            <div> Total train steps</div>
-                                        </div>
-                                        <div className="flex flexfull greyhighlight   pl10 rad3  ">
-
-
-                                        </div>
-                                    </div>
-                                    <div ref="glowbar" className={"glowbar w0 "} style={{ width: Math.floor((this.currentSteps / this.state.numSteps) * 100) + "%" }}></div>
-
-                                </div>
-                            </div>
-
-
-                        </div>
-                        <div className=" greyhighlight p10  mb5 ">
-
-                        </div>
-                    </div>
-                </div>
-                {/* start of top bar */}
-
-
-
-
-                {/* end of top bar */}
-
-
-
-                {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
-
-
-                {/* // Model Composer  */}
-                <div className="flex mt10 mb10 h100">
-                    {this.state.showModelComposer &&
+                 {/* // Model Composer  */}
+                {this.state.showModelComposer &&
                         <div className="flex7 mr10 ">
                             <div>
                                 <div className="charttitle mb5 ">
@@ -804,15 +742,131 @@ class Train extends Component {
                                         latentDim={[this.state.latentDim]}
                                         isTraining={this.state.isTraining}
                                         updateModelDims={this.updateModelDims}
-                                        adv={this.state.showAdvanced}
+                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction}
                                     />
                                 </div>
                             </div>
                         </div>}
+            </div>
+        )
 
+        let lossChartBlock = (
+            <div>
+                {this.state.showLossChart && <div className="iblock mr10  h100 " >
+                            <div className={"positionrelative h100 " + (this.state.trainMetrics.length <= 0 ? " " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
+                                {this.state.trainMetrics.length <= 0 &&
+                                    <div className="notrainingdata">  No training loss data yet </div>
+                                }
+                                {this.state.trainMetrics.length > 0 &&
+
+                                    <div>
+                                        <div className="charttitle ">
+                                            Train Loss
+                                        </div>
+
+                                        <div>
+                                            <LossChart
+                                                data={{
+                                                    data: this.state.trainMetrics,
+                                                    chartWidth: this.chartWidth,
+                                                    chartHeight: this.chartHeight,
+                                                    epoch: this.state.CumulativeSteps
+                                                }}
+
+                                            ></LossChart>
+                                        </div>
+                                    </div>
+
+                                }
+
+                            </div>
+                        </div>}
+            </div>
+        )
+
+        let rocChartBlock = (
+            <div>
+                {this.state.showRocChart && <div className="iblock p10">
+                            {this.state.rocData.length > 0 &&
+                                <div>
+                                    <div className="charttitle ">
+                                        ROC Curve Chart [ AUC : {this.state.auc.toFixed(2)} ]
+                                    </div>
+
+                                    <div>
+                                        <ROCChart
+                                            data={{
+                                                chartWidth: 350,
+                                                chartHeight: 250,
+                                                data: this.state.rocData,
+                                                isTraining: this.state.isTraining,
+                                                epoch: this.state.CumulativeSteps,
+                                                auc: this.state.auc
+
+                                            }} 
+                                        ></ROCChart>
+                                    </div>
+                                </div>
+                            }
+                        </div>}
+            </div>
+        )
+
+        let mseHistogramBlock = (
+            <div>
+                {this.state.showMseHistogram && <div className="iblock mr10 ">
+                            {this.state.mseData.length > 0 && 
+                                <div>
+                                    <div className="charttitle"> Histogram of Mean Square Error </  div>
+
+                                    <div>
+                                        <HistogramChart
+                                            data={{
+                                                data: this.state.mseData,
+                                                chartWidth: this.chartWidth,
+                                                chartHeight: this.chartHeight,
+                                                epoch: this.state.CumulativeSteps,
+                                                threshold: this.state.bestMetric.threshold
+                                            }}
+                                        ></HistogramChart>
+                                    </div>
+                                </div> 
+                            }
+                        </div>}
+            </div>
+        )
+
+        let bottleneckScatterPlotBlock = (
+            <div>
+                 {this.state.showBottleneckScatterPlot && <div className="iblock mr10  ">
+                            {this.state.encodedData.length > 0 &&
+
+                                <div>
+                                    <div className="charttitle"> Bottleneck Scatterplot </  div>
+
+                                    <div>
+                                        <ScatterPlot
+                                            data={{
+                                                data: this.state.encodedData,
+                                                chartWidth: this.chartWidth,
+                                                chartHeight: this.chartHeight,
+                                                epoch: this.state.CumulativeSteps
+                                            }}
+
+                                        ></ScatterPlot>
+                                    </div>
+                                </div>
+
+                            }
+                        </div>}
+            </div>
+        )
+
+        let modelMetricsBlock = (
+            <div className="flex mt5 mb10  h100"> 
                     {(this.state.bestMetric && this.state.showModelEvaluationMetrics) &&
 
-                        < div className={"iblock  flex3 perfmetrics " + (this.state.isTraining ? " disabled " : " ")}>
+                        <div className={"iblock  flex3 perfmetrics " + (this.state.isTraining ? " disabled " : " ")}>
                             <div className="charttitle mb5 ">
                                 Model Evaluation Metrics
                             </div>
@@ -868,116 +922,124 @@ class Train extends Component {
                         </div>}
 
                 </div>
+        )
 
-                {
-                    true &&
-                    <div>
+        return (
+            <div className="maintrainbox">
 
 
-                        {this.state.showLossChart && <div className="iblock mr10  h100 " >
-                            <div className={"positionrelative h100 " + (this.state.trainMetrics.length <= 0 ? " " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
-                                {this.state.trainMetrics.length <= 0 &&
-                                    <div className="notrainingdata">  No training loss data yet </div>
-                                }
-                                {this.state.trainMetrics.length > 0 &&
+                {/* show advanced options pannel */}
+                <div style={{ zIndex: 100 }} onClick={this.toggleIntroDrawer.bind(this)} className="unselectable mt10 p10 clickable  flex greymoreinfo">
+                    <div className="iblock flexfull minwidth485">
+                        <strong>
+                            {!this.state.showIntroduction && <span>&#x25BC;  </span>} {this.state.showIntroduction && <span>&#x25B2;  </span>}
+                        </strong>
+                        Introduction
+                    </div>
+                    <div className="iblock   ">
+                        <div className="iblock mr5"> <span className="boldtext"> {} </span></div>
+                        <div className="iblock">
+                            <div className="smalldesc"> Overview of how it works!</div>
+                        </div>
+                    </div>
 
-                                    <div>
-                                        <div className="charttitle ">
-                                            Train Loss
+                </div>
+
+
+                {(this.state.showIntroduction) &&
+                    <div className="mynotif h100 lh10 mt10 lightbluehightlight maxh16  mb10">
+                        <div className="boldtext"> Train an Autoencoder for Anomaly Detection </div>
+                        <div>
+                            <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">
+                                Autoencoders</a> are neural networks which learn to reconstruct input data. We can leverage this property to detect anomalies.
+                                <div className="circlenumber iblock textaligncenter"> 1 </div>  <span className="boldtext"> Train </span> the autoencoder on "normal data" and it learns to reconstruct this data with very little reconstruction error.
+                            At test time, we compute the reconstruction error for new samples (both normal and abnormal) and flag anomalies as data points with high reconstruction error (above  some threshold we decide).
+                         1.) Select parameters for the model 2) Click init to initialize your model 3) Click Train to train the model on the ECG 5000 dataset.
+                         
+                     </div>
+
+                    </div>}
+
+                {/* show advanced options pannel */}
+                <div style={{ zIndex: 100 }} onClick={this.toggleAdvancedDrawer.bind(this)} className="unselectable mt10 p10 clickable  flex greymoreinfo">
+                    <div className="iblock flexfull minwidth485">
+                        <strong>
+                            {!this.state.showAdvanced && <span>&#x25BC;  </span>} {this.state.showAdvanced && <span>&#x25B2;  </span>}
+                        </strong>
+                        Select model configuration and visualization charts.
+                    </div>
+                    <div className="iblock   ">
+                        <div className="iblock mr5"> <span className="boldtext"> {} </span></div>
+                        <div className="iblock">
+                            <div className="smalldesc"> {this.state.hiddenDim.length} Layer Autoencoder </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div ref="glowbar" className={"glowbar w0 "} style={{ width: Math.floor((this.currentSteps / this.state.numSteps) * 100) + "%" }}></div>
+
+
+                {(this.state.showAdvanced) &&
+                    <div className=" modelconfigdiv p10 ">
+
+                        <div className="flex flexwrap ">
+                            <div className="flexwrapitem">
+                                {trainResetButtons}
+                            </div>
+                            <div className="flexwrapitem flexfull ">
+                                {configBar}
+                            </div>
+                        </div>
+
+                        <div className="pl10 pt5 pr10 pb5 greyborder mt10">
+                            <div className="boldtext  iblock mr5">
+                                <div className="iblock "> Charts </div>
+                                <div className="iblock  ">
+                                    <Tooltip
+                                        direction="right"
+                                        triggerText=""
+                                    >
+                                        <div className="tooltiptext">
+                                            Add/Remove charts that visualize the state of the model as training progresses.
+                                            For example, the Training Loss chart shows the "loss" or error of the model as training progresses.
                                         </div>
 
-                                        <div>
-                                            <LossChart
-                                                data={{
-                                                    data: this.state.trainMetrics,
-                                                    chartWidth: this.chartWidth,
-                                                    chartHeight: this.chartHeight,
-                                                    epoch: this.state.CumulativeSteps
-                                                }}
-
-                                            ></LossChart>
-                                        </div>
-                                    </div>
-
-                                }
+                                    </Tooltip>
+                                </div>
 
                             </div>
-                        </div>}
+                            {showCheckBoxes}
+                        </div>
 
-                        {this.state.showRocChart && <div className="iblock p10">
-                            {this.state.rocData.length > 0 &&
-                                <div>
-                                    <div className="charttitle ">
-                                        ROC Curve Chart [ AUC : {this.state.auc.toFixed(2)} ]
-                                    </div>
+                    </div>
+                }
 
-                                    <div>
-                                        <ROCChart
-                                            data={{
-                                                chartWidth: 350,
-                                                chartHeight: 250,
-                                                data: this.state.rocData,
-                                                isTraining: this.state.isTraining,
-                                                epoch: this.state.CumulativeSteps,
-                                                auc: this.state.auc
 
-                                            }}
-
-                                        ></ROCChart>
-                                    </div>
-                                </div>
-                            }
-                        </div>}
+                {/* start of top bar */}
 
 
 
-                        {this.state.showMseHistogram && <div className="iblock mr10 ">
-                            {this.state.mseData.length > 0 &&
 
-                                <div>
-                                    <div className="charttitle"> Histogram of Mean Square Error </  div>
-
-                                    <div>
-                                        <HistogramChart
-                                            data={{
-                                                data: this.state.mseData,
-                                                chartWidth: this.chartWidth,
-                                                chartHeight: this.chartHeight,
-                                                epoch: this.state.CumulativeSteps,
-                                                threshold: this.state.bestMetric.threshold
-                                            }}
-                                        ></HistogramChart>
-                                    </div>
-                                </div>
+                {/* end of top bar */}
 
 
-                            }
-                        </div>}
 
+                {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
 
-                        {this.state.showBottleneckScatterPlot && <div className="iblock mr10  ">
-                            {this.state.encodedData.length > 0 &&
+                <div className="flex flexwrap mt10">
+                    <div className="flexwrapitem border p10 flex8"> {modelComposerBlock} </div>
+                    <div className="flexwrapitem border p10 flex1"> {modelMetricsBlock} </div>
+                    <div className="flexwrapitem border p10 flex5"> {lossChartBlock} </div>
+                    <div className="flexwrapitem border p10 flex5"> {mseHistogramBlock} </div>
+                    <div className="flexwrapitem border p10 flex5"> {rocChartBlock} </div>
+                    <div className="flexwrapitem border p10 flex5"> {bottleneckScatterPlotBlock} </div>
+                </div>
 
-                                <div>
-                                    <div className="charttitle"> Bottleneck Scatterplot </  div>
-
-                                    <div>
-                                        <ScatterPlot
-                                            data={{
-                                                data: this.state.encodedData,
-                                                chartWidth: this.chartWidth,
-                                                chartHeight: this.chartHeight,
-                                                epoch: this.state.CumulativeSteps
-                                            }}
-
-                                        ></ScatterPlot>
-                                    </div>
-                                </div>
-
-                            }
-                        </div>}
-
-
+               
+                
+                {
+                    true &&
+                    <div> 
 
                     </div>
                 }

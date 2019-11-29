@@ -18,6 +18,10 @@
     background-color: #3D3D3D;
 } 
 
+.headerboost{
+    height: 46px;;
+}
+
 /* .bx--header{
     background-color: rgb(199, 29, 29);
     border: 10px solid green;

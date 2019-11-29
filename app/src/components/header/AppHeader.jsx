@@ -58,7 +58,7 @@ class AppHeader extends Component {
                         </HeaderGlobalAction>
                     </HeaderGlobalBar>
                 </Header>
-                <div> <br /> <br />  <br />  <br /> </div>
+                <div className="headerboost">  </div>
             </div>
 
         );

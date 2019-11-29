@@ -268,7 +268,7 @@ class Viz extends Component {
                             </div>
 
                             <div className="border rad4 p10 flex4" style={{ height:"200px"}}>
-                                small histogram viz
+                               reply of training run visualization
                             </div>
                         </div>
 

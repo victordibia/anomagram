@@ -579,3 +579,28 @@
     margin-bottom: 5px;
 
 }
+
+@keyframes shadow-pulse{
+     0% {
+          box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+     }
+     100% {
+          box-shadow: 0 0 0 35px rgba(0, 0, 0, 0);
+     }
+}
+
+.pulse{
+     animation: shadow-pulse 2.0s infinite;
+}
+
+.tootltiptext{
+    line-height: 1.3em;
+}
+
+.newline { 
+    display: block; 
+}
+        
+@media screen and (min-width: 768px){
+    .newline{ display: inline; }
+}

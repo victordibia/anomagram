@@ -71,6 +71,18 @@
     border: 3px solid #054ADA;
 }
 
+.circlenumber{
+    background: #054ADA;
+    border-radius: 50%;
+    border: 3px solid white; 
+    color: white;
+    margin: 0px 0px 0px 5px;
+    /* height: 25px; */
+    width: 26px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
 .circlelarge{
     width: 50px;
     height: 50px;
@@ -83,6 +95,7 @@
 
 .circlebutton:hover{ 
     border: 3px solid white;
+    animation:  shadow-pulse 0s;
 }
 
 .circlebutton.disabled{
@@ -114,4 +127,26 @@
 .axislabel{
     font-size: 0.92em;
     
+}
+
+.modelconfigbar{
+    max-height: 16em;
+}
+
+.maintrainbox{
+    /* min-width: 600px; */
+}
+ 
+
+.flexwrap{
+
+}
+
+@media screen and (max-width:600px) {
+    .flexwrap { flex-wrap: wrap;  }
+    .flexwrapitem:first-child { flex-basis: 100%; }
+}
+
+.chartitem{
+
 }

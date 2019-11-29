@@ -30,6 +30,12 @@ $feature-flags: (
 .bx--slider-container{
     width: 100%;
 }
+.bx--tooltip__trigger{
+    margin: 0px;
+}
+.bx--tooltip__label{
+    padding: 0px;
+}
 
 .maxh16{
     // max-height:  12em;

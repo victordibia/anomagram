@@ -1,0 +1,14 @@
+
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #f0f3f6;
+    padding: 14px;
+    background: #fff;
+}
+
+#footer a {
+    text-decoration: none;
+}
