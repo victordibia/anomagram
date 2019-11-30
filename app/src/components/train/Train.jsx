@@ -20,6 +20,9 @@ class Train extends Component {
     constructor(props) {
         super(props)
 
+        this.chartWidth = 350;
+        this.chartHeight = 250;
+        
         // Load sameple data
         this.testData = require("../../data/ecg/test.json")
         this.trainData = require("../../data/ecg/train.json")
@@ -103,7 +106,7 @@ class Train extends Component {
             showRocChart: true,
             showLossChart: true,
             showMseHistogram: true,
-            showBottleneckScatterPlot: false,
+            showBottleneckScatterPlot: true,
 
 
             validateOnStep: true,
@@ -111,7 +114,11 @@ class Train extends Component {
 
 
             showAdvanced: true,
-            showIntroduction: true,
+            showIntroduction: false,
+
+            
+            lossChartHeight: this.chartHeight,
+            lossChartWidth: this.chartWidth
         }
 
         this.showOptions = [
@@ -133,8 +140,7 @@ class Train extends Component {
         this.trainDataPath = "data/ecg/train.json"
         this.testDataPath = "data/ecg/test.json"
 
-        this.chartWidth = 350;
-        this.chartHeight = 250;
+        
 
 
         this.momentum = 0.9
@@ -149,8 +155,10 @@ class Train extends Component {
         // this.computeAccuracyMetrics(this.dummyMSe)
 
         setTimeout(() => {
-            // this.createModel()
-        }, 2000);
+            this.createModel()
+        }, 1000);
+
+        this.getChartContainerSizes()
 
 
     }
@@ -530,6 +538,8 @@ class Train extends Component {
 
     }
 
+    
+
     showOptionsClick(e) {
         // console.log(e.target.checked, e.target.getAttribute("action"));
         switch (e.target.getAttribute("action")) {
@@ -565,20 +575,60 @@ class Train extends Component {
         this.setState({ showIntroduction: !(this.state.showIntroduction) })
     }
 
+    updateChartDim(chartName, width) {
+        switch (chartName) {
+            case "mse":
+                this.setState({ mseChartWidth: Math.max(this.chartWidth, width - 30) })
+                case "loss":
+                this.setState({ lossChartWidth: Math.max(width-30) })
+                case "roc":
+                this.setState({ rocChartWidth: Math.max(this.chartWidth, width - 30) })
+                case "bottleneck":
+                this.setState({bottleneckChartWidth: Math.max(this.chartWidth, width - 30)})
+        }
+    }
+
+    getChartContainerSizes() {
+        // let chartContainer = this.refs["chartcontainer"]
+        // if (chartContainer !== undefined) {
+        //     chartContainer.childNodes.forEach(each => {
+        //         console.log(each.offsetWidth, each.getAttribute("action")); 
+        //         this.updateChartDim(each.getAttribute("action"), each.offsetWidth)
+        //     });
+        // }
+
+        this.setState({ lossChartHeight: this.refs["modelevalbox"].offsetHeight- 45 })
+        // this.setState({lossChartWidth: this.refs["modelevalbox"].offsetWidth })
+        console.log(this.refs["modelevalbox"].offsetHeight, this.chartHeight - 40);
+        
+        
+    }
+
     render() {
         // console.log(this.state.minThreshold, this.state.maxThreshold);
+        
+        // Use chart state determine when to redraw model composer lines as UI has change
+        let chartState = ""
+        this.showOptions.forEach(data => {
+            let box = document.getElementById(data.action + "checkboxid")
+            if (box !== null) {
+                chartState += box.checked 
+            } 
+        }); 
 
-
+        //get size of chart containers
+       
+         
 
         let showCheckBoxes = this.showOptions.map((data) => {
             return (
                 <div key={data.label + "checkbox"} className="mediumdesc iblock mr10">
                     <Checkbox
                         defaultChecked={data.checked}
-                        wrapperClassName={"mediumdesc"}
-                        className={"mediumdesc"}
+                        wrapperClassName={"mediumdesc chartchecks"}
+                        className={"mediumdesc "}
                         labelText={data.label}
-                        id={data.label + "checkboxid"}
+                        id={data.action + "checkboxid"}
                         action={data.action}
                         onClick={this.showOptionsClick.bind(this)}
                     ></Checkbox>
@@ -728,7 +778,7 @@ class Train extends Component {
         )
 
         let modelComposerBlock = (
-            <div>
+            <div className="composermaindiv">
                  {/* // Model Composer  */}
                 {this.state.showModelComposer &&
                         <div className="flex7 mr10 ">
@@ -742,7 +792,7 @@ class Train extends Component {
                                         latentDim={[this.state.latentDim]}
                                         isTraining={this.state.isTraining}
                                         updateModelDims={this.updateModelDims}
-                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction}
+                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction + chartState}
                                     />
                                 </div>
                             </div>
@@ -769,7 +819,7 @@ class Train extends Component {
                                                 data={{
                                                     data: this.state.trainMetrics,
                                                     chartWidth: this.chartWidth,
-                                                    chartHeight: this.chartHeight,
+                                                    chartHeight: this.state.lossChartHeight,
                                                     epoch: this.state.CumulativeSteps
                                                 }}
 
@@ -786,7 +836,7 @@ class Train extends Component {
 
         let rocChartBlock = (
             <div>
-                {this.state.showRocChart && <div className="iblock p10">
+                {this.state.showRocChart && <div className="iblock mr10">
                             {this.state.rocData.length > 0 &&
                                 <div>
                                     <div className="charttitle ">
@@ -796,8 +846,8 @@ class Train extends Component {
                                     <div>
                                         <ROCChart
                                             data={{
-                                                chartWidth: 350,
-                                                chartHeight: 250,
+                                                chartWidth: this.chartWidth,
+                                                chartHeight: this.chartHeight,
                                                 data: this.state.rocData,
                                                 isTraining: this.state.isTraining,
                                                 epoch: this.state.CumulativeSteps,
@@ -863,10 +913,10 @@ class Train extends Component {
         )
 
         let modelMetricsBlock = (
-            <div className="flex mt5 mb10  h100"> 
+            <div className="flex w100 pr10  "> 
                     {(this.state.bestMetric && this.state.showModelEvaluationMetrics) &&
 
-                        <div className={"iblock  flex3 perfmetrics " + (this.state.isTraining ? " disabled " : " ")}>
+                        <div className={"iblock perfmetrics w100 " + (this.state.isTraining ? " disabled " : " ")}>
                             <div className="charttitle mb5 ">
                                 Model Evaluation Metrics
                             </div>
@@ -952,10 +1002,15 @@ class Train extends Component {
                         <div>
                             <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">
                                 Autoencoders</a> are neural networks which learn to reconstruct input data. We can leverage this property to detect anomalies.
-                                <div className="circlenumber iblock textaligncenter"> 1 </div>  <span className="boldtext"> Train </span> the autoencoder on "normal data" and it learns to reconstruct this data with very little reconstruction error.
-                            At test time, we compute the reconstruction error for new samples (both normal and abnormal) and flag anomalies as data points with high reconstruction error (above  some threshold we decide).
-                         1.) Select parameters for the model 2) Click init to initialize your model 3) Click Train to train the model on the ECG 5000 dataset.
-                         
+                                <div className="circlenumber iblock textaligncenter"> 1 </div>  <span className="boldtext"> Build . </span> model parameters
+                        (number of layers, batchsize, learning rate, regularizer etc) and then initialize the model.
+                        <div className="circlenumber iblock textaligncenter"> 2 </div>  <span className="boldtext"> Train. </span> Click the train model button.
+                        This trains the autoencoder using normal data samples from the ECG5000 dataset. This way the model learns to reconstruct normal data samples
+                        with very little reconstruction error.
+                        <div className="circlenumber iblock textaligncenter"> 3 </div>  <span className="boldtext"> Evaluate. </span> 
+                        At each training step, visualize the reconstruction error (mse) generated for each sample in the test dataset. We can observe that mse is higher
+                        for abnormal samples compared to normal samples. We can select a threshold and flag samples with an mse > threshold as anomalies.
+         
                      </div>
 
                     </div>}
@@ -1026,13 +1081,19 @@ class Train extends Component {
 
                 {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
 
-                <div className="flex flexwrap mt10">
-                    <div className="flexwrapitem border p10 flex8"> {modelComposerBlock} </div>
-                    <div className="flexwrapitem border p10 flex1"> {modelMetricsBlock} </div>
-                    <div className="flexwrapitem border p10 flex5"> {lossChartBlock} </div>
-                    <div className="flexwrapitem border p10 flex5"> {mseHistogramBlock} </div>
-                    <div className="flexwrapitem border p10 flex5"> {rocChartBlock} </div>
-                    <div className="flexwrapitem border p10 flex5"> {bottleneckScatterPlotBlock} </div>
+                <div ref="chartcontainer" className="flex chartcontainer flexwrap mt10">
+                    <div action="composer"  className="flexwrapitem   flex40"> {modelComposerBlock} </div>
+                    <div ref="modelevalbox" action="metrics" className="flexwrapitem   flexfull"> {modelMetricsBlock} </div>
+                    <div action="loss"  className="flexwrapitem flexfull"> {lossChartBlock} </div>
+                    
+                </div>
+                
+                <div> 
+                    {/* <div action="loss"  className="flexwrapitem smallshow  iblock"> {lossChartBlock} </div> */}
+                    <div action="mse"  className="flexwrapitem iblock  "> {mseHistogramBlock} </div>
+                    <div action="roc"  className="flexwrapitem  iblock "> {rocChartBlock} </div>
+                    <div action="bottleneck"  className="flexwrapitem   iblock"> {bottleneckScatterPlotBlock} </div>
+
                 </div>
 
                

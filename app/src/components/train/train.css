@@ -106,7 +106,8 @@
 
 .metricvalue{
     font-size: 2.1em;
-    min-width: 160px;
+    padding-top: 0.1em;
+    /* min-width: 160px; */
     /* border: 1px solid grey; */
 }
 
@@ -145,8 +146,32 @@
 @media screen and (max-width:600px) {
     .flexwrap { flex-wrap: wrap;  }
     .flexwrapitem:first-child { flex-basis: 100%; }
+    
 }
 
-.chartitem{
-
+@media screen and (max-width:1000px) {
+    .smallhide { display: none;}
 }
+
+@media screen and (min-width:1000px) {
+    .smallshow { display: none;}
+}
+
+
+.smallhide{
+    /* display: none; */
+}
+
+
+.composermaindiv{
+    /* min-width: 400px; */
+}
+
+.flexcomp{
+    flex:3
+}
+
+.chartcontainer{
+    align-content: start;
+}
+

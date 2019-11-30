@@ -394,6 +394,17 @@
     flex: 0.2;
 }
 
+.flex20 {
+    flex: 2;
+}
+
+.flex30 {
+    flex: 3;
+}
+.flex40 {
+    flex: 4;
+}
+
 .flex3 {
     flex: 0.3;
 }
