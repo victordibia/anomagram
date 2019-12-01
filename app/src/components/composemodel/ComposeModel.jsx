@@ -14,7 +14,7 @@ class ComposeModel extends Component {
             latentDim: this.props.latentDim,
             maxLayers: 10,
             minLayers: 1,
-            maxUnits: 12,
+            maxUnits: 9,
             minUnits: 2,
             defaultLayerDim: 3,
             isTraining: this.props.isTraining,
@@ -197,8 +197,6 @@ class ComposeModel extends Component {
             this.removeLayerLines("latent")
             this.addEncDecLines(this.state.hiddenDims.length - 2)
             this.addEncDecLines(this.state.hiddenDims.length - 1)
-
-
         } else if (this.state.hiddenDims.length < prevState.hiddenDims.length) {
             this.removeLayerLines("layerdiv" + this.state.hiddenDims.length)
             this.addEncDecLines(this.state.hiddenDims.length - 1)
@@ -404,7 +402,7 @@ class ComposeModel extends Component {
                 <div className="flex w100 mb5 ">
                     {/* <div className="mediumdesc mb5 mt5 mr10"> * we map the same configuration for both encoder and decoder </div> */}
                     <div className="flex5 ">
-                        <div className="mediumdesc networktitle  p5"> Encoder {this.state.hiddenDims.length} Layers </div>
+                        <div className="smalldesc networktitle  p5"> Encoder {this.state.hiddenDims.length} Layers </div>
                     </div>
                     <div className="buttonbar mr10 ml10 ">
                         <div
@@ -424,9 +422,9 @@ class ComposeModel extends Component {
                     </div>
                     <div className="unselectable flex5     ">
                         <div className="flex p5 networktitle  mediumdesc ">
-                            <div className="flex flexjustifyleft "> Update layers</div>
+                            <div className="flex flexjustifyleft "> </div>
                             <div className="flex flexfull flexjustifycenter   "></div>
-                            <div className="  "> Decoder {this.state.hiddenDims.length} Layers </div>
+                            <div className="smalldesc"> Decoder {this.state.hiddenDims.length} Layers </div>
                         </div>
                     </div>
                 </div>
@@ -440,7 +438,7 @@ class ComposeModel extends Component {
                 {/* Encoder, bottleneck, Decoder  */}
                 <div className="flex">
                     <div className="iotextdata unselectable mr10 p5  ">
-                        Input Data
+                        input
                     </div>
                     <div id="mainencoderdiv" ref="encoderbox" className="encoder greyhighlight  pl5 flex5 mr10 ">
                         <div className="layerbar flex  flexjustifycenter pb10 pt10">
@@ -460,7 +458,7 @@ class ComposeModel extends Component {
                     </div>
 
                     <div className="iotextdata unselectable ml10 p5  ">
-                        Output Data
+                        output
                     </div>
 
                 </div>

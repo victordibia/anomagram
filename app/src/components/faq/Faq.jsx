@@ -36,6 +36,18 @@ class Faq extends Component {
 
                 <div>FAQ</div>
                 <DrawSignal></DrawSignal>
+
+                <br />
+                <br />
+                <div> FAQ </div>
+
+                <div> Training Parameters </div>
+                <div> All trainining parameters are selected as specified.
+                    For regularization, kernel regularization (reduces the size of the weights) is implemented (vs activity regularization)
+                    This is applied to all layers in the model.
+                    The regularization rate is set as same as the learning rate.
+
+                </div>
             </div >
         );
     }

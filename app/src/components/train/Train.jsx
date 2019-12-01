@@ -22,6 +22,8 @@ class Train extends Component {
 
         this.chartWidth = 350;
         this.chartHeight = 250;
+
+        
         
         // Load sameple data
         this.testData = require("../../data/ecg/test.json")
@@ -34,7 +36,7 @@ class Train extends Component {
         this.stepOptions = [{ id: "opt1", text: "50", value: 50, type: "steps" }, { id: "opt2", text: "100", value: 100, type: "steps" }]
         this.regularizerOptions = [{ id: "opt1", text: "None", value: "none", type: "regularizer" }, { id: "opt1", text: "l1", value: "l1", type: "regularizer" }, { id: "opt2", text: "l2", value: "l2", type: "regularizer" }, { id: "opt2", text: "l1l2", value: "l1l2", type: "regularizer" }]
         this.batchSizeOptions = [{ id: "opt1", text: "64", value: 64, type: "batchsize" }, { id: "opt2", text: "128", value: 128, type: "batchsize" }, { id: "opt3", text: "256", value: 256, type: "batchsize" }, { id: "opt3", text: "512", value: 512, type: "batchsize" }, { id: "opt3", text: "1024", value: 1024, type: "batchsize" }]
-        this.learningRateOptions = [{ id: "opt1", text: "0.01", value: 0.01, type: "learningrate" }, { id: "opt2", text: "0.001", value: 0.001, type: "learningrate" }, { id: "opt3", text: "0.0001", value: 0.0001, type: "learningrate" }]
+        this.learningRateOptions = [{ id: "opt1", text: "0.01", value: 0.01, type: "learningrate" }, { id: "opt2", text: "0.001", value: 0.001, type: "learningrate" }, { id: "opt3", text: "0.0001", value: 0.0001, type: "learningrate" },{ id: "opt5", text: "0.1", value: 0.1, type: "learningrate" },{ id: "opt6", text: "1", value: 1, type: "learningrate" },{ id: "opt7", text: "10", value: 10, type: "learningrate" }]
         // this.regularizationRateOptions = [ 
         //     { id: "opt3", text: "0.01", value: 0.01, type: "regularizationrate" },
         //     { id: "opt1", text: "0.001", value: 0.001, type: "regularizationrate" },
@@ -143,8 +145,7 @@ class Train extends Component {
         
 
 
-        this.momentum = 0.9
-
+        this.momentum = 0.9 
 
     }
 
@@ -154,9 +155,9 @@ class Train extends Component {
         this.generateDataTensors()
         // this.computeAccuracyMetrics(this.dummyMSe)
 
-        setTimeout(() => {
-            this.createModel()
-        }, 1000);
+        // setTimeout(() => {
+        //     this.createModel()
+        // }, 1000);
 
         this.getChartContainerSizes()
 
@@ -574,33 +575,13 @@ class Train extends Component {
     toggleIntroDrawer(e) {
         this.setState({ showIntroduction: !(this.state.showIntroduction) })
     }
-
-    updateChartDim(chartName, width) {
-        switch (chartName) {
-            case "mse":
-                this.setState({ mseChartWidth: Math.max(this.chartWidth, width - 30) })
-                case "loss":
-                this.setState({ lossChartWidth: Math.max(width-30) })
-                case "roc":
-                this.setState({ rocChartWidth: Math.max(this.chartWidth, width - 30) })
-                case "bottleneck":
-                this.setState({bottleneckChartWidth: Math.max(this.chartWidth, width - 30)})
-        }
-    }
-
+ 
     getChartContainerSizes() {
-        // let chartContainer = this.refs["chartcontainer"]
-        // if (chartContainer !== undefined) {
-        //     chartContainer.childNodes.forEach(each => {
-        //         console.log(each.offsetWidth, each.getAttribute("action")); 
-        //         this.updateChartDim(each.getAttribute("action"), each.offsetWidth)
-        //     });
-        // }
-
-        this.setState({ lossChartHeight: this.refs["modelevalbox"].offsetHeight- 45 })
-        // this.setState({lossChartWidth: this.refs["modelevalbox"].offsetWidth })
-        console.log(this.refs["modelevalbox"].offsetHeight, this.chartHeight - 40);
         
+
+        this.setState({ lossChartHeight: this.refs["modelevalbox"].offsetHeight-  50 })
+        // this.setState({lossChartWidth: this.refs["modelevalbox"].offsetWidth })
+         
         
     }
 
@@ -685,7 +666,7 @@ class Train extends Component {
         )
         let configBar = (
             <div style={{ zIndex: 100 }} className="w100   unselectable greyhighlight  flex flexjustifyleft flexjustifycenter  ">
-                <div className=" p10  iblock">
+                <div className="pl10 pt10 pr10 pb5  iblock">
                     <div className="iblock mr10">
                         <div className="mediumdesc pb7 pt5"> Steps {this.state.numSteps} - {this.state.CumulativeSteps} </div>
                         <Dropdown
@@ -771,17 +752,24 @@ class Train extends Component {
                         />
                     </div>
 
-                   
-
+                
+                    <div className="  smalldesc  pt5 pb3">  
+                    {this.state.modelStale && <span className=""> Model configuration has changed. Click <span className="boldtext "> initialize </span> to recompile model.</span>}
+                    { !this.state.modelStale && <span className=""> Model compiled based on selected parameters. Ready to <span className="boldtext"> train </span>. </span> }
+                    </div>
                 </div>
             </div>
         )
-
+ 
+        if (this.state.encodedData[0]) {
+            // console.log(this.state.encodedData[0].x);
+            this.firstEncode = this.state.encodedData[0].x
+        }
         let modelComposerBlock = (
             <div className="composermaindiv">
                  {/* // Model Composer  */}
                 {this.state.showModelComposer &&
-                        <div className="flex7 mr10 ">
+                        <div className=" mr10 ">
                             <div>
                                 <div className="charttitle mb5 ">
                                     Model Composer
@@ -792,7 +780,7 @@ class Train extends Component {
                                         latentDim={[this.state.latentDim]}
                                         isTraining={this.state.isTraining}
                                         updateModelDims={this.updateModelDims}
-                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction + chartState}
+                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction + chartState + this.firstEncode }
                                     />
                                 </div>
                             </div>
@@ -802,34 +790,32 @@ class Train extends Component {
 
         let lossChartBlock = (
             <div>
-                {this.state.showLossChart && <div className="iblock mr10  h100 " >
-                            <div className={"positionrelative h100 " + (this.state.trainMetrics.length <= 0 ? " " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
-                                {this.state.trainMetrics.length <= 0 &&
-                                    <div className="notrainingdata">  No training loss data yet </div>
-                                }
-                                {this.state.trainMetrics.length > 0 &&
-
+                {this.state.showLossChart && <div className="iblock mr10  h100 " > 
                                     <div>
                                         <div className="charttitle ">
                                             Train Loss
                                         </div>
 
-                                        <div>
-                                            <LossChart
-                                                data={{
-                                                    data: this.state.trainMetrics,
-                                                    chartWidth: this.chartWidth,
-                                                    chartHeight: this.state.lossChartHeight,
-                                                    epoch: this.state.CumulativeSteps
-                                                }}
-
-                                            ></LossChart>
-                                        </div>
-                                    </div>
-
+                        <div>
+                        <div className={"positionrelative h100 " + (this.state.trainMetrics.length <= 0 ? " " : "")} style={{ width: this.chartWidth, height: this.chartHeight }}>
+                                {this.state.trainMetrics.length <= 0 &&
+                                    <div className="notrainingdata">  No training loss data yet </div>
                                 }
+                                 
+                                    {this.state.trainMetrics.length > 0 &&
+                                                    <LossChart
+                                                        data={{
+                                                            data: this.state.trainMetrics,
+                                                            chartWidth: this.chartWidth,
+                                                            chartHeight: this.state.lossChartHeight,
+                                                            epoch: this.state.CumulativeSteps
+                                                        }}
 
-                            </div>
+                                        ></LossChart>
+                                }
+                                </div>
+                                        </div>
+                                    </div> 
                         </div>}
             </div>
         )
@@ -847,7 +833,7 @@ class Train extends Component {
                                         <ROCChart
                                             data={{
                                                 chartWidth: this.chartWidth,
-                                                chartHeight: this.chartHeight,
+                                                chartHeight: this.state.lossChartHeight,
                                                 data: this.state.rocData,
                                                 isTraining: this.state.isTraining,
                                                 epoch: this.state.CumulativeSteps,
@@ -874,7 +860,7 @@ class Train extends Component {
                                             data={{
                                                 data: this.state.mseData,
                                                 chartWidth: this.chartWidth,
-                                                chartHeight: this.chartHeight,
+                                                chartHeight: this.state.lossChartHeight,
                                                 epoch: this.state.CumulativeSteps,
                                                 threshold: this.state.bestMetric.threshold
                                             }}
@@ -899,7 +885,7 @@ class Train extends Component {
                                             data={{
                                                 data: this.state.encodedData,
                                                 chartWidth: this.chartWidth,
-                                                chartHeight: this.chartHeight,
+                                                chartHeight: this.state.lossChartHeight,
                                                 epoch: this.state.CumulativeSteps
                                             }}
 
@@ -913,7 +899,7 @@ class Train extends Component {
         )
 
         let modelMetricsBlock = (
-            <div className="flex w100 pr10  "> 
+            <div className="flex  w100 pr10   "> 
                     {(this.state.bestMetric && this.state.showModelEvaluationMetrics) &&
 
                         <div className={"iblock perfmetrics w100 " + (this.state.isTraining ? " disabled " : " ")}>
@@ -974,6 +960,19 @@ class Train extends Component {
                 </div>
         )
 
+       
+        // if (this.refs["lossbox1"]) { 
+        //     if (this.refs["lossbox1"].offsetWidth > this.chartWidth + 60 || this.refs["lossbox1"].offsetWidth < this.chartWidth - 40) {
+        //         this.hideLoss = true
+        //     }
+        //     // console.log(this.refs["lossbox1"].offsetWidth, this.hideLoss);
+        // }
+        
+        
+       
+        
+        
+
         return (
             <div className="maintrainbox">
 
@@ -1002,14 +1001,16 @@ class Train extends Component {
                         <div>
                             <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">
                                 Autoencoders</a> are neural networks which learn to reconstruct input data. We can leverage this property to detect anomalies.
-                                <div className="circlenumber iblock textaligncenter"> 1 </div>  <span className="boldtext"> Build . </span> model parameters
-                        (number of layers, batchsize, learning rate, regularizer etc) and then initialize the model.
+                                <div className="circlenumber iblock textaligncenter"> 1 </div>  <span className="boldtext"> Build . </span> Select model parameters
+                        (number of layers, batchsize, learning rate, regularizer etc) and then initialize (compile) the model.
                         <div className="circlenumber iblock textaligncenter"> 2 </div>  <span className="boldtext"> Train. </span> Click the train model button.
                         This trains the autoencoder using normal data samples from the ECG5000 dataset. This way the model learns to reconstruct normal data samples
                         with very little reconstruction error.
                         <div className="circlenumber iblock textaligncenter"> 3 </div>  <span className="boldtext"> Evaluate. </span> 
-                        At each training step, visualize the reconstruction error (mse) generated for each sample in the test dataset. We can observe that mse is higher
-                        for abnormal samples compared to normal samples. We can select a threshold and flag samples with an mse > threshold as anomalies.
+                        At each training step, visualize the reconstruction error (mse) generated for each sample in the test dataset. Observe that mse is higher
+                        for abnormal samples compared to abnormal samples. We can select a threshold and flag samples with an mse > threshold as anomalies. 
+                        Model performance can then be evaluated using metrics such has AUC, TPR, FPR; also observe how these metrics vary with different
+                        choices of threshold.
          
                      </div>
 
@@ -1026,16 +1027,19 @@ class Train extends Component {
                     <div className="iblock   ">
                         <div className="iblock mr5"> <span className="boldtext"> {} </span></div>
                         <div className="iblock">
-                            <div className="smalldesc"> {this.state.hiddenDim.length} Layer Autoencoder </div>
+                            <div className="smalldesc"> 
+                                
+                                {this.state.hiddenDim.length} Layer Autoencoder
+                                
+                            </div>
                         </div>
                     </div>
 
                 </div>
-                <div ref="glowbar" className={"glowbar w0 "} style={{ width: Math.floor((this.currentSteps / this.state.numSteps) * 100) + "%" }}></div>
-
+                
 
                 {(this.state.showAdvanced) &&
-                    <div className=" modelconfigdiv p10 ">
+                    <div className=" modelconfigdiv p10 "> 
 
                         <div className="flex flexwrap ">
                             <div className="flexwrapitem">
@@ -1043,7 +1047,8 @@ class Train extends Component {
                             </div>
                             <div className="flexwrapitem flexfull ">
                                 {configBar}
-                            </div>
+                        </div>
+                       
                         </div>
 
                         <div className="pl10 pt5 pr10 pb5 greyborder mt10">
@@ -1068,6 +1073,8 @@ class Train extends Component {
 
                     </div>
                 }
+                <div ref="glowbar" className={"glowbar w0 "} style={{ width: Math.floor((this.currentSteps / this.state.numSteps) * 100) + "%" }}></div>
+
 
 
                 {/* start of top bar */}
@@ -1082,18 +1089,24 @@ class Train extends Component {
                 {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
 
                 <div ref="chartcontainer" className="flex chartcontainer flexwrap mt10">
-                    <div action="composer"  className="flexwrapitem   flex40"> {modelComposerBlock} </div>
+                    <div ref="composemodelbox" action="composer"  className="flexwrapitem   flex40"> {modelComposerBlock} </div>
                     <div ref="modelevalbox" action="metrics" className="flexwrapitem   flexfull"> {modelMetricsBlock} </div>
-                    <div action="loss"  className="flexwrapitem flexfull"> {lossChartBlock} </div>
+                    <div ref="lossbox1" action="loss"  className="  flexwrapitem "> { lossChartBlock} </div>
+                    <div action="mse" className="flexwrapitem  "> {mseHistogramBlock} </div>
                     
+                    {(this.state.rocData.length > 0 && this.state.encodedData.length >0) &&
+                        <div className="   iblock flex20">
+                            <div action="roc" className="flexwrapitem  iblock "> {rocChartBlock} </div>
+                            <div action="bottleneck"  className="flexwrapitem   iblock"> {bottleneckScatterPlotBlock} </div>
+
+                         </div>
+                    }
                 </div>
                 
                 <div> 
-                    {/* <div action="loss"  className="flexwrapitem smallshow  iblock"> {lossChartBlock} </div> */}
-                    <div action="mse"  className="flexwrapitem iblock  "> {mseHistogramBlock} </div>
-                    <div action="roc"  className="flexwrapitem  iblock "> {rocChartBlock} </div>
-                    <div action="bottleneck"  className="flexwrapitem   iblock"> {bottleneckScatterPlotBlock} </div>
-
+                   {/* {this.hideLoss && <div ref="lossbox1d" action="loss"  className="flexwrapitem iblock"> {lossChartBlock} </div>} */}
+                   
+                    
                 </div>
 
                

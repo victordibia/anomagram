@@ -152,6 +152,10 @@
     padding-bottom: 20px;
 }
 
+.pb3 {
+    padding-bottom: 3px;
+}
+
 .p5{
     padding: 5px;
 }
@@ -185,8 +189,8 @@
     padding-bottom: 7px;
 }
 
-.pb20 {
-    padding-bottom: 20px;
+.pb2 {
+    padding-bottom: 2px;
 }
 
 .pt20 {

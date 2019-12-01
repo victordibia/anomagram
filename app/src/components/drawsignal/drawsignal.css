@@ -1,14 +1,19 @@
-
-
-#footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    border-top: 1px solid #f0f3f6;
-    padding: 14px;
-    background: #fff;
+.gridcell{
+    
+     /* border: 1px solid pink; */
 }
 
-#footer a {
-    text-decoration: none;
+.gridcell:hover{
+    /* background: green; */
+}
+
+.gridcell.sel{
+    background: green;
+}
+
+.gridrow{
+    /* border-bottom: 1px dashed grey; */
+    border-bottom: 0.5px dashed grey;
+    margin: 0px;
+    padding: 0px;
 }

@@ -105,8 +105,8 @@
 }
 
 .metricvalue{
-    font-size: 2.1em;
-    padding-top: 0.1em;
+    font-size: 2.0em;
+    padding-top: 0.08em;
     /* min-width: 160px; */
     /* border: 1px solid grey; */
 }
@@ -149,7 +149,7 @@
     
 }
 
-@media screen and (max-width:1000px) {
+@media screen and (max-width:1070px) {
     .smallhide { display: none;}
 }
 

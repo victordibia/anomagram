@@ -20,6 +20,8 @@ class LossChart extends Component {
 
     componentDidMount() {
         this.drawGraph(this.props.data.data)
+        // console.log(this.props.data.data);
+
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -75,7 +77,7 @@ class LossChart extends Component {
         // console.log(data);
 
         // let self = this 
-        this.chartMargin = { top: 10, right: 10, bottom: 57, left: 50 }
+        this.chartMargin = { top: 10, right: 10, bottom: 57, left: 45 }
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
@@ -160,7 +162,7 @@ class LossChart extends Component {
         // text label for the y axis
         svg.append("text")
             .attr("transform", "rotate(-90)")
-            .attr("y", 0 - this.chartMargin.left)
+            .attr("y", 0 - this.chartMargin.left - 5)
             .attr("x", 0 - (this.chartHeight / 2))
             .attr("dy", "1em")
             .style("text-anchor", "middle")
