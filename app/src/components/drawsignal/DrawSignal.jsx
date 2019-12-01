@@ -3,6 +3,7 @@ import "./drawsignal.css"
 import * as d3 from "d3"
 import SmallLineChart from "../linechart/SmallLineChart"
 import * as _ from "lodash"
+import { Button } from "carbon-components-react"
 
 class DrawSignal extends Component {
     constructor(props) {
@@ -31,7 +32,7 @@ class DrawSignal extends Component {
 
         this.drawMap = new Map()
         this.signalCount = 140
-
+        this.pointColors = []
     }
 
     componentDidMount() {
@@ -92,11 +93,11 @@ class DrawSignal extends Component {
         }
         if (res === 'up') {
             this.flag = false;
-            this.clearDrawing()
+            this.miniGraph()
         }
-        if (res === "out") {
-            this.flag = false;
-        }
+        // if (res === "out") {
+        //     this.flag = false;
+        // }
         if (res === 'move') {
             if (this.flag) {
                 this.prevX = this.currX;
@@ -134,17 +135,22 @@ class DrawSignal extends Component {
         this.canvas.removeEventListener("mouseout", this.mouseOutEvent)
     }
 
+    miniGraph() {
+        if (this.drawMap.size > 0) {
+            this.drawGraph(this.drawMap)
+        }
+    }
 
     clearDrawing() {
 
         this.context.clearRect(0, 0, this.miniChartWidth, this.miniChartWidth);
         this.outContext.clearRect(0, 0, this.miniChartWidth, this.miniChartWidth);
 
-        this.drawGraph(this.drawMap)
         this.drawMap = new Map()
+
     }
 
-    rangeMean(start, end, prevMean, data) {
+    rangeMean(i, start, end, prevMean, data) {
         let sum = 0
         let count = 0
         for (let i = start; i <= end; i++) {
@@ -155,8 +161,10 @@ class DrawSignal extends Component {
         }
 
         let rangeMean = sum / count
+        this.pointColors[i] = "blue"
         if (count === 0) {
             rangeMean = prevMean
+            this.pointColors[i] = "orange"
         }
 
         console.log(start, end, sum, count, rangeMean);
@@ -166,6 +174,9 @@ class DrawSignal extends Component {
 
         let canv = this.refs.drawsignaloutcanvas
         let context = canv.getContext("2d")
+
+        this.outContext.clearRect(0, 0, this.miniChartWidth, this.miniChartWidth);
+
         // context.translate(0, this.chartHeight);
         // context.scale(1, -1);
 
@@ -175,7 +186,7 @@ class DrawSignal extends Component {
 
         let step = (this.miniChartWidth / this.signalCount)
         for (let i = 0; i < this.signalCount; i++) {
-            curMean = this.rangeMean(Math.floor(i * step), Math.floor(i * step + step), prevMean, data)
+            curMean = this.rangeMean(i, Math.floor(i * step), Math.floor(i * step + step), prevMean, data)
             signalHolder[i] = curMean
             prevMean = curMean
         }
@@ -186,10 +197,11 @@ class DrawSignal extends Component {
         for (let i = 1; i < signalHolder.length; i++) {
             currX = i
             currY = signalHolder[i] || signalHolder[i - 1]
+            let strokeColor = signalHolder[i] ? "green" : "blue"
             context.beginPath();
             context.moveTo(prevX, prevY);
             context.lineTo(currX, currY);
-            // context.strokeStyle = this.strokeColor;
+            context.strokeStyle = this.pointColors[i]
             context.lineWidth = this.lineWidth;
             context.stroke();
             context.closePath();
@@ -227,10 +239,14 @@ class DrawSignal extends Component {
                     <canvas className="border iblock mr10" ref="drawsignalcanvas" id="drawsignalcanvas"></canvas>
                     <canvas className="border iblock" ref="drawsignaloutcanvas" id="drawsignalcanvas"></canvas>
                 </div>
-                <div> size {this.miniChartWidth + " - " + this.miniChartHeight}
-                    <button className="" onClick={this.clearDrawing.bind(this)}> Clear Drawing </button>
+                <div className="pt5">
+                    <Button
+                        size={"small"}
+                        renderIcon={null}
+                        onClick={this.clearDrawing.bind(this)}
+                    > Clear Drawing </Button>
                 </div>
-                <div>
+                <div className="p5">
                     Click and drag to draw a signal. Please draw within the box.
                 </div>
             </div>
