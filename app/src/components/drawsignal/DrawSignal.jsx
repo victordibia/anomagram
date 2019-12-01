@@ -30,13 +30,15 @@ class DrawSignal extends Component {
         this.flag = false
 
         this.drawMap = new Map()
+        this.signalCount = 140
 
     }
 
     componentDidMount() {
 
-        this.refs.drawsignaloutcanvas.width = this.miniChartWidth
+        this.refs.drawsignaloutcanvas.width = this.signalCount
         this.refs.drawsignaloutcanvas.height = this.miniChartHeight
+        this.outContext = this.refs.drawsignaloutcanvas.getContext('2d')
         // console.log("Line component mounted")
         this.canvas = this.refs.drawsignalcanvas
         this.canvas.width = this.miniChartWidth
@@ -51,6 +53,8 @@ class DrawSignal extends Component {
     }
 
     draw() {
+
+
         this.context.beginPath();
         this.context.moveTo(this.prevX, this.prevY);
         this.context.lineTo(this.currX, this.currY);
@@ -62,19 +66,15 @@ class DrawSignal extends Component {
 
         if (!this.drawMap.has(this.currX)) {
             this.drawMap.set(this.currX, this.currY)
+
         }
 
     }
 
-    clearDrawing() {
-        console.log(this.drawMap.size);
-        this.drawMap = new Map()
 
-        this.context.clearRect(0, 0, this.miniChartWidth, this.miniChartWidth);
-    }
 
     findxy(res, e) {
-        if (res == 'down') {
+        if (res === 'down') {
             this.prevX = this.currX;
             this.prevY = this.currY;
             this.currX = e.clientX - this.canvas.offsetLeft;
@@ -90,10 +90,14 @@ class DrawSignal extends Component {
                 this.dot_flag = false;
             }
         }
-        if (res == 'up' || res == "out") {
+        if (res === 'up') {
+            this.flag = false;
+            this.clearDrawing()
+        }
+        if (res === "out") {
             this.flag = false;
         }
-        if (res == 'move') {
+        if (res === 'move') {
             if (this.flag) {
                 this.prevX = this.currX;
                 this.prevY = this.currY;
@@ -131,9 +135,68 @@ class DrawSignal extends Component {
     }
 
 
+    clearDrawing() {
 
-    drawGraph() {
+        this.context.clearRect(0, 0, this.miniChartWidth, this.miniChartWidth);
+        this.outContext.clearRect(0, 0, this.miniChartWidth, this.miniChartWidth);
 
+        this.drawGraph(this.drawMap)
+        this.drawMap = new Map()
+    }
+
+    rangeMean(start, end, prevMean, data) {
+        let sum = 0
+        let count = 0
+        for (let i = start; i <= end; i++) {
+            if (data.get(i * 1)) {
+                sum += data.get(i * 1)
+                count++
+            }
+        }
+
+        let rangeMean = sum / count
+        if (count === 0) {
+            rangeMean = prevMean
+        }
+
+        console.log(start, end, sum, count, rangeMean);
+        return rangeMean
+    }
+    drawGraph(data) {
+
+        let canv = this.refs.drawsignaloutcanvas
+        let context = canv.getContext("2d")
+        // context.translate(0, this.chartHeight);
+        // context.scale(1, -1);
+
+        let prevMean = data.values().next().value
+        let curMean = 0
+        let signalHolder = []
+
+        let step = (this.miniChartWidth / this.signalCount)
+        for (let i = 0; i < this.signalCount; i++) {
+            curMean = this.rangeMean(Math.floor(i * step), Math.floor(i * step + step), prevMean, data)
+            signalHolder[i] = curMean
+            prevMean = curMean
+        }
+
+        console.log(signalHolder);
+        let prevX = 0, prevY = signalHolder[0]
+        let currX = 0, currY = 0
+        for (let i = 1; i < signalHolder.length; i++) {
+            currX = i
+            currY = signalHolder[i] || signalHolder[i - 1]
+            context.beginPath();
+            context.moveTo(prevX, prevY);
+            context.lineTo(currX, currY);
+            // context.strokeStyle = this.strokeColor;
+            context.lineWidth = this.lineWidth;
+            context.stroke();
+            context.closePath();
+            prevX = currX
+            prevY = currY
+
+        }
     }
 
 
