@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-// import { InlineLoading, Button, Search, Modal, Tooltip } from 'carbon-components-react';
+import { Toggle } from 'carbon-components-react';
 // import { loadJSONData } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
 import SmallLineChart from "../linechart/SmallLineChart"
+import DrawSignal from "../drawsignal/DrawSignal"
 // import "../../data" 
 
 
@@ -18,7 +19,8 @@ class Viz extends Component {
             apptitle: "Anomagram",
             testData: this.testData,
             trainData: [],
-            selectedData: 0
+            selectedData: 0,
+            showDrawData: false
         }
 
 
@@ -71,6 +73,10 @@ class Viz extends Component {
         this.refs.predictioncolordiv.style.backgroundColor = colorAttrr
     }
 
+    toggleDataOptions(e) { 
+        this.setState({showDrawData: e})
+    }
+
     render() {
 
 
@@ -113,34 +119,9 @@ class Viz extends Component {
             )
         });
 
-        return (
+        let datasetExamples = (
             <div>
-
-
-
-
-                <div className="bold mt10 sectiontitle mb10">
-                    Anomaly Detection with Deep Learning in the Browser!
-
-                </div>
-
-                <div className="mynotif h100 lh10  lightbluehightlight maxh16  mb10">
-                    {this.state.apptitle} is an interactive visualization tool for exploring
-                    deep learning models applied to the task of anomaly detection (on stationary data).
-
-                </div>
-
-
-
-
-                <div className="bold mt10 sectiontitle mb10">
-                    {/* ECG Dataset */}
-                </div>
-
-
-
-                <div className="flex  " >
-                    <div className="flexfull p10  ">
+                <div className="p10  ">
                         <div className="mb10 boldtext">
                             ECG {this.state.testData.length}
                         </div>
@@ -151,38 +132,35 @@ class Viz extends Component {
                             {dataPoints}
                         </div>
                     </div>
-                    {/* <div className="flex2 p10 ">
-                        <div className="mb10 boldtext"> Model </div>
-                    </div> */}
-                    <div className=" p10 modeloutputbox rad5 ">
-                        <div className="mb10 boldtext"> Model Output
+            </div>
+        )
 
-                        </div>
-                        <div className="">
+        let dataSketchPad = (
+            <div>
+                <DrawSignal></DrawSignal>
+            </div>
+        )
 
+        let modelOutput = (
+            <div className=" p10 modeloutputbox rad5 ">
+                        <div className="mb10 boldtext"> Model Output</div>
+                        <div className=""> 
                             {this.state.testData.length > 0 &&
                                 <div>
                                     <div className="flex mediumdesc mb5 displaynone">
-                                        <div className="mr10 boldtext">
-                                            Label
-                                        </div>
-                                        <div ref="labelcolordiv" className="flexfull colorbox greenbox">
-
-                                        </div>
+                                        <div className="mr10 boldtext"> Label </div>
+                                        <div ref="labelcolordiv" className="flexfull colorbox greenbox"></div>
                                         {/* <span className="boldtext"> </span>: {this.chartColorMap[this.state.testData[this.state.selectedData].target].name} */}
                                     </div>
                                     <div className="flex mediumdesc mb5">
                                         <div className="mr10 boldtext">
                                             {this.state.testData[this.state.selectedData].target + "" === "1" ? "NORMAL" : "ABNORMAL"}
                                         </div>
-                                        <div ref="predictioncolordiv" className="flexfull colorbox redbox">
-
-                                        </div>
+                                        <div ref="predictioncolordiv" className="flexfull colorbox redbox"></div>
                                         {/* <span className="boldtext"> </span>: {this.chartColorMap[this.state.testData[this.state.selectedData].target].name} */}
                                     </div>
 
-                                    <div className="iblock">
-                                        {/* {this.state.testData[this.state.selectedData].index} */}
+                                    <div className="iblock"> 
                                         <LineChart
                                             data={{
                                                 data: this.state.testData[this.state.selectedData],
@@ -190,24 +168,55 @@ class Viz extends Component {
                                                 color: this.chartColorMap[this.state.testData[this.state.selectedData].target].colornorm,
                                                 chartWidth: 390,
                                                 chartHeight: 370
-                                            }}
-
+                                            }} 
                                         > </LineChart>
                                     </div>
                                 </div>
-                            }
-                            {/* {this.state.testData[0].index} */}
-                        </div>
+                            } 
+                        </div> 
+            </div>
+        )
 
-                        <div>
-                            
+        return (
+            <div> 
+                <div className="bold mt10 sectiontitle mb10">
+                    Anomaly Detection with Deep Learning in the Browser! 
+                </div>
 
-                        </div>
-
+                <div className="mynotif h100 lh10  lightbluehightlight maxh16  mb10">
+                    {this.state.apptitle} is an interactive visualization tool for exploring
+                    deep learning models applied to the task of anomaly detection (on stationary data).
+                </div> 
+                 
+                
+                <div className="boldtext pb5 "> Select  Data source</div>
+                    <div className=" rad2 iblock pr10 pl10 ">
+                        {/* <div className="mr10 pt10">Advanced options </div> */}
+                        <div className="boldtext iblock  mr10">
+                            <Toggle
+                                id="advancedoptionstoggle"
+                                className='smalldesc boldtext mr10'
+                                labelA=''
+                                labelB=' '
+                                // onChange action('onChange'),
+                                onToggle={this.toggleDataOptions.bind(this)}
+                            ></Toggle>
+                    </div>
+                    <div className="iblock  ">{ this.state.showDrawData ? " ECG Data" : "Draw your data"} </div>
 
                     </div>
-
-
+ 
+                <div className="flex flexwrap ">
+                    
+                   { <div className={"flexwrapitem  flex20" + (this.state.showDrawData ? " displaynone" : " ")}>
+                        {datasetExamples}
+                    </div> }
+                    {<div className={"flexwrapitem  flex20" + (!this.state.showDrawData ? " displaynone" : " ")}>
+                        {dataSketchPad}
+                    </div> }
+                    <div className="flexwrapitem">
+                        {modelOutput}
+                    </div> 
                 </div>
                 <div className="lh10 p10">
                     We have trained a two layer autoencoder with 2600 samples of normal ECG signal data.

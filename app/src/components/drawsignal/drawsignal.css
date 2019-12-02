@@ -1,19 +1,10 @@
-.gridcell{
-    
-     /* border: 1px solid pink; */
-}
 
-.gridcell:hover{
-    /* background: green; */
-}
 
-.gridcell.sel{
-    background: green;
+.smallchartbox{
+    background: rgba(198, 216, 248, 0.808);
+    border: 1px dashed grey;
+    border-radius: 4px;
 }
-
-.gridrow{
-    /* border-bottom: 1px dashed grey; */
-    border-bottom: 0.5px dashed grey;
-    margin: 0px;
-    padding: 0px;
+.extractedsignal{
+    /* border-top: 1px solid grey; */
 }

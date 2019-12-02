@@ -145,8 +145,13 @@
 
 @media screen and (max-width:600px) {
     .flexwrap { flex-wrap: wrap;  }
-    .flexwrapitem:first-child { flex-basis: 100%; }
-    
+    .flexwrapitem:first-child { flex-basis: 100%; }  
+}
+
+
+@media screen and (max-width:800px) {
+    .flexwrap8 { flex-wrap: wrap;  }
+    .flexwrapitem8:first-child { flex-basis: 100%; }  
 }
 
 @media screen and (max-width:1070px) {

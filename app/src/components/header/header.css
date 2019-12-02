@@ -10,8 +10,7 @@
     height: 100%;
     line-height: 3.4em;
     display: block;
-    padding: 0px 12px 44px 12px;
-   
+    padding: 0px 12px 44px 12px; 
 }
 
 .navbarlinks a:hover{
@@ -19,7 +18,7 @@
 } 
 
 .headerboost{
-    height: 46px;;
+    height: 38px;;
 }
 
 /* .bx--header{

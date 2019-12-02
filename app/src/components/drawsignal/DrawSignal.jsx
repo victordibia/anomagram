@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import "./drawsignal.css"
 import * as d3 from "d3"
-import SmallLineChart from "../linechart/SmallLineChart"
 import * as _ from "lodash"
 import { Button } from "carbon-components-react"
 
@@ -10,15 +9,14 @@ class DrawSignal extends Component {
         super(props)
 
         this.state = {
-            chart: this.props.data,
-            rows: 30,
-            columns: 140,
-            chartWidth: 600,
-            chartHeight: 300,
+            signalExtracted: false
         }
 
-        this.miniChartWidth = 500
-        this.miniChartHeight = 300
+        this.chartWidth = 600
+        this.chartHeight = 300
+
+        this.smallChartWidth = 150
+        this.smallChartHeight = 50
 
         this.prevX = 0
         this.currX = 0
@@ -37,32 +35,36 @@ class DrawSignal extends Component {
 
     componentDidMount() {
 
-        this.refs.drawsignaloutcanvas.width = this.signalCount
-        this.refs.drawsignaloutcanvas.height = this.miniChartHeight
-        this.outContext = this.refs.drawsignaloutcanvas.getContext('2d')
-        // console.log("Line component mounted")
-        this.canvas = this.refs.drawsignalcanvas
-        this.canvas.width = this.miniChartWidth
-        this.canvas.height = this.miniChartHeight;
-        this.context = this.canvas.getContext('2d')
+        this.refs.drawsignaloutcanvas.width = this.smallChartWidth
+        this.refs.drawsignaloutcanvas.height = this.smallChartHeight
+        this.smallChartContext = this.refs.drawsignaloutcanvas.getContext('2d')
 
-        this.canvas.addEventListener("mousedown", this.mouseDownEvent.bind(this))
-        this.canvas.addEventListener("mouseup", this.mouseUpEvent.bind(this))
-        this.canvas.addEventListener("mousemove", this.mouseMoveEvent.bind(this))
-        this.canvas.addEventListener("mouseout", this.mouseOutEvent.bind(this))
+        // console.log("Line component mounted")
+        this.largeChartCanvas = this.refs.drawsignalcanvas
+        this.largeChartCanvas.width = this.chartWidth
+        this.largeChartCanvas.height = this.chartHeight;
+        this.largeChartContext = this.largeChartCanvas.getContext('2d')
+
+        this.largeChartCanvas.addEventListener("mousedown", this.mouseDownEvent.bind(this))
+        // this.largeChartCanvas.addEventListener("touchstart", this.mouseDownEvent.bind(this))
+
+        this.largeChartCanvas.addEventListener("mouseup", this.mouseUpEvent.bind(this))
+        this.largeChartCanvas.addEventListener("mousemove", this.mouseMoveEvent.bind(this))
+        // this.largeChartCanvas.addEventListener("touchmove", this.mouseMoveEvent.bind(this))
+        this.largeChartCanvas.addEventListener("mouseout", this.mouseOutEvent.bind(this))
 
     }
 
     draw() {
 
 
-        this.context.beginPath();
-        this.context.moveTo(this.prevX, this.prevY);
-        this.context.lineTo(this.currX, this.currY);
-        this.context.strokeStyle = this.strokeColor;
-        this.context.lineWidth = this.lineWidth;
-        this.context.stroke();
-        this.context.closePath();
+        this.largeChartContext.beginPath();
+        this.largeChartContext.moveTo(this.prevX, this.prevY);
+        this.largeChartContext.lineTo(this.currX, this.currY);
+        this.largeChartContext.strokeStyle = this.strokeColor;
+        this.largeChartContext.lineWidth = this.lineWidth;
+        this.largeChartContext.stroke();
+        this.largeChartContext.closePath();
         // console.log(this.currX, this.currY);
 
         if (!this.drawMap.has(this.currX)) {
@@ -78,16 +80,16 @@ class DrawSignal extends Component {
         if (res === 'down') {
             this.prevX = this.currX;
             this.prevY = this.currY;
-            this.currX = e.clientX - this.canvas.offsetLeft;
-            this.currY = e.clientY - this.canvas.offsetTop;
+            this.currX = e.clientX - this.largeChartCanvas.offsetLeft;
+            this.currY = e.clientY - this.largeChartCanvas.offsetTop;
 
             this.flag = true;
             this.dot_flag = true;
             if (this.dot_flag) {
-                this.context.beginPath();
-                this.context.fillStyle = this.strokeColor;
-                this.context.fillRect(this.currX, this.currY, 2, 2);
-                this.context.closePath();
+                this.largeChartContext.beginPath();
+                this.largeChartContext.fillStyle = this.strokeColor;
+                this.largeChartContext.fillRect(this.currX, this.currY, 2, 2);
+                this.largeChartContext.closePath();
                 this.dot_flag = false;
             }
         }
@@ -95,15 +97,15 @@ class DrawSignal extends Component {
             this.flag = false;
             this.miniGraph()
         }
-        // if (res === "out") {
-        //     this.flag = false;
-        // }
+        if (res === "out") {
+            this.flag = false;
+        }
         if (res === 'move') {
             if (this.flag) {
                 this.prevX = this.currX;
                 this.prevY = this.currY;
-                this.currX = e.clientX - this.canvas.offsetLeft;
-                this.currY = e.clientY - this.canvas.offsetTop;
+                this.currX = e.clientX - this.largeChartCanvas.offsetLeft;
+                this.currY = e.clientY - this.largeChartCanvas.offsetTop;
                 this.draw();
             }
         }
@@ -113,6 +115,23 @@ class DrawSignal extends Component {
 
 
     }
+
+    // touchDownEvent(e) {
+
+    // }
+
+    // touchUpEvent(e) {
+
+    // }
+
+    // touchMoveEvent(e) {
+
+    // }
+    // touchOutEvent(e) {
+
+    // }
+
+
 
     mouseDownEvent(e) {
         this.findxy('down', e)
@@ -129,10 +148,10 @@ class DrawSignal extends Component {
 
 
     componentWillUnmount() {
-        this.canvas.removeEventListener("mousedown", this.mouseDownEvent)
-        this.canvas.removeEventListener("mouseup", this.mouseUpEvent)
-        this.canvas.removeEventListener("mouseover", this.mouseMoveEvent)
-        this.canvas.removeEventListener("mouseout", this.mouseOutEvent)
+        this.largeChartCanvas.removeEventListener("mousedown", this.mouseDownEvent)
+        this.largeChartCanvas.removeEventListener("mouseup", this.mouseUpEvent)
+        this.largeChartCanvas.removeEventListener("mouseover", this.mouseMoveEvent)
+        this.largeChartCanvas.removeEventListener("mouseout", this.mouseOutEvent)
     }
 
     miniGraph() {
@@ -143,11 +162,11 @@ class DrawSignal extends Component {
 
     clearDrawing() {
 
-        this.context.clearRect(0, 0, this.miniChartWidth, this.miniChartWidth);
-        this.outContext.clearRect(0, 0, this.miniChartWidth, this.miniChartWidth);
+        this.largeChartContext.clearRect(0, 0, this.chartWidth, this.chartHeight);
+        this.smallChartContext.clearRect(0, 0, this.smallChartWidth, this.smallChartHeight);
 
         this.drawMap = new Map()
-
+        this.setState({ signalExtracted: false })
     }
 
     rangeMean(i, start, end, prevMean, data) {
@@ -167,7 +186,7 @@ class DrawSignal extends Component {
             this.pointColors[i] = "orange"
         }
 
-        console.log(start, end, sum, count, rangeMean);
+        // console.log(start, end, sum, count, rangeMean);
         return rangeMean
     }
     drawGraph(data) {
@@ -175,7 +194,7 @@ class DrawSignal extends Component {
         let canv = this.refs.drawsignaloutcanvas
         let context = canv.getContext("2d")
 
-        this.outContext.clearRect(0, 0, this.miniChartWidth, this.miniChartWidth);
+        this.smallChartContext.clearRect(0, 0, this.chartWidth, this.chartWidth);
 
         // context.translate(0, this.chartHeight);
         // context.scale(1, -1);
@@ -184,14 +203,25 @@ class DrawSignal extends Component {
         let curMean = 0
         let signalHolder = []
 
-        let step = (this.miniChartWidth / this.signalCount)
+        let step = (this.chartWidth / this.signalCount)
         for (let i = 0; i < this.signalCount; i++) {
             curMean = this.rangeMean(i, Math.floor(i * step), Math.floor(i * step + step), prevMean, data)
             signalHolder[i] = curMean
             prevMean = curMean
         }
+        this.setState({ signalExtracted: true })
 
-        console.log(signalHolder);
+        this.xScale = d3.scaleLinear()
+            .domain([0, signalHolder.length - 1]) // input
+            .range([0, this.smallChartWidth]); // output
+
+
+        this.yScale = d3.scaleLinear()
+            .domain([d3.min(signalHolder), d3.max(signalHolder)]) // input 
+            .range([0, this.smallChartHeight]); // output
+
+
+        // console.log(signalHolder);
         let prevX = 0, prevY = signalHolder[0]
         let currX = 0, currY = 0
         for (let i = 1; i < signalHolder.length; i++) {
@@ -199,8 +229,8 @@ class DrawSignal extends Component {
             currY = signalHolder[i] || signalHolder[i - 1]
             let strokeColor = signalHolder[i] ? "green" : "blue"
             context.beginPath();
-            context.moveTo(prevX, prevY);
-            context.lineTo(currX, currY);
+            context.moveTo(this.xScale(prevX), this.yScale(prevY));
+            context.lineTo(this.xScale(currX), this.yScale(currY));
             context.strokeStyle = this.pointColors[i]
             context.lineWidth = this.lineWidth;
             context.stroke();
@@ -234,11 +264,17 @@ class DrawSignal extends Component {
         })
 
         return (
-            <div className="iblock mt2 border p10">
-                <div>
-                    <canvas className="border iblock mr10" ref="drawsignalcanvas" id="drawsignalcanvas"></canvas>
-                    <canvas className="border iblock" ref="drawsignaloutcanvas" id="drawsignalcanvas"></canvas>
+            <div style={{ width: this.chartWidth + 25 }} className="mt2 border p10">
+
+                <div className="border ml10 mt10 unclickable positionabsolute p10 smallchartbox " >
+                    <canvas className="" ref="drawsignaloutcanvas" id="drawsignalcanvas"></canvas>
+                    <div className={"smalldesc extractedsignal pt5 " + (this.state.signalExtracted ? " " : " displaynone")}> Extracted signal </div>
+                    {/* <div className={"smalldesc pt5 " + (this.state.signalExtracted ? " " : " displaynone")}> draw signal </div> */}
                 </div>
+                <div className="">
+                    <canvas className="border iblock largechart" ref="drawsignalcanvas" id="drawsignalcanvas"></canvas>
+                </div>
+
                 <div className="pt5">
                     <Button
                         size={"small"}
@@ -246,7 +282,7 @@ class DrawSignal extends Component {
                         onClick={this.clearDrawing.bind(this)}
                     > Clear Drawing </Button>
                 </div>
-                <div className="p5">
+                <div className="p5 iblock mediumdesc">
                     Click and drag to draw a signal. Please draw within the box.
                 </div>
             </div>
