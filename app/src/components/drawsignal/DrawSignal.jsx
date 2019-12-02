@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./drawsignal.css"
 import * as d3 from "d3"
-import * as _ from "lodash"
+// import * as _ from "lodash"
 import { Button } from "carbon-components-react"
 
 class DrawSignal extends Component {
@@ -227,7 +227,6 @@ class DrawSignal extends Component {
         for (let i = 1; i < signalHolder.length; i++) {
             currX = i
             currY = signalHolder[i] || signalHolder[i - 1]
-            let strokeColor = signalHolder[i] ? "green" : "blue"
             context.beginPath();
             context.moveTo(this.xScale(prevX), this.yScale(prevY));
             context.lineTo(this.xScale(currX), this.yScale(currY));
@@ -243,26 +242,6 @@ class DrawSignal extends Component {
 
 
     render() {
-
-        let gridWidth = this.state.chartWidth / this.state.columns
-        let gridHeight = this.state.chartHeight / this.state.rows
-
-        let grid = _.range(this.state.rows).map((row) => {
-            let cols = _.range(this.state.columns).map((column) => {
-                return (
-                    <div style={{ width: gridWidth + "px", height: gridHeight + "px" }} className="gridcell iblock" key={"gridcolumns" + row + column}>
-
-                    </div>
-                )
-            })
-
-            return (
-                <div style={{ height: gridHeight }} className="gridrow" key={"gridrow" + row}>
-                    {cols}
-                </div>
-            )
-        })
-
         return (
             <div style={{ width: this.chartWidth + 25 }} className="mt2 border p10">
 

@@ -621,7 +621,7 @@ class Train extends Component {
             <div>
                 <div className="  flex flexjustifycenter pt10 ">
 
-                    {/* <div className="flex  flexjustifycenter mr10 ">
+                    <div className="flex displaynone flexjustifycenter mr10 ">
                         <div ref="activeloaderdiv" >
                             <Loading
                                 className=" "
@@ -631,7 +631,7 @@ class Train extends Component {
                             > </Loading>
                         </div>
 
-                    </div> */}
+                    </div>
 
                     <div className="iblock h100 mr5 ">
                         <div className="  flex flexjustifycenter h100  ">
@@ -753,9 +753,10 @@ class Train extends Component {
                     </div>
 
                 
-                    <div className="  smalldesc  pt5 pb3">  
-                    {this.state.modelStale && <span className=""> Model configuration has changed. Click <span className="boldtext "> initialize </span> to recompile model.</span>}
-                    { !this.state.modelStale && <span className=""> Model compiled based on selected parameters. Ready to <span className="boldtext"> train </span>. </span> }
+                    <div className="   pt5 pb3">  
+                        {this.state.modelStale && <div className="smallblueball pulse iblock"></div>}
+                    {this.state.modelStale && <span className="mediumdesc"> Model configuration has changed. Click <span className="boldtext "> initialize </span> to recompile model.</span>}
+                    { !this.state.modelStale && <span className="mediumdesc"> Model compiled based on selected parameters. Ready to <span className="boldtext"> train </span>. </span> }
                     </div>
                 </div>
             </div>
