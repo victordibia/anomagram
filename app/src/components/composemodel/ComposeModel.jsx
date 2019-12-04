@@ -361,7 +361,7 @@ class ComposeModel extends Component {
                 )
             })
             return (
-                <div key={"enclayer" + layerindex} className="iblock  mr10 flex flexfull flexjustifycenter ">
+                <div key={"enclayer" + layerindex} className="iblock encdecbox  mr10 flex flexfull flexjustifycenter ">
                     <div className="iblock  mb5 mt5">
                         <div>
                             <div className="smalldesc mb3 unselectable ">{data} units</div>

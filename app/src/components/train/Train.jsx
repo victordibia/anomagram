@@ -52,11 +52,20 @@ class Train extends Component {
             { id: "opt6", text: "Momentum", value: "momentum", type: "optimizer" },
             { id: "opt7", text: "sgd", value: "sgd", type: "optimizer" },
         ]
+        this.abnormalPercentageOptions = [
+            { id: "opt1", text: "0%", value: 0, type: "abnormalpercentage" },
+            { id: "opt3", text: "5%", value: 0.05, type: "abnormalpercentage" },
+            { id: "opt4", text: "10%", value: 0.1, type: "abnormalpercentage" },
+            { id: "opt5", text: "20%", value: 0.2, type: "abnormalpercentage" },
+            { id: "opt2", text: "30%", value: 0.3, type: "abnormalpercentage" },
+            { id: "opt6", text: "50%", value: 0.5, type: "abnormalpercentage" },
+            { id: "opt7", text: "70%", value: 0.7, type: "abnormalpercentage" },
+        ]
 
         
 
 
-
+        this.selectedAbnormalPercentage = 0
         this.selectedTrainDataOption = 0
         this.selectedTestDataOption = 2
         this.selectedOptimizer = 0
@@ -120,7 +129,8 @@ class Train extends Component {
 
             
             lossChartHeight: this.chartHeight,
-            lossChartWidth: this.chartWidth
+            lossChartWidth: this.chartWidth,
+            abnormalPercentage: this.abnormalPercentageOptions[this.selectedAbnormalPercentage].value
         }
 
         this.showOptions = [
@@ -180,7 +190,7 @@ class Train extends Component {
         }
 
         // if train or test size updated, regenerate tensors
-        if (this.state.trainDataSize !== prevState.trainDataSize || this.state.testDataSize !== prevState.testDataSize) {
+        if (this.state.trainDataSize !== prevState.trainDataSize || this.state.testDataSize !== prevState.testDataSize || this.state.abnormalPercentage !== prevState.abnormalPercentage ) {
             this.generateDataTensors()
         }
     }
@@ -443,17 +453,35 @@ class Train extends Component {
         this.trainData = _.shuffle(this.trainData)
         this.testData = _.shuffle(this.testData)
 
-        //Add only positive normal ECG (target==1) to train json array
+        let maxAbnormalCount = this.state.abnormalPercentage * this.state.trainDataSize;
+        let abnormalCount = 0;
+
         let trainEcg = []
+        //Add abnormal samples
         for (let row in this.trainData) {
-            let val = this.trainData[row]
-            if (val.target + "" === 1 + "") {
-                trainEcg.push(val)
-                if (trainEcg.length === this.state.trainDataSize) {
-                    break;
+            let val = this.trainData[row] 
+            if (val.target + "" !== 1 + "") {
+                if (abnormalCount < maxAbnormalCount) {
+                    trainEcg.push(val)
+                    abnormalCount++
                 }
             }
         }
+
+        //Add  positive normal ECG (target==1) to train json array 
+        for (let row in this.trainData) {
+            let val = this.trainData[row]
+            if (val.target + "" === 1 + "") { 
+                if (trainEcg.length < this.state.trainDataSize) {
+                    trainEcg.push(val)
+                } else {
+                    break
+                }
+            }  
+        }
+
+        console.log(maxAbnormalCount, "abnormal samples",  abnormalCount, "Total", trainEcg.length);
+        
 
         // Create train tensor from json array
         this.xsTrain = tf.tensor2d(trainEcg.map(item => item.data
@@ -507,9 +535,11 @@ class Train extends Component {
                 this.setState({ modelStale: true })
                 break
             case "traindatasize":
-                this.setState({ trainDataSize: e.selectedItem.value })
-
+                this.setState({ trainDataSize: e.selectedItem.value }) 
                 break
+            case "abnormalpercentage":
+                    this.setState({ abnormalPercentage: e.selectedItem.value }) 
+                    break
             case "testdatasize":
                 this.setState({ testDataSize: e.selectedItem.value })
                 break
@@ -728,6 +758,8 @@ class Train extends Component {
                         />
                     </div>
 
+                    <div className="configsectiontitle smalldesc iblock"> Data params </div>
+
                     <div className="iblock mr10">
                         <div className="mediumdesc pb7 pt5">Train Size {this.state.trainDataShape[0]} </div>
                         <Dropdown
@@ -735,6 +767,18 @@ class Train extends Component {
                             label="Training Data"
                             items={this.trainingDataOptions}
                             initialSelectedItem={this.trainingDataOptions[this.selectedTrainDataOption]}
+                            itemToString={item => (item ? item.text : "")}
+                            onChange={this.updateModelParam.bind(this)}
+                        />
+                    </div>
+
+                    <div className="iblock mr10">
+                        <div className="mediumdesc pb7 pt5"> Abnormal % {this.state.abnormalPercentage} </div>
+                        <Dropdown
+                            id="abnormalpercentagedatadropdown"
+                            label="Abnormal %"
+                            items={this.abnormalPercentageOptions}
+                            initialSelectedItem={this.abnormalPercentageOptions[this.selectedAbnormalPercentage]}
                             itemToString={item => (item ? item.text : "")}
                             onChange={this.updateModelParam.bind(this)}
                         />
@@ -755,7 +799,8 @@ class Train extends Component {
                 
                     <div className="   pt5 pb3">  
                         {this.state.modelStale && <div className="smallblueball pulse iblock"></div>}
-                    {this.state.modelStale && <span className="mediumdesc"> Model configuration has changed. Click <span className="boldtext "> initialize </span> to recompile model.</span>}
+                        {(this.state.modelStale && this.state.CumulativeSteps === 0 )&& <span className="mediumdesc"> Select model parameters and click <span className="boldtext "> initialize </span> to compile model.</span>}
+                        {(this.state.modelStale && this.state.CumulativeSteps > 0) && <span className="mediumdesc"> Model configuration has changed. Click <span className="boldtext "> initialize </span> to recompile model.</span>}
                     { !this.state.modelStale && <span className="mediumdesc"> Model compiled based on selected parameters. Ready to <span className="boldtext"> train </span>. </span> }
                     </div>
                 </div>
@@ -764,8 +809,14 @@ class Train extends Component {
  
         if (this.state.encodedData[0]) {
             // console.log(this.state.encodedData[0].x);
-            this.firstEncode = this.state.encodedData[0].x
+            this.firstEncode = this.state.encodedData[0].x + this.state.encodedData[1].x
         }
+        let compBoxSize = 0
+        if (this.refs["composemodelbox"]) {
+            compBoxSize = this.refs["composemodelbox"].offsetWidth
+        }
+        // console.log(compBoxSize);
+        
         let modelComposerBlock = (
             <div className="composermaindiv">
                  {/* // Model Composer  */}
@@ -781,7 +832,7 @@ class Train extends Component {
                                         latentDim={[this.state.latentDim]}
                                         isTraining={this.state.isTraining}
                                         updateModelDims={this.updateModelDims}
-                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction + chartState + this.firstEncode }
+                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction + chartState + this.firstEncode + "-" + compBoxSize}
                                     />
                                 </div>
                             </div>
@@ -1090,8 +1141,8 @@ class Train extends Component {
                 {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
 
                 <div ref="chartcontainer" className="flex chartcontainer flexwrap mt10">
-                    <div ref="composemodelbox" action="composer"  className="flexwrapitem   flex40"> {modelComposerBlock} </div>
-                    <div ref="modelevalbox" action="metrics" className="flexwrapitem   flexfull"> {modelMetricsBlock} </div>
+                    <div ref="composemodelbox" action="composer"  className={"flexwrapitem " + (this.state.showModelComposer ? " flex40":"")}> {modelComposerBlock} </div>
+                    <div ref="modelevalbox" action="metrics" className={"flexwrapitem " + (this.state.showModelEvaluationMetrics ? " flexfull":"")}> {modelMetricsBlock} </div>
                     <div ref="lossbox1" action="loss"  className="  flexwrapitem "> { lossChartBlock} </div>
                     <div action="mse" className="flexwrapitem  "> {mseHistogramBlock} </div>
                     

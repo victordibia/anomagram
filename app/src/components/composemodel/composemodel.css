@@ -61,3 +61,7 @@
     align-content: center;
     /* border: 1px solid grey; */
 }
+
+.encdecbox{
+    min-height: 235px;
+}
