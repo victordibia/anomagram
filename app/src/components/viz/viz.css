@@ -64,3 +64,15 @@ white
 black
  
  */
+
+ .datasettab{
+     background: rgb(218, 218, 218);
+     padding: 10px;
+ }
+.datasettab.active{
+    background:  #0062ff;
+    color: white;
+}
+.lowerbar{
+    border-bottom: 2px solid #0062ff;
+}

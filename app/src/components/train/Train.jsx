@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Loading, Dropdown, Slider, Checkbox, Tooltip } from "carbon-components-react"
+import {Dropdown, Slider, Checkbox, Tooltip } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
 import { computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions"
@@ -19,6 +19,9 @@ class Train extends Component {
 
     constructor(props) {
         super(props)
+
+       
+        
 
         this.chartWidth = 350;
         this.chartHeight = 250;
@@ -126,6 +129,7 @@ class Train extends Component {
 
             showAdvanced: true,
             showIntroduction: false,
+            showWarmingUp: true,
 
             
             lossChartHeight: this.chartHeight,
@@ -150,12 +154,10 @@ class Train extends Component {
         this.yTest = []
 
         this.trainDataPath = "data/ecg/train.json"
-        this.testDataPath = "data/ecg/test.json"
-
-        
-
-
+        this.testDataPath = "data/ecg/test.json" 
         this.momentum = 0.9 
+
+        this.modelWarmedUp = false;
 
     }
 
@@ -165,9 +167,9 @@ class Train extends Component {
         this.generateDataTensors()
         // this.computeAccuracyMetrics(this.dummyMSe)
 
-        // setTimeout(() => {
-        //     this.createModel()
-        // }, 1000);
+        setTimeout(() => {
+            // this.createModel()
+        }, 100);
 
         this.getChartContainerSizes()
 
@@ -272,19 +274,27 @@ class Train extends Component {
 
         // showToast("success", "Model successfully created")
         // console.log(tf.memory());
+        this.setState({showWarmingUp: false})
     }
 
-    // modelWarmUp() {
-    //     let startTime = new Date();
-    //     this.createdModel.fit(this.xsWarmup,
-    //         this.xsWarmup, { epochs: 1, verbose: 0, batchSize: this.warmupSampleSize }
-    //     ).then(res => {
-    //         let endTime = new Date();
-    //         let elapsedTime = (endTime - startTime) / 1000
-    //         console.log("Warmup done", elapsedTime);
-    //     });
+    warmUpModel() {
 
-    // }
+        // let warmUpTensor = tf.tensor2d(this.trainData[0].data,[1,140])
+         console.log("attempting warmup");
+         
+        let warmUpTensor =  tf.tensor2d(this.trainData.slice(0,10).map(item => item.data
+            ), [10, this.trainData[0].data.length])
+        this.setState({ trainDataShape: this.xsTrain.shape })
+        
+        let startTime = new Date();
+        this.createdModel.fit(warmUpTensor, warmUpTensor, { epochs: 1, verbose: 0, batchSize: 512}
+        ).then(res => {
+            let endTime = new Date();
+            let elapsedTime = (endTime - startTime) / 1000
+            console.log("Warmup done", elapsedTime);
+        });
+
+    }
     trainModel() {
         // for (let i = 0; i < this.numSteps; i++) {
 
@@ -627,6 +637,8 @@ class Train extends Component {
             } 
         }); 
 
+        
+
         //get size of chart containers
        
          
@@ -651,17 +663,7 @@ class Train extends Component {
             <div>
                 <div className="  flex flexjustifycenter pt10 ">
 
-                    <div className="flex displaynone flexjustifycenter mr10 ">
-                        <div ref="activeloaderdiv" >
-                            <Loading
-                                className=" "
-                                active={this.state.isTraining ? true : false}
-                                small={true}
-                                withOverlay={false}
-                            > </Loading>
-                        </div>
-
-                    </div>
+                   
 
                     <div className="iblock h100 mr5 ">
                         <div className="  flex flexjustifycenter h100  ">
@@ -745,7 +747,7 @@ class Train extends Component {
                         />
                     </div>
 
-                    <div style={{ zIndex: 5000 }} className="iblock mr10">
+                    <div style={{ zIndex: 5000 }} className="iblock mr10 ">
                         <div className="mediumdesc pb7 pt5"> Optimizer {this.state.optimizer} </div>
                         <Dropdown
                             style={{ zIndex: 100 }}
@@ -758,9 +760,10 @@ class Train extends Component {
                         />
                     </div>
 
-                    <div className="configsectiontitle smalldesc iblock"> Data params </div>
-
-                    <div className="iblock mr10">
+                     
+                    <div className="iblock mr10 borderleftdash pl10 ">
+                    {/* <div className="configsectiontitle smalldesc iblock mr10">  Dataset </div> */}
+                        <div className="iblock">
                         <div className="mediumdesc pb7 pt5">Train Size {this.state.trainDataShape[0]} </div>
                         <Dropdown
                             id="trainingdatadropdown"
@@ -770,6 +773,7 @@ class Train extends Component {
                             itemToString={item => (item ? item.text : "")}
                             onChange={this.updateModelParam.bind(this)}
                         />
+                        </div>
                     </div>
 
                     <div className="iblock mr10">
@@ -958,7 +962,7 @@ class Train extends Component {
                             <div className="charttitle mb5 ">
                                 Model Evaluation Metrics
                             </div>
-                            <div className="mb5 greyhighlight p10">
+                            <div className="mb5 greyhighlight p10 touchnoscroll">
                                 <Slider
                                     className="w100 border"
                                     min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
@@ -1026,8 +1030,17 @@ class Train extends Component {
         
 
         return (
-            <div className="maintrainbox">
-
+            <div className="maintrainbox">  
+                {/* {this.state.showWarmingUp && <div className="">
+                    <div className="flex mt10 mr10 ">
+                        <div className="iblock  flexjustifycenter" ref="activeloaderdiv" >
+                            <div className="loadcircle iblock"></div>
+                                
+                        </div> 
+                       
+                        <div className="iblock pt3 pl5 h100 "> Initializing model ...</div> 
+                    </div>
+                </div>} */}
 
                 {/* show advanced options pannel */}
                 <div style={{ zIndex: 100 }} onClick={this.toggleIntroDrawer.bind(this)} className="unselectable mt10 p10 clickable  flex greymoreinfo">
@@ -1054,10 +1067,12 @@ class Train extends Component {
                             <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">
                                 Autoencoders</a> are neural networks which learn to reconstruct input data. We can leverage this property to detect anomalies.
                                 <div className="circlenumber iblock textaligncenter"> 1 </div>  <span className="boldtext"> Initialize . </span> Select model parameters
-                        (number of layers, batchsize, learning rate, regularizer etc) and then initialize (compile) the model.
-                        <div className="circlenumber iblock textaligncenter"> 2 </div>  <span className="boldtext"> Train. </span> Click the train model button.
-                        This trains the autoencoder using normal data samples from the ECG5000 dataset. This way the model learns to reconstruct normal data samples
-                        with very little reconstruction error.
+                (number of layers, batchsize, learning rate, regularizer etc) and then initialize (compile) the model.
+                        <div className="circlenumber iblock textaligncenter"> 2 </div>  <span className="boldtext"> Train. </span> This trains the autoencoder using normal data 
+                        samples from the ECG5000 dataset.  Training the model on a dataset that consists of mainly normal data (an assumption that holds for most anomaly use cases), 
+                        the model learns to reconstruct only normal data samples with very little reconstruction error. 
+                        To mirror your use case conditions, you can specify the percentage of abnormal samples 
+                        to include in the training data set and observe how it affects accuracy.
                         <div className="circlenumber iblock textaligncenter"> 3 </div>  <span className="boldtext"> Evaluate. </span> 
                         At each training step, visualize the reconstruction error (mse) generated for each sample in the test dataset. Observe that mse is higher
                         for abnormal samples compared to abnormal samples. We can select a threshold and flag samples with an mse > threshold as anomalies. 

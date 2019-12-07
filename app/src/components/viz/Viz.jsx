@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Toggle } from 'carbon-components-react';
+// import { Toggle } from 'carbon-components-react';
 // import { loadJSONData } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
@@ -12,15 +12,19 @@ class Viz extends Component {
     constructor(props) {
         super(props)
 
-
+        this.modelChartWidth = Math.min(390, window.innerWidth - 25)
+        this.modelChartHeight = 300
+ 
         this.testData = require("../../data/ecg/test.json")
-
+        this.testData = this.testData.slice(0, 70)
         this.state = {
             apptitle: "Anomagram",
             testData: this.testData,
             trainData: [],
             selectedData: 0,
-            showDrawData: false
+            showDrawData: true,
+            drawSectionWidth: 350,
+            drawSectionHeight: this.modelChartHeight - 30
         }
 
 
@@ -38,6 +42,8 @@ class Viz extends Component {
         }
 
         this.maxSmallChart = 100
+
+        
 
     }
 
@@ -62,6 +68,21 @@ class Viz extends Component {
 
     componentDidMount() {
         this.apptitle = "Amadioha"
+
+        // window.addEventListener("resize", this.onWindowResize.bind(this))
+        // console.log(this.refs["datasection"].offsetWidth)
+        this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth -5 })
+        this.drawSectionWidth = this.refs["datasection"].offsetWidth
+
+    }
+
+    componentWillUnmount() {
+        // window.removeEventListener("resize", this.onWindowResize)
+
+    }
+
+    onWindowResize() {
+        
     }
 
     clickDataPoint(e) {
@@ -75,6 +96,15 @@ class Viz extends Component {
 
     toggleDataOptions(e) { 
         this.setState({showDrawData: e})
+    }
+    setDatasetDraw(e) {
+        this.setState({ showDrawData: true })
+        // this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth })
+        console.log(this.refs["datasection"].offsetWidth);
+        
+    }
+    setDatasetECG(e) {
+        this.setState({showDrawData: false})
     }
 
     render() {
@@ -121,7 +151,7 @@ class Viz extends Component {
 
         let datasetExamples = (
             <div>
-                <div className="p10  ">
+                <div className="  ">
                         <div className="mb10 boldtext">
                             ECG {this.state.testData.length}
                         </div>
@@ -136,8 +166,11 @@ class Viz extends Component {
         )
 
         let dataSketchPad = (
-            <div>
-                <DrawSignal></DrawSignal>
+            <div > 
+                <DrawSignal
+                    width={this.state.drawSectionWidth}
+                    height={this.state.drawSectionHeight}
+                ></DrawSignal>
             </div>
         )
 
@@ -166,8 +199,8 @@ class Viz extends Component {
                                                 data: this.state.testData[this.state.selectedData],
                                                 index: this.state.testData[this.state.selectedData].index,
                                                 color: this.chartColorMap[this.state.testData[this.state.selectedData].target].colornorm,
-                                                chartWidth: 390,
-                                                chartHeight: 370
+                                                chartWidth: this.modelChartWidth,
+                                                chartHeight: this.modelChartHeight
                                             }} 
                                         > </LineChart>
                                     </div>
@@ -177,10 +210,14 @@ class Viz extends Component {
             </div>
         )
 
+        // if (this.refs["datasetexamplebox"]) {
+        //     console.log(this.refs["datasetexamplebox"].offsetWidth);
+        // } 
+
         return (
             <div> 
                 <div className="bold mt10 sectiontitle mb10">
-                    Anomaly Detection with Deep Learning in the Browser! 
+                    A Gentle Introduction to Anomaly Detection with Deep Learning (in the Browser!)
                 </div>
 
                 <div className="mynotif h100 lh10  lightbluehightlight maxh16  mb10">
@@ -189,31 +226,24 @@ class Viz extends Component {
                 </div> 
                  
                 
-                <div className="boldtext pb5 "> Select  Data source</div>
-                    <div className=" rad2 iblock pr10 pl10 ">
-                        {/* <div className="mr10 pt10">Advanced options </div> */}
-                        <div className="boldtext iblock  mr10">
-                            <Toggle
-                                id="advancedoptionstoggle"
-                                className='smalldesc boldtext mr10'
-                                labelA=''
-                                labelB=' '
-                                // onChange action('onChange'),
-                                onToggle={this.toggleDataOptions.bind(this)}
-                            ></Toggle>
-                    </div>
-                    <div className="iblock  ">{ this.state.showDrawData ? " ECG Data" : "Draw your data"} </div>
-
-                    </div>
+                <div className="mediumdesc pb5 "> Select  Data source</div>
+                 
+                <div className="mb10 lowerbar">
+                    <div onClick={this.setDatasetECG.bind(this)} className={"datasettab clickable iblock mr5 " + (this.state.showDrawData ? "" : " active")}> ECG5000 Dataset</div>
+                    <div onClick={this.setDatasetDraw.bind(this)} className={"datasettab clickable iblock mr10 " + (this.state.showDrawData ? " active" : " ")}> Draw your ECG data</div>
+                </div>
  
-                <div className="flex flexwrap ">
+                <div  className="flex flexwrap ">
                     
-                   { <div className={"flexwrapitem  flex20" + (this.state.showDrawData ? " displaynone" : " ")}>
-                        {datasetExamples}
-                    </div> }
-                    {<div className={"flexwrapitem  flex20" + (!this.state.showDrawData ? " displaynone" : " ")}>
-                        {dataSketchPad}
-                    </div> }
+                    <div ref="datasection" className=" flexwrapitem  flex20 " >
+                            { <div ref="datasetexamplebox" className={" " + (this.state.showDrawData ? " displaynone" : " ")}>
+                            {datasetExamples}
+                            </div> }
+                            {<div className={" " + (!this.state.showDrawData ? " displaynone" : " ")}>
+                            {dataSketchPad}
+                            </div> }
+                    </div>
+                   
                     <div className="flexwrapitem">
                         {modelOutput}
                     </div> 
@@ -251,32 +281,28 @@ class Viz extends Component {
 
                     <div className="sectiontitle mt10 mb5"> Modeling Normal Data  </div>
                     <div className="">
-                        <div className="flex">
-                            <div className="flex6 lh10 mb10 pr10">
-                                <div className="flex">
-                                    <div className="flex5 mr10">
-                                    <div className="pb5 boldtext"> Data Standardization  </div>
-                                    Most approaches to anomaly detection (and there are many) begin by constructing a model of 
-                                normal behaviour and then exploit this model to identify deviations from normal (anomalies or abnormal data).
-                            Here is how we can use an autoencoder to model normal behaviour. If you recall, an autoencoder learns to compress 
-                            and reconstruct data. Notably this learned mapping is specific to the data type/distribution distribution of the training data.
-                            In other words an autoencoder trained using 15 px images of dogs is unlikely to correctly reconstruct 20px images of the surface 
-                            of the moon.
-                                    </div>
-                                    
-                                    <div className="flex5 mr10">
+                        <div className="flex lh10 flexwrap">
+                            <div className="flex20 flexwrapitem  mb10 pr10">
+                                <div className="pb5 boldtext"> Data Standardization  </div>
+                                                Most approaches to anomaly detection (and there are many) begin by constructing a model of 
+                                            normal behaviour and then exploit this model to identify deviations from normal (anomalies or abnormal data).
+                                        Here is how we can use an autoencoder to model normal behaviour. If you recall, an autoencoder learns to compress 
+                                        and reconstruct data. Notably this learned mapping is specific to the data type/distribution distribution of the training data.
+                                        In other words an autoencoder trained using 15 px images of dogs is unlikely to correctly reconstruct 20px images of the surface 
+                                        of the moon.
+                            </div>
+                            <div className=" flex20 flexwrapitem mr10">
                                     <div className="pb5 boldtext"> Model Training </div>
                                     Most approaches to anomaly detection (and there are many) begin by constructing a model of 
-                            normal behaviour and then exploit this model to identify deviations from normal (anomalies or abnormal data).
-                        Here is how we can use an autoencoder to model normal behaviour. If you recall, an autoencoder learns to compress 
-                        and reconstruct data. Notably this learned mapping is specific to the data type/distribution distribution of the training data.
-                        In other words an autoencoder trained using 15 px images of dogs is unlikely to correctly reconstruct 20px images of the surface 
-                        of the moon.
-                                    </div>
+                                        normal behaviour and then exploit this model to identify deviations from normal (anomalies or abnormal data).
+                                    Here is how we can use an autoencoder to model normal behaviour. If you recall, an autoencoder learns to compress 
+                                    and reconstruct data. Notably this learned mapping is specific to the data type/distribution distribution of the training data.
+                                    In other words an autoencoder trained using 15 px images of dogs is unlikely to correctly reconstruct 20px images of the surface 
+                                    of the moon.
                             </div>
-                            </div>
+                            
 
-                            <div className="border rad4 p10 flex4" style={{ height:"200px"}}>
+                            <div className="border rad4 p10 flex1" style={{ height:"200px"}}>
                                reply of training run visualization
                             </div>
                         </div>
@@ -300,9 +326,9 @@ class Viz extends Component {
                     </div>
 
                     <div className="sectiontitle mt10 mb10"> Effect of Model Parameters </div>
-                    <div className="flex">
+                    <div className="flex flexwrap">
                         
-                            <div className="flex3 mr10">
+                            <div className="flex3 flexwrapitem mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                     <div className="pb5 boldtext"> Learning Rate </div>
                                 Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
@@ -313,7 +339,7 @@ class Viz extends Component {
                                 
                             </div>
                             
-                            <div className="flex3 mr10">
+                            <div className="flex3 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                 <div className="pb5 boldtext"> Regularization </div>
                                 Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
@@ -324,9 +350,18 @@ class Viz extends Component {
                                 
                             </div>
                             
-                            <div className="flex4 mr10">
+                            <div className="flex4 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                 <div className="pb5 boldtext"> Batch Size </div>
+                                Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
+                                Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value. 
+
+                                </div> 
+                            </div> 
+
+                            <div className="flex4 flexwrapitem  mr10">
+                                <div className="flex6 lh10 mb10 pr10">
+                                <div className="pb5 boldtext"> Abnormal Percentage </div>
                                 Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
                                 Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value. 
 

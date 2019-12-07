@@ -35,7 +35,11 @@ class Faq extends Component {
 
 
                 <div>FAQ</div>
-                <DrawSignal></DrawSignal>
+                <DrawSignal
+                    width={600}
+                    height={300}
+
+                ></DrawSignal>
 
                 <br />
                 <br />

@@ -12,11 +12,15 @@ class DrawSignal extends Component {
             signalExtracted: false
         }
 
-        this.chartWidth = 600
-        this.chartHeight = 300
+
+
+        this.chartWidth = this.props.width
+        this.chartHeight = this.props.height
+
+        // console.log(this.props, this.chartHeight, this.chartWidth);
 
         this.smallChartWidth = 150
-        this.smallChartHeight = 50
+        this.smallChartHeight = 40
 
         this.prevX = 0
         this.currX = 0
@@ -33,7 +37,20 @@ class DrawSignal extends Component {
         this.pointColors = []
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        console.log("props changing", this.props);
+
+        // console.log(prevProps.data.epoch, this.props.data.epoch)
+        if ((this.props.width !== prevProps.width)) {
+            console.log("props updated");
+            this.chartWidth = this.props.width
+            this.setUpCanvasSize()
+        }
+
+    }
+
     componentDidMount() {
+
 
         this.refs.drawsignaloutcanvas.width = this.smallChartWidth
         this.refs.drawsignaloutcanvas.height = this.smallChartHeight
@@ -41,19 +58,26 @@ class DrawSignal extends Component {
 
         // console.log("Line component mounted")
         this.largeChartCanvas = this.refs.drawsignalcanvas
-        this.largeChartCanvas.width = this.chartWidth
-        this.largeChartCanvas.height = this.chartHeight;
+        this.setUpCanvasSize()
         this.largeChartContext = this.largeChartCanvas.getContext('2d')
 
         this.largeChartCanvas.addEventListener("mousedown", this.mouseDownEvent.bind(this))
-        // this.largeChartCanvas.addEventListener("touchstart", this.mouseDownEvent.bind(this))
-
         this.largeChartCanvas.addEventListener("mouseup", this.mouseUpEvent.bind(this))
         this.largeChartCanvas.addEventListener("mousemove", this.mouseMoveEvent.bind(this))
-        // this.largeChartCanvas.addEventListener("touchmove", this.mouseMoveEvent.bind(this))
         this.largeChartCanvas.addEventListener("mouseout", this.mouseOutEvent.bind(this))
 
+        this.largeChartCanvas.addEventListener("touchend", this.touchEndEvent.bind(this))
+        this.largeChartCanvas.addEventListener("touchstart", this.touchStartEvent.bind(this))
+        this.largeChartCanvas.addEventListener("touchmove", this.touchMoveEvent.bind(this))
+
+
     }
+
+    setUpCanvasSize() {
+        this.largeChartCanvas.width = this.chartWidth
+        this.largeChartCanvas.height = this.chartHeight;
+    }
+
 
     draw() {
 
@@ -78,11 +102,6 @@ class DrawSignal extends Component {
 
     findxy(res, e) {
         if (res === 'down') {
-            this.prevX = this.currX;
-            this.prevY = this.currY;
-            this.currX = e.clientX - this.largeChartCanvas.offsetLeft;
-            this.currY = e.clientY - this.largeChartCanvas.offsetTop;
-
             this.flag = true;
             this.dot_flag = true;
             if (this.dot_flag) {
@@ -101,50 +120,57 @@ class DrawSignal extends Component {
             this.flag = false;
         }
         if (res === 'move') {
-            if (this.flag) {
-                this.prevX = this.currX;
-                this.prevY = this.currY;
-                this.currX = e.clientX - this.largeChartCanvas.offsetLeft;
-                this.currY = e.clientY - this.largeChartCanvas.offsetTop;
-                this.draw();
-            }
+
         }
     }
 
-    componentDidUpdate(prevProps, prevState) {
-
-
+    setXYCoords(xPos, yPos) {
+        this.prevX = this.currX;
+        this.prevY = this.currY;
+        this.currX = xPos
+        this.currY = yPos
     }
 
-    // touchDownEvent(e) {
+    updateMove(xPos, yPos) {
+        if (this.flag) {
+            this.setXYCoords(xPos, yPos)
+            this.draw();
+        }
+    }
 
-    // }
+    touchStartEvent(e) {
+        console.log(e.changedTouches[0].pageY);
+        this.setXYCoords(e.changedTouches[0].pageX - this.largeChartCanvas.offsetLeft, e.changedTouches[0].pageY - this.largeChartCanvas.offsetTop)
+        this.findxy('down', e)
+    }
 
-    // touchUpEvent(e) {
-
-    // }
-
-    // touchMoveEvent(e) {
-
-    // }
-    // touchOutEvent(e) {
-
-    // }
-
+    touchEndEvent(e) {
+        this.findxy('up', e)
+    }
+    touchMoveEvent(e) {
+        console.log(e.changedTouches.length);
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            console.log("touchpoint[" + i + "].pageX = " + e.changedTouches[i].pageX);
+            console.log("touchpoint[" + i + "].pageY = " + e.changedTouches[i].pageY);
+            this.updateMove(e.changedTouches[i].pageX - this.largeChartCanvas.offsetLeft, e.changedTouches[i].pageY - this.largeChartCanvas.offsetTop)
+        }
+    }
 
 
     mouseDownEvent(e) {
+        this.setXYCoords(e.pageX - this.largeChartCanvas.offsetLeft, e.pageY - this.largeChartCanvas.offsetTop)
         this.findxy('down', e)
     }
     mouseUpEvent(e) {
         this.findxy('up', e)
     }
     mouseMoveEvent(e) {
-        this.findxy('move', e)
+        this.updateMove(e.pageX - this.largeChartCanvas.offsetLeft, e.pageY - this.largeChartCanvas.offsetTop)
     }
     mouseOutEvent(e) {
         this.findxy('out', e)
     }
+
 
 
     componentWillUnmount() {
@@ -152,6 +178,13 @@ class DrawSignal extends Component {
         this.largeChartCanvas.removeEventListener("mouseup", this.mouseUpEvent)
         this.largeChartCanvas.removeEventListener("mouseover", this.mouseMoveEvent)
         this.largeChartCanvas.removeEventListener("mouseout", this.mouseOutEvent)
+
+
+        this.largeChartCanvas.removeEventListener("touchend", this.touchEndEvent)
+        this.largeChartCanvas.removeEventListener("touchstart", this.touchStartEvent)
+        this.largeChartCanvas.removeEventListener("touchmove", this.touchMoveEvent)
+
+
     }
 
     miniGraph() {
@@ -243,11 +276,14 @@ class DrawSignal extends Component {
 
     render() {
         return (
-            <div style={{ width: this.chartWidth + 25 }} className="mt2 border p10">
-
-                <div className="border ml10 mt10 unclickable positionabsolute p10 smallchartbox " >
-                    <canvas className="" ref="drawsignaloutcanvas" id="drawsignalcanvas"></canvas>
-                    <div className={"smalldesc extractedsignal pt5 " + (this.state.signalExtracted ? " " : " displaynone")}> Extracted signal </div>
+            // <div style={{ width: this.chartWidth + 25 }} className="mt2 border p10">
+            <div className=" w100 " >
+                <div className="p5 iblock mediumdesc">
+                    Click and drag to draw a signal. Please draw within the box.
+                </div>
+                <div className={"unclickable positionabsolute  smallchartbox " + (this.state.signalExtracted ? " " : " displaynone")} >
+                    <canvas className="smallchart" ref="drawsignaloutcanvas" id="drawsignalcanvas"></canvas>
+                    <div className={"smalldesc extractedsignal " + (this.state.signalExtracted ? " " : " displaynone")}> Extracted signal </div>
                     {/* <div className={"smalldesc pt5 " + (this.state.signalExtracted ? " " : " displaynone")}> draw signal </div> */}
                 </div>
                 <div className="">
@@ -261,9 +297,7 @@ class DrawSignal extends Component {
                         onClick={this.clearDrawing.bind(this)}
                     > Clear Drawing </Button>
                 </div>
-                <div className="p5 iblock mediumdesc">
-                    Click and drag to draw a signal. Please draw within the box.
-                </div>
+
             </div>
         )
     }
