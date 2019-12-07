@@ -9,15 +9,16 @@ class LineChart extends Component {
         super(props)
 
         this.state = {
-            chart: this.props.data
+            data: this.props.data,
+            color: this.props.color
         }
 
 
 
-        this.minChartWidth = this.props.data.chartWidth
-        this.minChartHeight = this.props.data.chartHeight
+        this.minChartWidth = this.props.width
+        this.minChartHeight = this.props.height
 
-
+        console.log(this.props);
 
 
     }
@@ -29,11 +30,11 @@ class LineChart extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // console.log(this.props.data.chartdata.index, prevProps.data.chartdata.index);
+        console.log(this.props.index, prevProps.index);
 
-        if (this.props.data.data.index !== prevProps.data.data.index) {
-            this.setState({ chart: this.props.data.chart })
-            // console.log("stuff hass changed", this.props.data.data);
+        if (this.props.index !== prevProps.index) {
+            this.setState({ data: this.props.data })
+            // console.log("stuff hass changed", this.props.data);
             this.updateGraph(this.props.data)
 
         }
@@ -62,10 +63,9 @@ class LineChart extends Component {
 
     }
 
-    updateGraph(chart) {
+    updateGraph(data) {
         let self = this
-        let data = chart.data.data
-        // console.log(chart.color)
+        // console.log(data)
         this.setupScalesAxes(data)
         // Select the section we want to apply our changes to
         var svg = d3.select("div.linechartbox").transition();
@@ -74,7 +74,7 @@ class LineChart extends Component {
         // Make the changes
         svg.select(".line")   // change the line
             .duration(750)
-            .attr("stroke", chart.color)
+            .attr("stroke", this.state.color)
             .attr("d", this.line(data));
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -89,7 +89,7 @@ class LineChart extends Component {
 
     drawGraph() {
         let self = this
-        this.setupScalesAxes(this.state.chart.data.data)
+        this.setupScalesAxes(this.state.data)
         let width = this.chartWidth, height = this.chartHeight, margin = this.chartMargin
 
 
@@ -100,7 +100,7 @@ class LineChart extends Component {
         // .curve(d3.curveMonotoneX) // apply smoothing to the line
 
         // 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
-        var dataset = this.state.chart.data.data
+        var dataset = this.state.data
 
 
         // d3.range(n).map(function (d) { return { "y": d3.randomUniform(1)() } })
@@ -141,7 +141,7 @@ class LineChart extends Component {
         svg.append("path")
             .datum(dataset) // 10. Binds data to the line 
             .attr("class", "line") // Assign a class for styling 
-            .attr("stroke", this.state.chart.color)
+            .attr("stroke", this.state.color)
             .attr("d", this.line); // 11. Calls the line generator 
 
         // // 12. Appends a circle for each datapoint 

@@ -71,6 +71,21 @@ class DrawSignal extends Component {
         this.largeChartCanvas.addEventListener("touchmove", this.touchMoveEvent.bind(this))
 
 
+        // Set up scales 
+        this.xScale = d3.scaleLinear()
+            .domain([0, this.signalCount - 1]) // input
+            .range([0, this.smallChartWidth]); // output
+
+
+        this.yScale = d3.scaleLinear()
+            .domain([0, this.chartHeight]) // input 
+            .range([0, this.smallChartHeight]); // output
+
+
+        this.ynScale = d3.scaleLinear()
+            .domain([0, this.chartHeight]) // input 
+            .range([-5, 2]); // output
+
     }
 
     setUpCanvasSize() {
@@ -190,6 +205,7 @@ class DrawSignal extends Component {
     miniGraph() {
         if (this.drawMap.size > 0) {
             this.drawGraph(this.drawMap)
+
         }
     }
 
@@ -243,15 +259,7 @@ class DrawSignal extends Component {
             prevMean = curMean
         }
         this.setState({ signalExtracted: true })
-
-        this.xScale = d3.scaleLinear()
-            .domain([0, signalHolder.length - 1]) // input
-            .range([0, this.smallChartWidth]); // output
-
-
-        this.yScale = d3.scaleLinear()
-            .domain([d3.min(signalHolder), d3.max(signalHolder)]) // input 
-            .range([0, this.smallChartHeight]); // output
+        this.props.updateCurrentSignal(this.ynScale(signalHolder))
 
 
         // console.log(signalHolder);

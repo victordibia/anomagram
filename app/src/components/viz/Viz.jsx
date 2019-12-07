@@ -14,14 +14,18 @@ class Viz extends Component {
 
         this.modelChartWidth = Math.min(390, window.innerWidth - 25)
         this.modelChartHeight = 300
+
+        // Allow the draw signal component update current signal with drawn signal
+        this.updateCurrentSignal = this.updateCurrentSignal.bind(this)
+
  
         this.testData = require("../../data/ecg/test.json")
         this.testData = this.testData.slice(0, 70)
         this.state = {
-            apptitle: "Anomagram",
-            testData: this.testData,
+            apptitle: "Anomagram", 
             trainData: [],
-            selectedData: 0,
+            selectedIndex:0,
+            selectedData: this.testData[0],
             showDrawData: false,
             drawSectionWidth: 350,
             drawSectionHeight: this.modelChartHeight - 30
@@ -45,6 +49,11 @@ class Viz extends Component {
 
         
 
+    }
+
+    updateCurrentSignal(data) {
+        console.log(data);
+        console.log(this.state.selectedData); 
     }
 
     loadData() {
@@ -88,10 +97,11 @@ class Viz extends Component {
     }
 
     clickDataPoint(e) {
-        this.setState({ selectedData: e.target.getAttribute("indexvalue") })
+        this.setState({ selectedData: this.testData[e.target.getAttribute("indexvalue")] })
+        this.setState({selectedIndex: e.target.getAttribute("indexvalue")})
 
         let colorAttrr = e.target.getAttribute("targetval") + "" === "1" ? "green" : "red"
-        console.log(e.target.getAttribute("targetval"), colorAttrr)
+        // console.log(e.target.getAttribute("targetval"), colorAttrr)
         this.refs.labelcolordiv.style.backgroundColor = colorAttrr
         this.refs.predictioncolordiv.style.backgroundColor = colorAttrr
     }
@@ -125,20 +135,20 @@ class Viz extends Component {
             )
         });
 
-        let dataPoints = this.state.testData.slice(0, this.maxSmallChart).map((data, index) => {
+        let dataPoints = this.testData.slice(0, this.maxSmallChart).map((data, index) => {
             return (
-                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (this.state.selectedData + "" === (index + "") ? " active" : "")} indexvalue={index} targetval={data.target} >
+                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (this.state.selectedIndex + "" === (index + "") ? " active" : "")} indexvalue={index} targetval={data.target} >
                     <div indexvalue={index} className="boldtext  unclickable iblock ">
 
                         <div className="positionrelative">
                             <div className="p3 indicatoroutrcircle  positionabsolute bottomright">
-                                <div style={{ background: this.chartColorMap[this.state.testData[index].target].color }} className="indicatorcircle "></div>
+                                <div style={{ background: this.chartColorMap[this.testData[index].target].color }} className="indicatorcircle "></div>
                             </div>
                             <SmallLineChart
                                 data={{
-                                    data: this.state.testData[index],
+                                    data: this.testData[index],
                                     index: index,
-                                    color: this.chartColorMap[this.state.testData[index].target].colornorm,
+                                    color: this.chartColorMap[this.testData[index].target].colornorm,
                                     chartWidth: 72,
                                     chartHeight: 30
                                 }}
@@ -170,6 +180,7 @@ class Viz extends Component {
                 <DrawSignal
                     width={this.state.drawSectionWidth}
                     height={this.state.drawSectionHeight}
+                    updateCurrentSignal = {this.updateCurrentSignal}
                 ></DrawSignal>
             </div>
         )
@@ -178,30 +189,31 @@ class Viz extends Component {
             <div className=" p10 modeloutputbox rad5 ">
                         <div className="mb10 boldtext"> Model Output</div>
                         <div className=""> 
-                            {this.state.testData.length > 0 &&
+                            {this.testData.length > 0 &&
                                 <div>
                                     <div className="flex mediumdesc mb5 displaynone">
                                         <div className="mr10 boldtext"> Label </div>
                                         <div ref="labelcolordiv" className="flexfull colorbox greenbox"></div>
-                                        {/* <span className="boldtext"> </span>: {this.chartColorMap[this.state.testData[this.state.selectedData].target].name} */}
+                                        {/* <span className="boldtext"> </span>: {this.chartColorMap[this.testData[this.state.selectedData].target].name} */}
                                     </div>
                                     <div className="flex mediumdesc mb5">
                                         <div className="mr10 boldtext">
-                                            {this.state.testData[this.state.selectedData].target + "" === "1" ? "NORMAL" : "ABNORMAL"}
+                                            {this.testData[this.state.selectedIndex].target + "" === "1" ? "NORMAL" : "ABNORMAL"}
                                         </div>
                                         <div ref="predictioncolordiv" className="flexfull colorbox redbox"></div>
-                                        {/* <span className="boldtext"> </span>: {this.chartColorMap[this.state.testData[this.state.selectedData].target].name} */}
+                                        {/* <span className="boldtext"> </span>: {this.chartColorMap[this.testData[this.testData].target].name} */}
                                     </div>
 
                                     <div className="iblock"> 
                                         <LineChart
-                                            data={{
-                                                data: this.state.testData[this.state.selectedData],
-                                                index: this.state.testData[this.state.selectedData].index,
-                                                color: this.chartColorMap[this.state.testData[this.state.selectedData].target].colornorm,
-                                                chartWidth: this.modelChartWidth,
-                                                chartHeight: this.modelChartHeight
-                                            }} 
+                                            
+                                                data= {this.state.selectedData.data}
+                                                index = {this.state.selectedIndex }
+                                                color={this.chartColorMap[this.testData[this.state.selectedIndex].target].colornorm}
+                                                width={this.modelChartWidth}
+                                                height= {this.modelChartHeight}
+                                             
+                                            
                                         > </LineChart>
                                     </div>
                                 </div>
