@@ -38,11 +38,11 @@ class DrawSignal extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("props changing", this.props);
+        // console.log("props changing", this.props);
 
         // console.log(prevProps.data.epoch, this.props.data.epoch)
         if ((this.props.width !== prevProps.width)) {
-            console.log("props updated");
+            // console.log("props updated");
             this.chartWidth = this.props.width
             this.setUpCanvasSize()
         }

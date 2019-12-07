@@ -3,8 +3,9 @@
 }
 
 .ecgdatabox{
-    max-height: 330px;
-    overflow: scroll;
+    max-height: 300px;
+    /* overflow: scroll; */
+    /* border: 2px solid pink */
 }
 
 .ecgdatapoint{

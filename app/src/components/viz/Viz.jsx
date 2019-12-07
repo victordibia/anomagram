@@ -22,7 +22,7 @@ class Viz extends Component {
             testData: this.testData,
             trainData: [],
             selectedData: 0,
-            showDrawData: true,
+            showDrawData: false,
             drawSectionWidth: 350,
             drawSectionHeight: this.modelChartHeight - 30
         }
@@ -82,7 +82,9 @@ class Viz extends Component {
     }
 
     onWindowResize() {
+        console.log(this.refs["datasection"].offsetWidth);
         
+        this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth -5 })
     }
 
     clickDataPoint(e) {
@@ -125,7 +127,7 @@ class Viz extends Component {
 
         let dataPoints = this.state.testData.slice(0, this.maxSmallChart).map((data, index) => {
             return (
-                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable ecgdatapoint rad3 iblock mr5" + (this.state.selectedData + "" === (index + "") ? " active" : "")} indexvalue={index} targetval={data.target} >
+                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (this.state.selectedData + "" === (index + "") ? " active" : "")} indexvalue={index} targetval={data.target} >
                     <div indexvalue={index} className="boldtext  unclickable iblock ">
 
                         <div className="positionrelative">
@@ -152,13 +154,11 @@ class Viz extends Component {
         let datasetExamples = (
             <div>
                 <div className="  ">
-                        <div className="mb10 boldtext">
-                            ECG {this.state.testData.length}
-                        </div>
+                       
                         <div className="mb5">
                             {dataLegend}
                         </div>
-                        <div className="ecgdatabox mb10">
+                        <div className="ecgdatabox scrollwindow">
                             {dataPoints}
                         </div>
                     </div>
