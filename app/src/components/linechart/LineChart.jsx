@@ -18,7 +18,7 @@ class LineChart extends Component {
         this.minChartWidth = this.props.width
         this.minChartHeight = this.props.height
 
-        console.log(this.props);
+        // console.log(this.props);
 
 
     }
@@ -30,9 +30,9 @@ class LineChart extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log(this.props.index, prevProps.index);
+        // console.log(this.props.index, prevProps.index);
 
-        if (this.props.index !== prevProps.index) {
+        if (this.props.lastUpdated !== prevProps.lastUpdated) {
             this.setState({ data: this.props.data })
             // console.log("stuff hass changed", this.props.data);
             this.updateGraph(this.props.data)
@@ -45,6 +45,8 @@ class LineChart extends Component {
         this.chartMargin = { top: 10, right: 5, bottom: 40, left: 20 }
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
+
+        // consolse.log(data);
 
         var n = data.length;
 

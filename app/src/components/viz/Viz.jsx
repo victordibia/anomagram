@@ -25,7 +25,7 @@ class Viz extends Component {
             apptitle: "Anomagram", 
             trainData: [],
             selectedIndex:0,
-            selectedData: this.testData[0],
+            selectedData: this.testData[0].data,
             showDrawData: false,
             drawSectionWidth: 350,
             drawSectionHeight: this.modelChartHeight - 30
@@ -46,14 +46,17 @@ class Viz extends Component {
         }
 
         this.maxSmallChart = 100
-
+        this.modelDataLastUpdated = true
         
 
     }
 
     updateCurrentSignal(data) {
-        console.log(data);
-        console.log(this.state.selectedData); 
+        // console.log(data);
+        this.modelDataLastUpdated = !this.modelDataLastUpdated 
+        // console.log(this.state.selectedData); 
+        this.setState({ selectedData: data })
+       
     }
 
     loadData() {
@@ -82,6 +85,7 @@ class Viz extends Component {
         // console.log(this.refs["datasection"].offsetWidth)
         this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth -5 })
         this.drawSectionWidth = this.refs["datasection"].offsetWidth
+        
 
     }
 
@@ -97,7 +101,8 @@ class Viz extends Component {
     }
 
     clickDataPoint(e) {
-        this.setState({ selectedData: this.testData[e.target.getAttribute("indexvalue")] })
+        this.modelDataLastUpdated = !this.modelDataLastUpdated 
+        this.setState({ selectedData: this.testData[e.target.getAttribute("indexvalue")].data })
         this.setState({selectedIndex: e.target.getAttribute("indexvalue")})
 
         let colorAttrr = e.target.getAttribute("targetval") + "" === "1" ? "green" : "red"
@@ -207,8 +212,9 @@ class Viz extends Component {
                                     <div className="iblock"> 
                                         <LineChart
                                             
-                                                data= {this.state.selectedData.data}
-                                                index = {this.state.selectedIndex }
+                                                data= {this.state.selectedData}
+                                index={this.state.selectedIndex}
+                                lastUpdated = {this.modelDataLastUpdated}
                                                 color={this.chartColorMap[this.testData[this.state.selectedIndex].target].colornorm}
                                                 width={this.modelChartWidth}
                                                 height= {this.modelChartHeight}
@@ -314,8 +320,8 @@ class Viz extends Component {
                             </div>
                             
 
-                            <div className="border rad4 p10 flex1" style={{ height:"200px"}}>
-                               reply of training run visualization
+                            <div className="border rad4 p10 " style={{ width:"300px", height:"300px"}}>
+                               Interactive replay of training run visualization
                             </div>
                         </div>
 

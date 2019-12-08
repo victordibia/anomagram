@@ -84,7 +84,7 @@ class DrawSignal extends Component {
 
         this.ynScale = d3.scaleLinear()
             .domain([0, this.chartHeight]) // input 
-            .range([-5, 2]); // output
+            .range([2, -5]); // output
 
     }
 
@@ -251,15 +251,17 @@ class DrawSignal extends Component {
         let prevMean = data.values().next().value
         let curMean = 0
         let signalHolder = []
+        let signalHolderScaled = []
 
         let step = (this.chartWidth / this.signalCount)
         for (let i = 0; i < this.signalCount; i++) {
             curMean = this.rangeMean(i, Math.floor(i * step), Math.floor(i * step + step), prevMean, data)
             signalHolder[i] = curMean
+            signalHolderScaled[i] = this.ynScale(curMean)
             prevMean = curMean
         }
         this.setState({ signalExtracted: true })
-        this.props.updateCurrentSignal(this.ynScale(signalHolder))
+        this.props.updateCurrentSignal(signalHolderScaled)
 
 
         // console.log(signalHolder);
