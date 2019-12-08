@@ -141,7 +141,18 @@ class DrawSignal extends Component {
         }
     }
 
+    limitValues(x, min, max) {
+        x = x < min ? min : x
+        x = x > max ? max : x
+        return x
+    }
+
     setXYCoords(xPos, yPos) {
+        console.log(xPos, yPos);
+
+        xPos = this.limitValues(xPos, 0, this.chartWidth)
+        yPos = this.limitValues(yPos, 0, this.chartHeight)
+
         this.prevX = this.currX;
         this.prevY = this.currY;
         this.currX = xPos

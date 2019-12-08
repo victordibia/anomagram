@@ -26,7 +26,7 @@ class Viz extends Component {
             trainData: [],
             selectedIndex:0,
             selectedData: this.testData[0].data,
-            showDrawData: false,
+            showDrawData: true,
             drawSectionWidth: 350,
             drawSectionHeight: this.modelChartHeight - 30
         }
