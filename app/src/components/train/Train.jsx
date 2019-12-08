@@ -324,7 +324,7 @@ class Train extends Component {
 
             // console.log(this.state.numSteps);
 
-            if (this.state.numSteps > this.currentSteps && this.state.isTraining) {
+            if (this.state.numSteps > this.currentSteps && this.state.isTraining  && (!this.state.modelStale)) {
                 this.setState({ currentEpoch: this.currentSteps })
                 this.trainModel()
             } else {
