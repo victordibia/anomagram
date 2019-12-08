@@ -13,8 +13,8 @@ class DrawSignal extends Component {
         }
 
 
-
-        this.chartWidth = this.props.width
+        this.axisOffset = 0
+        this.chartWidth = this.props.width - this.axisOffset
         this.chartHeight = this.props.height
 
         // console.log(this.props, this.chartHeight, this.chartWidth);
@@ -35,6 +35,8 @@ class DrawSignal extends Component {
         this.drawMap = new Map()
         this.signalCount = 140
         this.pointColors = []
+
+
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -43,7 +45,7 @@ class DrawSignal extends Component {
         // console.log(prevProps.data.epoch, this.props.data.epoch)
         if ((this.props.width !== prevProps.width)) {
             // console.log("props updated");
-            this.chartWidth = this.props.width
+            this.chartWidth = this.props.width - this.axisOffset
             this.setUpCanvasSize()
         }
 
@@ -296,7 +298,8 @@ class DrawSignal extends Component {
                     <div className={"smalldesc extractedsignal " + (this.state.signalExtracted ? " " : " displaynone")}> Extracted signal </div>
                     {/* <div className={"smalldesc pt5 " + (this.state.signalExtracted ? " " : " displaynone")}> draw signal </div> */}
                 </div>
-                <div className="">
+                <div style={{ height: this.chartHeight }} className="">
+
                     <canvas className="border iblock largechart" ref="drawsignalcanvas" id="drawsignalcanvas"></canvas>
                 </div>
 

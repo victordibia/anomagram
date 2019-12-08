@@ -882,7 +882,7 @@ class Train extends Component {
                             {this.state.rocData.length > 0 &&
                                 <div>
                                     <div className="charttitle ">
-                                        ROC Curve Chart [ AUC : {this.state.auc.toFixed(2)} ]
+                                        ROC Curve [ AUC : {this.state.auc.toFixed(2)} ]
                                     </div>
 
                                     <div>

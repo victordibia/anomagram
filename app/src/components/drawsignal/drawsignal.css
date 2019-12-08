@@ -22,3 +22,8 @@
     border: 1px dashed grey;
     touch-action: none;
 }
+
+.axisbar{
+    border: 1px dashed grey;
+    height: 100px;
+}

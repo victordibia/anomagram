@@ -266,7 +266,7 @@ class Viz extends Component {
                         {modelOutput}
                     </div> 
                 </div>
-                <div className="lh10 p10">
+                <div className="lh10 ">
                     We have trained a two layer autoencoder with 2600 samples of normal ECG signal data.
                     Each ECG signal contains 140 recordings of the electrical signal of the heart, corresponding to a heartbeat.
                     Our test set (above) contains both normal and abormal ECG signals, and our model is tasked with distinguishing normal from abnormal signal.
