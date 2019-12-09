@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Dropdown, Slider, Checkbox, Tooltip } from "carbon-components-react"
+import {Loading,Dropdown, Slider, Checkbox, Tooltip } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
 import { computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions"
@@ -21,7 +21,7 @@ class Train extends Component {
         super(props)
 
        
-        
+        // tf.webgl.forceHalfFloat()
 
         this.chartWidth = 350;
         this.chartHeight = 250;
@@ -93,7 +93,7 @@ class Train extends Component {
             numFeatures: this.testData[0].data.length,
             hiddenLayers: 2,
             latentDim: 2,
-            hiddenDim: [8, 3],
+            hiddenDim: [7, 3],
             learningRate: this.learningRateOptions[0].value,
             regularizer: this.regularizerOptions[this.selectedRegularizer].value,
             adamBeta1: 0.5,
@@ -134,7 +134,10 @@ class Train extends Component {
             
             lossChartHeight: this.chartHeight,
             lossChartWidth: this.chartWidth,
-            abnormalPercentage: this.abnormalPercentageOptions[this.selectedAbnormalPercentage].value
+            abnormalPercentage: this.abnormalPercentageOptions[this.selectedAbnormalPercentage].value,
+
+            floatCapable: false,
+            floatEnabled: false,
         }
 
         this.showOptions = [
@@ -172,6 +175,11 @@ class Train extends Component {
         }, 100);
 
         this.getChartContainerSizes()
+
+        this.setState({ floatCapable: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_CAPABLE') })
+        this.setState({floatEnabled: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_ENABLED')})
+        // this.floatEnabled = tf.ENV.getBool('WEBGL_RENDER_FLOAT32_ENABLED') 
+
 
 
     }
@@ -490,7 +498,7 @@ class Train extends Component {
             }  
         }
 
-        console.log(maxAbnormalCount, "abnormal samples",  abnormalCount, "Total", trainEcg.length);
+        // console.log(maxAbnormalCount, "abnormal samples",  abnormalCount, "Total", trainEcg.length);
         
 
         // Create train tensor from json array
@@ -516,7 +524,9 @@ class Train extends Component {
             this.setState({ isTraining: false })
         } else {
             this.setState({ isTraining: true })
-            this.trainModel()
+            setTimeout(() => {
+                this.trainModel()
+            }, 1000);
         }
     }
 
@@ -531,18 +541,17 @@ class Train extends Component {
     }
 
     updateModelParam(e) {
-        // console.log(e);
+        // model state is set to stale each time a parameter is updated.
+        this.setState({ modelStale: true })
         switch (e.selectedItem.type) {
             case "steps":
                 this.setState({ numSteps: e.selectedItem.value })
                 break
             case "batchsize":
-                this.setState({ batchSize: e.selectedItem.value })
-                this.setState({ modelStale: true })
+                this.setState({ batchSize: e.selectedItem.value }) 
                 break
             case "learningrate":
-                this.setState({ learningRate: e.selectedItem.value })
-                this.setState({ modelStale: true })
+                this.setState({ learningRate: e.selectedItem.value }) 
                 break
             case "traindatasize":
                 this.setState({ trainDataSize: e.selectedItem.value }) 
@@ -554,12 +563,10 @@ class Train extends Component {
                 this.setState({ testDataSize: e.selectedItem.value })
                 break
             case "optimizer":
-                this.setState({ optimizer: e.selectedItem.value })
-                this.setState({ modelStale: true })
+                this.setState({ optimizer: e.selectedItem.value }) 
                 break
             case "regularizer":
-                this.setState({ regularizer: e.selectedItem.value })
-                this.setState({ modelStale: true })
+                this.setState({ regularizer: e.selectedItem.value }) 
                 break
             default:
                 break
@@ -681,7 +688,7 @@ class Train extends Component {
 
                     </div>
 
-                    <div className=" iblock mr10">
+                    <div className=" iblock ">
                         <div
                             onClick={this.trainButtonClick.bind(this)}
                             className={("iblock circlelarge circlebutton mr5 flexcolumn flex flexjustifycenter clickable ") + (this.state.modelStale ? " disabled" : "")}>
@@ -689,6 +696,18 @@ class Train extends Component {
                             {this.state.isTraining && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
                         </div>
                         <div className="smalldesc textaligncenter pt5 pb5 "> Train &nbsp; </div>
+                    </div>
+
+                    <div ref className="iblock  mr10">
+                        <div ref="activeloaderdiv" className="resetbox" style={{opacity: this.state.isTraining ? 1:0, width: this.state.isTraining ?  "34px": "0px"  }} >
+                            <Loading
+                                className=" "
+                                active={true}
+                                small={true}
+                                withOverlay={false}
+                            > </Loading>
+                        </div>
+
                     </div>
 
 
@@ -1015,20 +1034,7 @@ class Train extends Component {
 
                 </div>
         )
-
-       
-        // if (this.refs["lossbox1"]) { 
-        //     if (this.refs["lossbox1"].offsetWidth > this.chartWidth + 60 || this.refs["lossbox1"].offsetWidth < this.chartWidth - 40) {
-        //         this.hideLoss = true
-        //     }
-        //     // console.log(this.refs["lossbox1"].offsetWidth, this.hideLoss);
-        // }
-        
-        
-       
-        
-        
-
+  
         return (
             <div className="maintrainbox">  
                 {/* {this.state.showWarmingUp && <div className="">
@@ -1179,9 +1185,9 @@ class Train extends Component {
                
                 
                 {
-                    true &&
-                    <div> 
-
+                     
+                    <div className="mediumdesc p10"> 
+                       Textures in use - Flaot32 Capable ? {this.state.floatCapable.toString()} | {this.state.floatEnabled.toString()}
                     </div>
                 }
                 <br />
