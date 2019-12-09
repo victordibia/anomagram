@@ -128,7 +128,7 @@ class Train extends Component {
 
 
             showAdvanced: true,
-            showIntroduction: false,
+            showIntroduction: true,
             showWarmingUp: true,
 
             
