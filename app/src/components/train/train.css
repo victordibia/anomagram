@@ -176,7 +176,11 @@
 
 .resetbox{
     /* border: 1px solid grey; */
-    transition: width 1s,  opacity 1s;
-    -webkit-transition: width 1s, opacity 1s;
+    transition: width 0.7s,  opacity 0.7s;
+    -webkit-transition: width 0.7s, opacity 0.7s;
     /* width: 34px; */
+}
+
+.traincomposerdiv{
+    min-width: 350px;
 }

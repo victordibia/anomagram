@@ -138,6 +138,7 @@ class Train extends Component {
 
             floatCapable: false,
             floatEnabled: false,
+            isCreating: false,
         }
 
         this.showOptions = [
@@ -170,9 +171,9 @@ class Train extends Component {
         this.generateDataTensors()
         // this.computeAccuracyMetrics(this.dummyMSe)
 
-        setTimeout(() => {
-            // this.createModel()
-        }, 100);
+        // setTimeout(() => {
+        //     // this.createModel()
+        // }, 100);
 
         this.getChartContainerSizes()
 
@@ -270,8 +271,10 @@ class Train extends Component {
         }
 
         this.createdModel = buildModel(modelParams)
-        this.setState({ modelStale: false })
+        this.setState({ modelStale: false, isCreating:false })
         this.getPredictions()
+
+        
 
 
         // this.createdModel.summary()
@@ -282,7 +285,7 @@ class Train extends Component {
 
         // showToast("success", "Model successfully created")
         // console.log(tf.memory());
-        this.setState({showWarmingUp: false})
+        // this.setState({showWarmingUp: false})
     }
 
     warmUpModel() {
@@ -526,18 +529,27 @@ class Train extends Component {
             this.setState({ isTraining: true })
             setTimeout(() => {
                 this.trainModel()
-            }, 1000);
+            }, 700);
         }
     }
 
-    resetModelButtonClick(e) {
-        this.setState({ isTraining: false })
-        this.CumulativeSteps = 0
-        this.setState({ CumulativeSteps: 0 })
-        // this.setState({ mseData: [] })
+    resetModelButtonClick(e) { 
+        this.CumulativeSteps = 0 
         this.trainMetricHolder = []
-        this.setState({ trainMetrics: this.trainMetricHolder })
-        this.createModel()
+        this.setState({
+            // showIntroduction: false,
+            isCreating: true,
+            isTraining: false,
+            CumulativeSteps: 0,
+            trainMetrics: this.trainMetricHolder 
+        })
+          
+       
+        // this.setState({ mseData: [] }) 
+        setTimeout(() => {
+            this.createModel()
+        }, 700);
+        
     }
 
     updateModelParam(e) {
@@ -699,7 +711,7 @@ class Train extends Component {
                     </div>
 
                     <div ref className="iblock  mr10">
-                        <div ref="activeloaderdiv" className="resetbox" style={{opacity: this.state.isTraining ? 1:0, width: this.state.isTraining ?  "34px": "0px"  }} >
+                        <div ref="activeloaderdiv" className="resetbox" style={{opacity: (this.state.isTraining || this.state.isCreating) ? 1:0, width: (this.state.isTraining || this.state.isCreating)  ?  "34px": "0px"  }} >
                             <Loading
                                 className=" "
                                 active={true}
@@ -1162,7 +1174,7 @@ class Train extends Component {
                 {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
 
                 <div ref="chartcontainer" className="flex chartcontainer flexwrap mt10">
-                    <div ref="composemodelbox" action="composer"  className={"flexwrapitem " + (this.state.showModelComposer ? " flex40":"")}> {modelComposerBlock} </div>
+                    <div ref="composemodelbox" action="composer"  className={"traincomposerdiv flexwrapitem " + (this.state.showModelComposer ? " flex40":"")}> {modelComposerBlock} </div>
                     <div ref="modelevalbox" action="metrics" className={"flexwrapitem " + (this.state.showModelEvaluationMetrics ? " flexfull":"")}> {modelMetricsBlock} </div>
                     <div ref="lossbox1" action="loss"  className="  flexwrapitem "> { lossChartBlock} </div>
                     <div action="mse" className="flexwrapitem  "> {mseHistogramBlock} </div>
