@@ -90,7 +90,8 @@ class DrawSignal extends Component {
 
 
         this.zeroArr = new Array(this.signalCount).fill(0);
-        console.log(this.zeroArr);
+        // this.zeroArr[0] = 2
+        // this.zeroArr[this.signalCount - 1] = -5
 
     }
 
