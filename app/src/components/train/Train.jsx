@@ -31,6 +31,9 @@ class Train extends Component {
         // Load sameple data
         this.testData = require("../../data/ecg/test.json")
         this.trainData = require("../../data/ecg/train.json")
+
+        // this.testData = []
+        // this.trainData = []
         // this.dummyMSe = require("../../data/dummy/mse.json")
 
         // Model update method passed to model composer component
@@ -162,13 +165,11 @@ class Train extends Component {
         this.momentum = 0.9 
 
         this.modelWarmedUp = false;
-
+        this.tensorsCreated = false;
     }
 
     componentDidMount() {
         // this.loadSavedModel() 
-
-        this.generateDataTensors()
         // this.computeAccuracyMetrics(this.dummyMSe)
 
         // setTimeout(() => {
@@ -177,10 +178,10 @@ class Train extends Component {
 
         this.getChartContainerSizes()
 
-        this.setState({ floatCapable: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_CAPABLE') })
-        this.setState({floatEnabled: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_ENABLED')})
-        // this.floatEnabled = tf.ENV.getBool('WEBGL_RENDER_FLOAT32_ENABLED') 
-
+        this.setState({
+            floatCapable: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_CAPABLE'),
+            floatEnabled: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_ENABLED')
+        }) 
 
 
     }
@@ -218,20 +219,26 @@ class Train extends Component {
 
     componentWillUnmount() {
         this.setState({ isTraining: false })
+        if (this.tensorsCreated) {
+            this.xsTest.dispose()
+            this.xsTrain.dispose() 
         this.disposeModelTensors()
-        this.xsTest.dispose()
-        this.xsTrain.dispose()
+        }
+       
         // this.xsWarmup.dispose()
         // console.log(tf.memory());
 
     }
-    createModel() {
-
-
+    createModel() { 
 
         // dispose of existing model to release tensors from memory
         this.disposeModelTensors()
 
+        // if Data tensors not created at all, create tensors 
+        if (!this.tensorsCreated) {
+            this.generateDataTensors()
+            this.tensorsCreated = true
+        } 
 
         //construct model
         switch (this.state.optimizer) {
@@ -274,6 +281,7 @@ class Train extends Component {
         this.setState({ modelStale: false, isCreating:false })
         this.getPredictions()
 
+        
         
 
 
@@ -470,6 +478,8 @@ class Train extends Component {
 
     // visualizeMSE(mse)
     generateDataTensors() {
+        console.log("Generating data tensor");
+        
         //shuffle data
         this.trainData = _.shuffle(this.trainData)
         this.testData = _.shuffle(this.testData)

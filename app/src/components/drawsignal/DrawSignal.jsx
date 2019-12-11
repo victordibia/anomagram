@@ -69,8 +69,8 @@ class DrawSignal extends Component {
         this.largeChartCanvas.addEventListener("mouseout", this.mouseOutEvent.bind(this))
 
         this.largeChartCanvas.addEventListener("touchend", this.touchEndEvent.bind(this))
-        this.largeChartCanvas.addEventListener("touchstart", this.touchStartEvent.bind(this))
-        this.largeChartCanvas.addEventListener("touchmove", this.touchMoveEvent.bind(this))
+        this.largeChartCanvas.addEventListener("touchstart", this.touchStartEvent.bind(this), { passive: true })
+        this.largeChartCanvas.addEventListener("touchmove", this.touchMoveEvent.bind(this), { passive: true })
 
 
         // Set up scales 
@@ -87,6 +87,10 @@ class DrawSignal extends Component {
         this.ynScale = d3.scaleLinear()
             .domain([0, this.chartHeight]) // input 
             .range([2, -5]); // output
+
+
+        this.zeroArr = new Array(this.signalCount).fill(0);
+        console.log(this.zeroArr);
 
     }
 
@@ -148,7 +152,7 @@ class DrawSignal extends Component {
     }
 
     setXYCoords(xPos, yPos) {
-        console.log(xPos, yPos);
+        // console.log(xPos, yPos);
 
         xPos = this.limitValues(xPos, 0, this.chartWidth)
         yPos = this.limitValues(yPos, 0, this.chartHeight)
@@ -229,6 +233,8 @@ class DrawSignal extends Component {
 
         this.drawMap = new Map()
         this.setState({ signalExtracted: false })
+
+        this.props.updateCurrentSignal(this.zeroArr)
     }
 
     rangeMean(i, start, end, prevMean, data) {
@@ -305,7 +311,7 @@ class DrawSignal extends Component {
                     Click and drag to draw a signal. Please draw within the box.
                 </div>
                 <div className={"unclickable positionabsolute  smallchartbox " + (this.state.signalExtracted ? " " : " displaynone")} >
-                    <canvas className="smallchart" ref="drawsignaloutcanvas" id="drawsignalcanvas"></canvas>
+                    <canvas className="smallchart" ref="drawsignaloutcanvas" id="smallsignalcanvas"></canvas>
                     <div className={"smalldesc extractedsignal " + (this.state.signalExtracted ? " " : " displaynone")}> Extracted signal </div>
                     {/* <div className={"smalldesc pt5 " + (this.state.signalExtracted ? " " : " displaynone")}> draw signal </div> */}
                 </div>
@@ -316,7 +322,7 @@ class DrawSignal extends Component {
 
                 <div className="pt5">
                     <Button
-                        size={"small"}
+                        size={"field"}
                         renderIcon={null}
                         onClick={this.clearDrawing.bind(this)}
                     > Clear Drawing </Button>

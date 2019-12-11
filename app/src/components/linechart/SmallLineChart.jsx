@@ -109,7 +109,7 @@ class SmallLineChart extends Component {
 
         return (
             <div className="iblock mt2">
-                <canvas ref="smalllinecanvas" id="smalllinecanvas"></canvas>
+                <canvas ref="smalllinecanvas" ></canvas>
             </div>
         )
     }

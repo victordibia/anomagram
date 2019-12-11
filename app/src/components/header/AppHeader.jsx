@@ -3,7 +3,8 @@ import {
     Header,
     HeaderName,
     HeaderNavigation,
-    //   HeaderMenuItem,
+    Link,
+    HeaderMenuItem,
     HeaderGlobalBar,
     HeaderGlobalAction,
     SkipToContent,
@@ -22,7 +23,7 @@ class AppHeader extends Component {
         super(props)
 
         this.appName = "Anomagram"
-        this.appDescription = "An interactive visualization for exploring deep learning models applied to the task of anomaly detectiion."
+        this.appDescription = "An interactive visualization for exploring deep learning models applied to the task of anomaly detection."
 
 
     }
@@ -37,9 +38,10 @@ class AppHeader extends Component {
                         {this.appName}
                     </HeaderName>
                     <HeaderNavigation aria-label={this.appDescription}>
-                        {/* <HeaderMenuItem element={Link} to="/" className="navbarlink "> Datasets </HeaderMenuItem> */}
+                        <HeaderMenuItem element={Link} to="/" className="navbarlink "> Datasets </HeaderMenuItem>
+                        <HeaderMenuItem element={Link} to="/" className="navbarlink "> Datasets </HeaderMenuItem>
                         {/* <HeaderMenuItem  element={Link} to="/models" className="navbarlink "> Models</HeaderMenuItem> */}
-                        <div className="navbarlinks  "><NavLink exact to="/"> Introduction </NavLink></div>
+                        <div role="menuitem" tabIndex={0} className="navbarlinks  "><NavLink exact to="/"> Introduction </NavLink></div>
                         <div className="navbarlinks "><NavLink to="/train"> Train a Model </NavLink></div>
                         {/* <div className="navbarlinks "><NavLink to="/faq"> FAQ </NavLink></div> */}
                         {/* <div className="navbarlinks "><NavLink to="/algebra"> Image Algebra </NavLink></div> */}
