@@ -38,11 +38,11 @@ class AppHeader extends Component {
                         {this.appName}
                     </HeaderName>
                     <HeaderNavigation aria-label={this.appDescription}>
-                        <HeaderMenuItem element={Link} to="/" className="navbarlink "> Datasets </HeaderMenuItem>
-                        <HeaderMenuItem element={Link} to="/" className="navbarlink "> Datasets </HeaderMenuItem>
+                        {/* <HeaderMenuItem element={Link} to="/" className="navbarlink "> Datasets </HeaderMenuItem>
+                        <HeaderMenuItem element={Link} to="/" className="navbarlink "> Datasets </HeaderMenuItem> */}
                         {/* <HeaderMenuItem  element={Link} to="/models" className="navbarlink "> Models</HeaderMenuItem> */}
                         <div role="menuitem" tabIndex={0} className="navbarlinks  "><NavLink exact to="/"> Introduction </NavLink></div>
-                        <div className="navbarlinks "><NavLink to="/train"> Train a Model </NavLink></div>
+                        <div role="menuitem" className="navbarlinks "><NavLink to="/train"> Train a Model </NavLink></div>
                         {/* <div className="navbarlinks "><NavLink to="/faq"> FAQ </NavLink></div> */}
                         {/* <div className="navbarlinks "><NavLink to="/algebra"> Image Algebra </NavLink></div> */}
                         {/* <div className="navbarlinks "><NavLink to="/energy"> Energy Explorer </NavLink></div> */}

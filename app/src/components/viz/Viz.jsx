@@ -26,7 +26,7 @@ class Viz extends Component {
             trainData: [],
             selectedIndex:0,
             selectedData: this.testData[0].data,
-            showDrawData: true,
+            showDrawData: false,
             drawSectionWidth: 350,
             drawSectionHeight: this.modelChartHeight - 30
         }
@@ -253,7 +253,7 @@ class Viz extends Component {
  
                 <div  className="flex flexwrap ">
                     
-                    <div ref="datasection" className=" flexwrapitem  flex20 " >
+                    <div ref="datasection" className=" flexwrapitem  flex20 mr10 " >
                             { <div ref="datasetexamplebox" className={" " + (this.state.showDrawData ? " displaynone" : " ")}>
                             {datasetExamples}
                             </div> }
@@ -261,7 +261,11 @@ class Viz extends Component {
                             {dataSketchPad}
                             </div> }
                     </div>
-                   
+
+                    {/* <div style={{width: "200px"}} className="flexwrapitem h100 p10 border">
+                             Threshold gauge etc
+                     </div>
+                    */}
                     <div className="flexwrapitem">
                         {modelOutput}
                     </div> 

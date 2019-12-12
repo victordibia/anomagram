@@ -32,8 +32,8 @@ class Train extends Component {
         this.testData = require("../../data/ecg/test.json")
         this.trainData = require("../../data/ecg/train.json")
 
-        // this.testData = []
-        // this.trainData = []
+        // this.testData = [{"data":[1,2,3,3]}]
+        // this.trainData = [{"data":[1,2,3,3]}]
         // this.dummyMSe = require("../../data/dummy/mse.json")
 
         // Model update method passed to model composer component
@@ -178,10 +178,10 @@ class Train extends Component {
 
         this.getChartContainerSizes()
 
-        this.setState({
-            floatCapable: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_CAPABLE'),
-            floatEnabled: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_ENABLED')
-        }) 
+        // this.setState({
+        //     floatCapable: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_CAPABLE'),
+        //     floatEnabled: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_ENABLED')
+        // }) 
 
 
     }
@@ -743,7 +743,7 @@ class Train extends Component {
                     <div className="iblock mr10">
                         <div className="mediumdesc pb7 pt5"> Steps {this.state.numSteps} - {this.state.CumulativeSteps} </div>
                         <Dropdown
-                            id="epochsdropdown"
+                            id="epochsdropdown" 
                             label="Steps"
                             items={this.stepOptions}
                             initialSelectedItem={this.stepOptions[0]}
@@ -1148,11 +1148,11 @@ class Train extends Component {
 
                         <div className="pl10 pt5 pr10 pb5 greyborder mt10">
                             <div className="boldtext  iblock mr5">
-                                <div className="iblock "> Charts </div>
-                                <div className="iblock  ">
+                                {/* <div className="iblock "> Charts </div> */}
+                                <div className="iblock boldtext  ">
                                     <Tooltip
                                         direction="right"
-                                        triggerText=""
+                                        triggerText="Select Charts"
                                     >
                                         <div className="tooltiptext">
                                             Add/Remove charts that visualize the state of the model as training progresses.
