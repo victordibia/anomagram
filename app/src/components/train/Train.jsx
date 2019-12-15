@@ -1020,33 +1020,33 @@ class Train extends Component {
                                 />
                             </div>
                             <div className="flex">
-                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.acc * 100)) }} className="metricguage mb5 p5 greyhighlight  textaligncenter mr5 flex5" >
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.acc * 100)) }} className="metricguage mb5  greyhighlight  textaligncenter mr5 flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
                                     <div className="metricdesc mediumdesc p5"> Best Accuracy </div>
                                 </div>
-                                <div style={{ borderLeftColor: percentToRGB((this.state.auc * 100)) }} className="metricguage mb5 p5 greyhighlight  textaligncenter flex5" >
+                                <div style={{ borderLeftColor: percentToRGB((this.state.auc * 100)) }} className="metricguage mb5 greyhighlight  textaligncenter flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.auc).toFixed(2)} </div>
                                     <div className="metricdesc mediumdesc p5"> AUC </div>
                                 </div>
                             </div>
                             <div className="mb5 flex">
 
-                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fpr * 100)) }} className="metricguage flex5 mr5 p10 greyhighlight  textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fpr * 100)) }} className="metricguage flex5 mr5  greyhighlight  textaligncenter">
                                     <div className="metricvalue textaligncenter"> {(this.state.bestMetric.fpr * 100).toFixed(2)}  % </div>
                                     <div className="metricdesc mediumdesc p5"> False Positive Rate </div>
                                 </div>
-                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fnr * 100)) }} className="metricguage flex5  p10 greyhighlight  textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fnr * 100)) }} className="metricguage flex5   greyhighlight  textaligncenter">
                                     <div className="metricvalue"> {(this.state.bestMetric.fnr * 100).toFixed(2)} % </div>
                                     <div className="metricdesc displayblock mediumdesc p5"> False Negative Rate </div>
                                 </div>
 
                             </div>
                             <div className="flex">
-                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tpr * 100)) }} className="metricguage flex5 p10 mr5 greyhighlight  textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tpr * 100)) }} className="metricguage flex5  mr5 greyhighlight  textaligncenter">
                                     <div className="metricvalue"> {(this.state.bestMetric.tpr * 100).toFixed(2)} % </div>
                                     <div className="metricdesc mr10 mediumdesc p5"> True Positive Rate </div>
                                 </div>
-                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tnr * 100)) }} className="metricguage flex5 p10 greyhighlight  textaligncenter">
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tnr * 100)) }} className="metricguage flex5  greyhighlight  textaligncenter">
                                     <div className="metricvalue"> {(this.state.bestMetric.tnr * 100).toFixed(2)} % </div>
                                     <div className="metricdesc mediumdesc p5"> True Negative Rate </div>
                                 </div>

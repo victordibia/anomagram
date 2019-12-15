@@ -4,6 +4,7 @@
 
 .ecgdatabox{
     max-height: 300px;
+    min-width: 350px; 
     /* overflow: scroll; */
     /* border: 2px solid pink */
 }
@@ -70,10 +71,20 @@ black
      background: rgb(218, 218, 218);
      padding: 10px;
  }
+.datasettab:hover{
+    background: rgb(218, 218, 218,0.6);
+}
+
 .datasettab.active{
     background:  #0062ff;
     color: white;
 }
+
+.datasettab.active:hover{
+    background:  rgba(0, 97, 255, 0.9);
+    /* color: white;  */
+}
+
 .lowerbar{
     border-bottom: 2px solid #0062ff;
 }

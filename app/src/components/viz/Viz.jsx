@@ -6,7 +6,7 @@ import LineChart from "../linechart/LineChart"
 import SmallLineChart from "../linechart/SmallLineChart"
 import DrawSignal from "../drawsignal/DrawSignal"
 // import "../../data" 
-
+import * as tf from '@tensorflow/tfjs';
 
 class Viz extends Component {
     constructor(props) {
@@ -48,7 +48,17 @@ class Viz extends Component {
         this.maxSmallChart = 100
         this.modelDataLastUpdated = true
         
+        this.modelLoaded = false
 
+    }
+
+    loadModel() {
+        let modelPath = "/webmodel/ecg/model.json"
+        this.savedModel =  tf.loadLayersModel(modelPath);
+        console.log("model loaded");
+        // this.loadTestData()
+
+        
     }
 
     updateCurrentSignal(data) {
@@ -86,7 +96,7 @@ class Viz extends Component {
         this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth -5 })
         this.drawSectionWidth = this.refs["datasection"].offsetWidth
         
-
+        this.loadModel()
     }
 
     componentWillUnmount() {
@@ -167,16 +177,18 @@ class Viz extends Component {
         });
 
         let datasetExamples = (
-            <div>
-                <div className="  ">
-                       
+            <div className="flex">
+                <div className="flex20 mr10"> 
                         <div className="mb5">
                             {dataLegend}
                         </div>
                         <div className="ecgdatabox scrollwindow">
                             {dataPoints}
                         </div>
-                    </div>
+                </div>
+                <div className="p10 greyhighlight">
+                    Threshold ring implementation
+                </div>
             </div>
         )
 

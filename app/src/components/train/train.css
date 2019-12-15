@@ -106,7 +106,7 @@
 
 .metricvalue{
     font-size: 2.0em;
-    padding-top: 0.08em;
+    /* padding-top: 0.28em; */
     /* min-width: 160px; */
     /* border: 1px solid grey; */
 }
@@ -123,6 +123,7 @@
 
 .metricguage{
     border-left: solid 6px red;
+    padding: 7px 0px 6px 0px  ;
 }
 
 .axislabel{
