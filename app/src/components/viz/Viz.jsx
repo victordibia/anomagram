@@ -26,7 +26,7 @@ class Viz extends Component {
             trainData: [],
             selectedIndex:0,
             selectedData: this.testData[0].data,
-            showDrawData: false,
+            showDrawData: true,
             drawSectionWidth: 350,
             drawSectionHeight: this.modelChartHeight - 30,
             isLoading: false,
@@ -47,7 +47,7 @@ class Viz extends Component {
             0: { color: "grey", colornorm: "grey", name: "All" },
             1: { color: "#0062ff", colornorm: "#0062ff", name: "Normal" },
             2: { color: "#ffa32c", colornorm: "grey", name: "R-on-T Premature Ventricular Contraction" },
-            3: { color: "violet", colornorm: "grey", name: "Supraventricular Premature or Ectopic Beat" },
+            // 3: { color: "violet", colornorm: "grey", name: "Supraventricular Premature or Ectopic Beat" },
             4: { color: "orange", colornorm: "grey", name: "Premature Ventricular Contraction" },
             5: { color: "red", colornorm: "grey", name: "Unclassifiable Beat" },
         }
@@ -209,7 +209,7 @@ class Viz extends Component {
                 <div action={name} onClick={this.clickLegend.bind(this)} className={"iblock mr5 mb5 legendrow clickable" + (this.state.selectedLegend === name ? " active": " ")} key={"legendrow" + index}>
                     <div style={{ background: color }} className="unclickable indicatorcircle iblock mr5"></div>
                     <div className="iblock unclickable legendtext pl4 mediumdesc"> {name}</div>
-                   s
+                   
 
                 </div>
             )

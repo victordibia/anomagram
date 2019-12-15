@@ -13,7 +13,7 @@ class DrawSignal extends Component {
         }
 
 
-        this.axisOffset = 0
+        this.axisOffset = 150
         this.chartWidth = this.props.width - this.axisOffset
         this.chartHeight = this.props.height
 
@@ -308,27 +308,34 @@ class DrawSignal extends Component {
         return (
             // <div style={{ width: this.chartWidth + 25 }} className="mt2 border p10">
             <div className=" w100 " >
-                <div className="p5 iblock mediumdesc">
-                    Click and drag to draw a signal. Please draw within the box.
-                </div>
-                <div className={"unclickable positionabsolute  smallchartbox " + (this.state.signalExtracted ? " " : " displaynone")} >
-                    <canvas className="smallchart" ref="drawsignaloutcanvas" id="smallsignalcanvas"></canvas>
-                    <div className={"smalldesc extractedsignal " + (this.state.signalExtracted ? " " : " displaynone")}> Extracted signal </div>
-                    {/* <div className={"smalldesc pt5 " + (this.state.signalExtracted ? " " : " displaynone")}> draw signal </div> */}
-                </div>
-                <div style={{ height: this.chartHeight }} className="">
+                <div className=" w100 flex">
+                    <div className=" axisbox mr10 iblock">
+                        bo
+                    </div>
+                    <div className="flexfull border iblock">
 
-                    <canvas className="border iblock largechart" ref="drawsignalcanvas" id="drawsignalcanvas"></canvas>
+                        <div className={"unclickable positionabsolute  smallchartbox " + (this.state.signalExtracted ? " " : " displaynone")} >
+                            <canvas className="smallchart" ref="drawsignaloutcanvas" id="smallsignalcanvas"></canvas>
+                            <div className={"smalldesc extractedsignal " + (this.state.signalExtracted ? " " : " displaynone")}> Extracted signal </div>
+                            {/* <div className={"smalldesc pt5 " + (this.state.signalExtracted ? " " : " displaynone")}> draw signal </div> */}
+                        </div>
+                        <div style={{ height: this.chartHeight }} className="">
+
+                            <canvas className="border iblock largechart" ref="drawsignalcanvas" id="drawsignalcanvas"></canvas>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="pt5">
+                    <div className="pb5  mediumdesc">
+                        Click and drag to draw a signal. Please draw within the box.
+                        </div>
                     <Button
                         size={"field"}
                         renderIcon={null}
                         onClick={this.clearDrawing.bind(this)}
                     > Clear Drawing </Button>
                 </div>
-
             </div>
         )
     }

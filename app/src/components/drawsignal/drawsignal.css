@@ -27,3 +27,8 @@
     border: 1px dashed grey;
     height: 100px;
 }
+
+.axisbox{
+    border: 1px solid grey; 
+    width: 30px;
+}
