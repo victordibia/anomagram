@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-// import { Toggle } from 'carbon-components-react';
+import { Loading } from 'carbon-components-react';
 // import { loadJSONData } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
@@ -28,7 +28,8 @@ class Viz extends Component {
             selectedData: this.testData[0].data,
             showDrawData: false,
             drawSectionWidth: 350,
-            drawSectionHeight: this.modelChartHeight - 30
+            drawSectionHeight: this.modelChartHeight - 30,
+            isLoading: true
         }
 
 
@@ -115,10 +116,10 @@ class Viz extends Component {
         this.setState({ selectedData: this.testData[e.target.getAttribute("indexvalue")].data })
         this.setState({selectedIndex: e.target.getAttribute("indexvalue")})
 
-        let colorAttrr = e.target.getAttribute("targetval") + "" === "1" ? "green" : "red"
-        // console.log(e.target.getAttribute("targetval"), colorAttrr)
-        this.refs.labelcolordiv.style.backgroundColor = colorAttrr
-        this.refs.predictioncolordiv.style.backgroundColor = colorAttrr
+        // let colorAttrr = e.target.getAttribute("targetval") + "" === "1" ? "green" : "red"
+        // // console.log(e.target.getAttribute("targetval"), colorAttrr)
+        // this.refs.labelcolordiv.style.backgroundColor = colorAttrr
+        // this.refs.predictioncolordiv.style.backgroundColor = colorAttrr
     }
 
     toggleDataOptions(e) { 
@@ -203,40 +204,41 @@ class Viz extends Component {
         )
 
         let modelOutput = (
-            <div className=" p10 modeloutputbox rad5 ">
-                        <div className="mb10 boldtext"> Model Output</div>
-                        <div className=""> 
-                            {this.testData.length > 0 &&
-                                <div>
-                                    <div className="flex mediumdesc mb5 displaynone">
-                                        <div className="mr10 boldtext"> Label </div>
-                                        <div ref="labelcolordiv" className="flexfull colorbox greenbox"></div>
-                                        {/* <span className="boldtext"> </span>: {this.chartColorMap[this.testData[this.state.selectedData].target].name} */}
-                                    </div>
-                                    <div className="flex mediumdesc mb5">
-                                        <div className="mr10 boldtext">
-                                            {this.testData[this.state.selectedIndex].target + "" === "1" ? "NORMAL" : "ABNORMAL"}
-                                        </div>
-                                        <div ref="predictioncolordiv" className="flexfull colorbox redbox"></div>
-                                        {/* <span className="boldtext"> </span>: {this.chartColorMap[this.testData[this.testData].target].name} */}
-                                    </div>
-
-                                    <div className="iblock"> 
-                                        <LineChart
-                                            
-                                                data= {this.state.selectedData}
-                                index={this.state.selectedIndex}
-                                lastUpdated = {this.modelDataLastUpdated}
-                                                color={this.chartColorMap[this.testData[this.state.selectedIndex].target].colornorm}
-                                                width={this.modelChartWidth}
-                                                height= {this.modelChartHeight}
-                                             
-                                            
-                                        > </LineChart>
-                                    </div>
+            <div className="  modeloutputbox rad5 ">
+                {/* <div className="mb10 boldtext"> Model Prediction</div> */}
+                <div className="flex   ">
+                    <div className="iblock  mr10">
+                            <div ref="" className="resetbox vizloadingbox" style={{opacity: (this.state.isLoading ) ? 1:0, width: (this.state.isLoading)  ?  "34px": "0px"  }} >
+                                <Loading
+                                    className=" "
+                                    active={true}
+                                    small={true}
+                                    withOverlay={false}
+                                > </Loading>
+                            </div>
+                    </div>
+                    <div className="flexfull ">
+                        {this.testData.length > 0 &&
+                            <div className=" mediumdesc mb5">
+                                <div className="mr10 boldtext ">
+                                  Model Prediction:   {this.testData[this.state.selectedIndex].target + "" === "1" ? "NORMAL" : "ABNORMAL"}
                                 </div>
-                            } 
-                        </div> 
+                                <div ref="predictioncolordiv" className="mt5 colorbox redbox"></div>
+                            
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div className="iblock"> 
+                    <LineChart 
+                            data= {this.state.selectedData}
+                            index={this.state.selectedIndex}
+                            lastUpdated = {this.modelDataLastUpdated}
+                            color={this.chartColorMap[this.testData[this.state.selectedIndex].target].colornorm}
+                            width={this.modelChartWidth}
+                            height= {this.modelChartHeight} 
+                    > </LineChart>
+                </div>
             </div>
         )
 
@@ -261,6 +263,8 @@ class Viz extends Component {
                 <div className="mb10 lowerbar">
                     <div onClick={this.setDatasetECG.bind(this)} className={"datasettab clickable iblock mr5 " + (this.state.showDrawData ? "" : " active")}> ECG5000 Dataset</div>
                     <div onClick={this.setDatasetDraw.bind(this)} className={"datasettab clickable iblock mr10 " + (this.state.showDrawData ? " active" : " ")}> Draw your ECG data</div>
+                     
+                   
                 </div>
  
                 <div  className="flex flexwrap ">

@@ -29,6 +29,11 @@
     opacity: 1;
  }
 
+ .vizloadingbox{
+     border: 1px solid greenyellow;
+     /* height: 20px; */
+ }
+
  .modeloutputbox{
      /* background:#ffa32c; */
  }
