@@ -208,7 +208,8 @@ class Train extends Component {
     }
 
 
-    disposeModelTensors() {
+    destroyModelTensors() {
+        // Dispose all tensors used to hold model parameters
         if (this.createdModel) {
             // this.encoder.dispose()
             this.createdModel.dispose()
@@ -222,7 +223,7 @@ class Train extends Component {
         if (this.tensorsCreated) {
             this.xsTest.dispose()
             this.xsTrain.dispose() 
-        this.disposeModelTensors()
+            this.destroyModelTensors()
         }
        
         // this.xsWarmup.dispose()
@@ -232,7 +233,7 @@ class Train extends Component {
     createModel() { 
 
         // dispose of existing model to release tensors from memory
-        this.disposeModelTensors()
+        this.destroyModelTensors()
 
         // if Data tensors not created at all, create tensors 
         if (!this.tensorsCreated) {

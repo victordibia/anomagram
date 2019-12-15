@@ -30,7 +30,10 @@ class Viz extends Component {
             drawSectionWidth: 350,
             drawSectionHeight: this.modelChartHeight - 30,
             isLoading: false,
-            modelLoaded: false
+            modelLoaded: false,
+            threshold: 0.99,
+            predictedData: [],
+            predictedMse: null
         }
 
 
@@ -54,19 +57,6 @@ class Viz extends Component {
 
     }
 
-    loadModel() {
-        this.setState({isLoading: true})
-        let modelPath = "/webmodel/ecg/model.json"
-        tf.loadLayersModel(modelPath).then((model) => {
-            this.loadedModel = model
-            console.log("model loaded");
-            console.log(tf.memory());
-            this.setState({modelLoaded:true, isLoading: false})
-        });
-       
-        // this.loadTestData()  
-        // console.log(tf.memory());
-    }
 
     updateCurrentSignal(data) {
         // console.log(data);
@@ -103,12 +93,75 @@ class Viz extends Component {
         this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth -5 })
         this.drawSectionWidth = this.refs["datasection"].offsetWidth
         
-        // this.loadModel()
+        console.log(tf.memory());
+        
+        
     }
 
     componentWillUnmount() {
         // window.removeEventListener("resize", this.onWindowResize)
+        if (this.loadedModel) {
+            this.loadedModel.dispose()
+        }  
+    }
 
+    
+
+    loadModel() {
+        this.setState({isLoading: true})
+        setTimeout(() => {
+            let modelPath = "/webmodel/ecg/model.json"
+        tf.loadLayersModel(modelPath).then((model) => {
+            this.loadedModel = model  
+            this.setState({ modelLoaded: true, isLoading: false }) 
+            this.getPrediction(this.state.selectedData)
+        });
+        }, 700); 
+    }
+
+    // Get predictions for a selected datapoint
+    getPrediction(data) {
+
+        if (!this.state.modelLoaded) {
+            this.loadModel()
+        } else {
+            this.setState({isLoading: true})
+             
+            // Get predictions  
+            const [mse,preds] = tf.tidy(() => {
+                let dataTensor = tf.tensor2d(data,[1,140])
+                let preds = this.loadedModel.predict(dataTensor, { batchSize: 8 }) 
+                return [tf.sub(preds, dataTensor).square().mean(1), preds]
+            })
+
+            mse.array().then(array => { 
+                console.log(array);
+                this.setState({isLoading: false, predictedMse: array[0]})
+            });
+
+            preds.array().then(array => {  
+                this.setState({predictedData: array[0]})
+            });
+      
+            mse.dispose()
+            preds.dispose()
+        }
+        
+
+
+    }
+
+
+
+    clickDataPoint(e) {
+        
+        let selectedData = this.testData[e.target.getAttribute("indexvalue")].data
+        this.modelDataLastUpdated = !this.modelDataLastUpdated 
+          
+        // set data and get predictions on click
+        this.setState({selectedIndex: e.target.getAttribute("indexvalue"), selectedData:selectedData }, () => { 
+            this.getPrediction(selectedData) 
+        })
     }
 
     onWindowResize() {
@@ -117,21 +170,7 @@ class Viz extends Component {
         this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth -5 })
     }
 
-    clickDataPoint(e) {
-        if (!this.state.modelLoaded) {
-            this.loadModel()
-        }
-
-        this.modelDataLastUpdated = !this.modelDataLastUpdated 
-        this.setState({ selectedData: this.testData[e.target.getAttribute("indexvalue")].data })
-        this.setState({selectedIndex: e.target.getAttribute("indexvalue")})
-
-        // let colorAttrr = e.target.getAttribute("targetval") + "" === "1" ? "green" : "red"
-        // // console.log(e.target.getAttribute("targetval"), colorAttrr)
-        // this.refs.labelcolordiv.style.backgroundColor = colorAttrr
-        // this.refs.predictioncolordiv.style.backgroundColor = colorAttrr
-    }
-
+    
     toggleDataOptions(e) { 
         this.setState({showDrawData: e})
     }
@@ -230,10 +269,19 @@ class Viz extends Component {
                     <div className="flexfull ">
                         {this.testData.length > 0 &&
                             <div className=" mediumdesc mb5">
+                            {this.state.predictedMse &&
                                 <div className="mr10 boldtext ">
-                                  MODEL PREDICTION:   {this.testData[this.state.selectedIndex].target + "" === "1" ? "NORMAL" : "ABNORMAL"}
+                                MODEL PREDICTION [<span className="smalldesc"> mse: </span>  {this.state.predictedMse.toFixed(3)}]:
+                                  {/* {this.testData[this.state.selectedIndex].target + "" === "1" ? "NORMAL" : "ABNORMAL"} */}
+                                &nbsp;
+                                {this.state.predictedMse > this.state.threshold ? "ABNORMAL" : "NORMAL"} 
                                 </div>
-                                <div ref="predictioncolordiv" className="mt5 colorbox redbox"></div>
+                            }
+                            {!this.state.predictedMse &&
+                                <div className="mr10 boldtext ">
+                                 Select a signal or draw one!
+                            </div>}
+                            <div ref="predictioncolordiv" className="mt5 colorbox redbox"></div>
                             
                             </div>
                         }
@@ -241,7 +289,8 @@ class Viz extends Component {
                 </div>
                 <div className="iblock "> 
                     <LineChart 
-                            data= {this.state.selectedData}
+                        data={this.state.selectedData}
+                        predictedData={this.state.predictedData}
                             index={this.state.selectedIndex}
                             lastUpdated = {this.modelDataLastUpdated}
                             color={this.chartColorMap[this.testData[this.state.selectedIndex].target].colornorm}
