@@ -29,7 +29,8 @@ class Viz extends Component {
             showDrawData: false,
             drawSectionWidth: 350,
             drawSectionHeight: this.modelChartHeight - 30,
-            isLoading: true
+            isLoading: false,
+            modelLoaded: false
         }
 
 
@@ -49,17 +50,22 @@ class Viz extends Component {
         this.maxSmallChart = 100
         this.modelDataLastUpdated = true
         
-        this.modelLoaded = false
+    
 
     }
 
     loadModel() {
+        this.setState({isLoading: true})
         let modelPath = "/webmodel/ecg/model.json"
-        this.savedModel =  tf.loadLayersModel(modelPath);
-        console.log("model loaded");
-        // this.loadTestData()
-
-        
+        tf.loadLayersModel(modelPath).then((model) => {
+            this.loadedModel = model
+            console.log("model loaded");
+            console.log(tf.memory());
+            this.setState({modelLoaded:true, isLoading: false})
+        });
+       
+        // this.loadTestData()  
+        // console.log(tf.memory());
     }
 
     updateCurrentSignal(data) {
@@ -97,7 +103,7 @@ class Viz extends Component {
         this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth -5 })
         this.drawSectionWidth = this.refs["datasection"].offsetWidth
         
-        this.loadModel()
+        // this.loadModel()
     }
 
     componentWillUnmount() {
@@ -112,6 +118,10 @@ class Viz extends Component {
     }
 
     clickDataPoint(e) {
+        if (!this.state.modelLoaded) {
+            this.loadModel()
+        }
+
         this.modelDataLastUpdated = !this.modelDataLastUpdated 
         this.setState({ selectedData: this.testData[e.target.getAttribute("indexvalue")].data })
         this.setState({selectedIndex: e.target.getAttribute("indexvalue")})
@@ -206,11 +216,11 @@ class Viz extends Component {
         let modelOutput = (
             <div className="  modeloutputbox rad5 ">
                 {/* <div className="mb10 boldtext"> Model Prediction</div> */}
-                <div className="flex   ">
-                    <div className="iblock  mr10">
+                <div className="flex  ">
+                    <div className="iblock ">
                             <div ref="" className="resetbox vizloadingbox" style={{opacity: (this.state.isLoading ) ? 1:0, width: (this.state.isLoading)  ?  "34px": "0px"  }} >
                                 <Loading
-                                    className=" "
+                                    className=" mr10"
                                     active={true}
                                     small={true}
                                     withOverlay={false}
@@ -221,7 +231,7 @@ class Viz extends Component {
                         {this.testData.length > 0 &&
                             <div className=" mediumdesc mb5">
                                 <div className="mr10 boldtext ">
-                                  Model Prediction:   {this.testData[this.state.selectedIndex].target + "" === "1" ? "NORMAL" : "ABNORMAL"}
+                                  MODEL PREDICTION:   {this.testData[this.state.selectedIndex].target + "" === "1" ? "NORMAL" : "ABNORMAL"}
                                 </div>
                                 <div ref="predictioncolordiv" className="mt5 colorbox redbox"></div>
                             
@@ -229,7 +239,7 @@ class Viz extends Component {
                         }
                     </div>
                 </div>
-                <div className="iblock"> 
+                <div className="iblock "> 
                     <LineChart 
                             data= {this.state.selectedData}
                             index={this.state.selectedIndex}

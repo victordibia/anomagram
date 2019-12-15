@@ -4,7 +4,7 @@ import {
     HeaderName,
     HeaderNavigation,
     Link,
-    HeaderMenuItem,
+    // HeaderMenuItem,
     HeaderGlobalBar,
     HeaderGlobalAction,
     SkipToContent,
