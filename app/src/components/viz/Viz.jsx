@@ -33,7 +33,8 @@ class Viz extends Component {
             modelLoaded: false,
             threshold: 0.99,
             predictedData: [],
-            predictedMse: null
+            predictedMse: null,
+            selectedLegend:  "All",
         }
 
 
@@ -43,9 +44,10 @@ class Viz extends Component {
         this.loadData()
 
         this.chartColorMap = {
+            0: { color: "grey", colornorm: "grey", name: "All" },
             1: { color: "#0062ff", colornorm: "#0062ff", name: "Normal" },
             2: { color: "#ffa32c", colornorm: "grey", name: "R-on-T Premature Ventricular Contraction" },
-            3: { color: "violet", colornorm: "grey", name: "Supraventricular Premature or Ectopic Beat " },
+            3: { color: "violet", colornorm: "grey", name: "Supraventricular Premature or Ectopic Beat" },
             4: { color: "orange", colornorm: "grey", name: "Premature Ventricular Contraction" },
             5: { color: "red", colornorm: "grey", name: "Unclassifiable Beat" },
         }
@@ -62,7 +64,13 @@ class Viz extends Component {
         // console.log(data);
         this.modelDataLastUpdated = !this.modelDataLastUpdated 
         // console.log(this.state.selectedData); 
-        this.setState({ selectedData: data })
+        this.setState({ selectedData: data }, () => {
+            this.getPrediction(data)
+        })
+
+        
+        
+
        
     }
 
@@ -135,7 +143,7 @@ class Viz extends Component {
             })
 
             mse.array().then(array => { 
-                console.log(array);
+                // console.log(array);
                 this.setState({isLoading: false, predictedMse: array[0]})
             });
 
@@ -184,25 +192,36 @@ class Viz extends Component {
         this.setState({showDrawData: false})
     }
 
+    clickLegend(e) {
+        // console.log(e.target);
+        // this.state.selectedLegend = e.target.getAttribute("action")
+        this.setState({selectedLegend: e.target.getAttribute("action")})
+    }
+
     render() {
 
 
         let dataLegend = Object.entries(this.chartColorMap).map((data, index) => {
             let color = data[1].color
             let name = data[1].name
+            // console.log(name); 
             return (
-                <div className="iblock mr10 mb5" key={"legendrow" + index}>
-                    <div style={{ background: color }} className="indicatorcircle iblock mr5"></div>
-                    <div className="iblock legendtext pl4 mediumdesc"> {name}</div>
-                    <div className="iblock"></div>
+                <div action={name} onClick={this.clickLegend.bind(this)} className={"iblock mr5 mb5 legendrow clickable" + (this.state.selectedLegend === name ? " active": " ")} key={"legendrow" + index}>
+                    <div style={{ background: color }} className="unclickable indicatorcircle iblock mr5"></div>
+                    <div className="iblock unclickable legendtext pl4 mediumdesc"> {name}</div>
+                   s
 
                 </div>
             )
         });
 
         let dataPoints = this.testData.slice(0, this.maxSmallChart).map((data, index) => {
+            let isVisible = (this.state.selectedLegend === this.chartColorMap[this.testData[index].target].name) || this.state.selectedLegend === "All"
+
+            console.log(   );
+            
             return (
-                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (this.state.selectedIndex + "" === (index + "") ? " active" : "")} indexvalue={index} targetval={data.target} >
+                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (isVisible ? " ": " displaynone"   ) } indexvalue={index} targetval={data.target} >
                     <div indexvalue={index} className="boldtext  unclickable iblock ">
 
                         <div className="positionrelative">
@@ -236,7 +255,7 @@ class Viz extends Component {
                             {dataPoints}
                         </div>
                 </div>
-                <div className="p10 greyhighlight">
+                <div className="p10 greyhighlight displaynone">
                     Threshold ring implementation
                 </div>
             </div>
@@ -279,9 +298,9 @@ class Viz extends Component {
                             }
                             {!this.state.predictedMse &&
                                 <div className="mr10 boldtext ">
-                                 Select a signal or draw one!
+                                 MODEL PREDICTION : Select a signal or draw one!
                             </div>}
-                            <div ref="predictioncolordiv" className="mt5 colorbox redbox"></div>
+                            <div style={{backgroundColor: this.state.predictedMse > this.state.threshold ? "red" : "green" }} ref="predictioncolordiv" className="mt5 colorbox redbox"></div>
                             
                             </div>
                         }

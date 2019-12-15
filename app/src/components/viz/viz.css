@@ -39,10 +39,11 @@
  }
 
  .indicatorcircle{
-     height: 6px;
-     width: 6px;
+     height: 7px;
+     width: 7px;
      border-radius: 6px;  
      opacity: 0.95; 
+     border: 1px solid white;
  }
 
  .indicatoroutrcircle{
@@ -71,6 +72,18 @@ white
 black
  
  */
+ .legendrow{
+     background: rgb(211, 211, 211);
+     padding: 5px 8px 5px 5px;
+ }
+
+ .legendrow:hover{
+    background: rgb(238, 238, 238); 
+}
+ .legendrow.active{
+    background:  #0062ff;
+    color: white;
+ }
 
  .datasettab{
      background: rgb(218, 218, 218);
