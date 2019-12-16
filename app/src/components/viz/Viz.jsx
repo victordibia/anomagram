@@ -287,7 +287,7 @@ class Viz extends Component {
                     </div>
                     <div className="flexfull ">
                         {this.testData.length > 0 &&
-                            <div className=" mediumdesc mb5">
+                            <div className="mt5 mediumdesc mb5">
                             {this.state.predictedMse &&
                                 <div className="mr10 boldtext ">
                                 MODEL PREDICTION [<span className="smalldesc"> mse: </span>  {this.state.predictedMse.toFixed(3)}]:

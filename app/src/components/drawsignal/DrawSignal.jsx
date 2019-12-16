@@ -13,8 +13,9 @@ class DrawSignal extends Component {
         }
 
 
-        this.axisOffset = 150
+        this.axisOffset = 25
         this.chartWidth = this.props.width - this.axisOffset
+        // this.chartWidth = 450
         this.chartHeight = this.props.height
 
         // console.log(this.props, this.chartHeight, this.chartWidth);
@@ -36,6 +37,8 @@ class DrawSignal extends Component {
         this.signalCount = 140
         this.pointColors = []
 
+        this.scaleRange = [2, -5]
+        this.axisList = [2, 1, 0, -1, -2, -3, -4, -5]
 
     }
 
@@ -86,7 +89,7 @@ class DrawSignal extends Component {
 
         this.ynScale = d3.scaleLinear()
             .domain([0, this.chartHeight]) // input 
-            .range([2, -5]); // output
+            .range(this.scaleRange); // output
 
 
         this.zeroArr = new Array(this.signalCount).fill(0);
@@ -303,16 +306,27 @@ class DrawSignal extends Component {
         }
     }
 
+    drawSample() {
+
+    }
+
 
     render() {
+        let xaxis = this.axisList.map((data) => {
+            return (
+                <div style={{ height: this.chartHeight / this.axisList.length }} key={"axisbox" + data} className="axiscell ">
+                    <div className="axiscelltext mediumdesc">   {data}</div>
+                </div>
+            )
+        })
         return (
             // <div style={{ width: this.chartWidth + 25 }} className="mt2 border p10">
             <div className=" w100 " >
                 <div className=" w100 flex">
-                    <div className=" axisbox mr10 iblock">
-                        bo
+                    <div className=" axisbox mr5 iblock">
+                        {xaxis}
                     </div>
-                    <div className="flexfull border iblock">
+                    <div className="flexfull  iblock">
 
                         <div className={"unclickable positionabsolute  smallchartbox " + (this.state.signalExtracted ? " " : " displaynone")} >
                             <canvas className="smallchart" ref="drawsignaloutcanvas" id="smallsignalcanvas"></canvas>
@@ -330,11 +344,22 @@ class DrawSignal extends Component {
                     <div className="pb5  mediumdesc">
                         Click and drag to draw a signal. Please draw within the box.
                         </div>
-                    <Button
-                        size={"field"}
-                        renderIcon={null}
-                        onClick={this.clearDrawing.bind(this)}
-                    > Clear Drawing </Button>
+                    <div>
+                        <div className="iblock mr5">
+                            <Button
+                                size={"field"}
+                                renderIcon={null}
+                                onClick={this.clearDrawing.bind(this)}
+                            > Clear Drawing </Button>
+                        </div >
+                        <div className="iblock">
+                            <Button
+                                size={"field"}
+                                renderIcon={null}
+                                onClick={this.drawSample.bind(this)}
+                            > Draw Sample </Button>
+                        </div>
+                    </div>
                 </div>
             </div>
         )

@@ -29,6 +29,18 @@
 }
 
 .axisbox{
-    border: 1px solid grey; 
-    width: 30px;
+    /* border: 1px solid grey;  */
+    width: 20px;
+}
+
+.axiscell{
+    border-bottom: 1px dashed grey;
+   position: relative;
+  
+}
+.axiscelltext{
+    position: absolute;
+    bottom: 0px;
+    right: 3px;
+    padding-bottom: 3px;
 }
