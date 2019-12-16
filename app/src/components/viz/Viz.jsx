@@ -56,7 +56,7 @@ class Viz extends Component {
         this.modelDataLastUpdated = true
         
     
-
+        this.zeroArr = new Array(this.signalCount).fill(0);
     }
 
 
@@ -164,11 +164,17 @@ class Viz extends Component {
     clickDataPoint(e) {
         
         let selectedData = this.testData[e.target.getAttribute("indexvalue")].data
+       
+
+        // set data and get predictions on click 
+        this.setSelectedData(e.target.getAttribute("indexvalue"), selectedData)
+        
+    }
+
+    setSelectedData(index, data) {
         this.modelDataLastUpdated = !this.modelDataLastUpdated 
-          
-        // set data and get predictions on click
-        this.setState({selectedIndex: e.target.getAttribute("indexvalue"), selectedData:selectedData }, () => { 
-            this.getPrediction(selectedData) 
+        this.setState({selectedIndex: index, selectedData:data }, () => { 
+            this.getPrediction(data) 
         })
     }
 
@@ -180,16 +186,20 @@ class Viz extends Component {
 
     
     toggleDataOptions(e) { 
-        this.setState({showDrawData: e})
+        this.setState({ showDrawData: e })
+        
     }
     setDatasetDraw(e) {
         this.setState({ showDrawData: true })
         // this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth })
-        console.log(this.refs["datasection"].offsetWidth);
+        // console.log(this.refs["datasection"].offsetWidth);
         
     }
-    setDatasetECG(e) {
-        this.setState({showDrawData: false})
+    setDatasetECG(e) {  
+        this.setState({ showDrawData: false })
+        
+        this.setSelectedData(0, this.testData[0].data)
+        
     }
 
     clickLegend(e) {
@@ -221,9 +231,8 @@ class Viz extends Component {
             console.log(   );
             
             return (
-                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (isVisible ? " ": " displaynone"   ) } indexvalue={index} targetval={data.target} >
-                    <div indexvalue={index} className="boldtext  unclickable iblock ">
-
+                <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (isVisible ? " ": " displaynone ") + (this.state.selectedIndex+"" === index+"" ? " active ":"") } indexvalue={index} targetval={data.target} >
+                    <div indexvalue={index} className="boldtext  unclickable iblock "> 
                         <div className="positionrelative">
                             <div className="p3 indicatoroutrcircle  positionabsolute bottomright">
                                 <div style={{ background: this.chartColorMap[this.testData[index].target].color }} className="indicatorcircle "></div>
@@ -300,7 +309,8 @@ class Viz extends Component {
                                 <div className="mr10 boldtext ">
                                  MODEL PREDICTION : Select a signal or draw one!
                             </div>}
-                            <div style={{backgroundColor: this.state.predictedMse > this.state.threshold ? "red" : "green" }} ref="predictioncolordiv" className="mt5 colorbox redbox"></div>
+                            {this.state.predictedMse &&<div style={{ backgroundColor: this.state.predictedMse > this.state.threshold ? "red" : "green" }} ref="predictioncolordiv" className="mt5 colorbox redbox"></div>}
+                            {!this.state.predictedMse && <div style={{backgroundColor:  "grey" }} ref="predictioncolordiv" className="mt5 colorbox redbox"></div>}
                             
                             </div>
                         }

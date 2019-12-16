@@ -30,17 +30,17 @@
 
 .axisbox{
     /* border: 1px solid grey;  */
-    width: 20px;
+    width: 10px;
 }
 
 .axiscell{
-    border-bottom: 1px dashed grey;
+   border-top: 1px dashed grey;
    position: relative;
   
 }
 .axiscelltext{
     position: absolute;
-    bottom: 0px;
-    right: 3px;
+    top: 0px;
+    right: 0px;
     padding-bottom: 3px;
 }
