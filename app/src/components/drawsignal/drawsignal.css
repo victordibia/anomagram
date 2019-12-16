@@ -34,13 +34,13 @@
 }
 
 .axiscell{
-   border-top: 1px dashed grey;
+   border-top: 1px solid grey;
    position: relative;
   
 }
 .axiscelltext{
     position: absolute;
-    top: 0px;
+    top: 3px;
     right: 0px;
     padding-bottom: 3px;
 }
