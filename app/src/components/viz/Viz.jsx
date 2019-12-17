@@ -13,7 +13,7 @@ class Viz extends Component {
         super(props)
 
         this.modelChartWidth = Math.min(390, window.innerWidth - 25)
-        this.modelChartHeight = 300
+        this.modelChartHeight = 280
 
         // Allow the draw signal component update current signal with drawn signal
         this.updateCurrentSignal = this.updateCurrentSignal.bind(this)

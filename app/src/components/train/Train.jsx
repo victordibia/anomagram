@@ -742,7 +742,7 @@ class Train extends Component {
             <div style={{ zIndex: 100 }} className="w100   unselectable greyhighlight  flex flexjustifyleft flexjustifycenter  ">
                 <div className="pl10 pt10 pr10 pb5  iblock">
                     <div className="iblock mr10">
-                        <div className="mediumdesc pb7 pt5"> Steps {this.state.numSteps} - {this.state.CumulativeSteps} </div>
+                        <div className="mediumdesc pb7 pt5"> Steps <span className="boldtext"> {this.state.numSteps} </span>  - {this.state.CumulativeSteps}  </div>
                         <Dropdown
                             id="epochsdropdown" 
                             label="Steps"
@@ -754,7 +754,7 @@ class Train extends Component {
                     </div>
 
                     <div className="iblock mr10">
-                        <div className="mediumdesc pb7 pt5"> Batchsize {this.state.batchSize} </div>
+                        <div className="mediumdesc pb7 pt5"> Batchsize <span className="boldtext"> {this.state.batchSize} </span> </div>
                         <Dropdown
                             id="batchsizedropdown"
                             label="Batch Size"
@@ -766,7 +766,7 @@ class Train extends Component {
                     </div>
 
                     <div className="iblock mr10">
-                        <div className="mediumdesc pb7 pt5"> Learning Rate {this.state.learningRate} </div>
+                        <div className="mediumdesc pb7 pt5"> Learning Rate <span className="boldtext"> {this.state.learningRate}</span>  </div>
                         <Dropdown
                             id="learningratedropdown"
                             label="Learning Rate"
@@ -778,7 +778,7 @@ class Train extends Component {
                     </div>
 
                     <div className="iblock mr10">
-                        <div className="mediumdesc pb7 pt5"> Regularlizer {this.state.regularizer} </div>
+                        <div className="mediumdesc pb7 pt5"> Regularlizer <span className="boldtext"> {this.state.regularizer}</span> </div>
                         <Dropdown
                             id="regularizeerdropdown"
                             label="Regularizer"
@@ -790,7 +790,7 @@ class Train extends Component {
                     </div>
 
                     <div style={{ zIndex: 5000 }} className="iblock mr10 ">
-                        <div className="mediumdesc pb7 pt5"> Optimizer {this.state.optimizer} </div>
+                        <div className="mediumdesc pb7 pt5"> Optimizer <span className="boldtext"> {this.state.optimizer} </span> </div>
                         <Dropdown
                             style={{ zIndex: 100 }}
                             id="optimizerdropdown"
@@ -806,7 +806,7 @@ class Train extends Component {
                     <div className="iblock mr10 borderleftdash pl10 ">
                     {/* <div className="configsectiontitle smalldesc iblock mr10">  Dataset </div> */}
                         <div className="iblock">
-                        <div className="mediumdesc pb7 pt5">Train Size {this.state.trainDataShape[0]} </div>
+                        <div className="mediumdesc pb7 pt5">Train Size <span className="boldtext"> {this.state.trainDataShape[0]} </span>  </div>
                         <Dropdown
                             id="trainingdatadropdown"
                             label="Training Data"
@@ -819,7 +819,7 @@ class Train extends Component {
                     </div>
 
                     <div className="iblock mr10">
-                        <div className="mediumdesc pb7 pt5"> Abnormal % {this.state.abnormalPercentage} </div>
+                        <div className="mediumdesc pb7 pt5"> Abnormal % <span className="boldtext"> {this.state.abnormalPercentage} </span> </div>
                         <Dropdown
                             id="abnormalpercentagedatadropdown"
                             label="Abnormal %"
@@ -831,7 +831,7 @@ class Train extends Component {
                     </div>
 
                     <div className="iblock mr10">
-                        <div className="mediumdesc pb7 pt5">Test Size {this.state.testDataShape[0]} </div>
+                        <div className="mediumdesc pb7 pt5">Test Size <span className="boldtext"> {this.state.testDataShape[0]} </span> </div>
                         <Dropdown
                             id="testdatadropdown"
                             label="Test Data"
