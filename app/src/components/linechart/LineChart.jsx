@@ -222,11 +222,21 @@ class LineChart extends Component {
                         <div ref="trainlabel" className="iblock boldtext mr5"> Input  </div>
                         <div className="iblock "> </div>
                     </div>
-                    <div>
+                    <div className="mb3 ">
                         <div style={{ backgroundColor: this.props.predictedColor }} className="legendcolorbox mr5 iblock"></div>
                         <div ref="validationlabel" className="iblock boldtext mr5"> Prediction</div>
                         <div className="iblock "></div>
                     </div>
+                    <div >
+                        <div style={{ backgroundColor: this.props.predictedColor + this.backgrounOpacity }} className="legendcolorbox mr5  iblock"></div>
+                        <div ref="trainlabel" className="iblock boldtext mr5"> Error  </div>
+                        <div className="iblock "> </div>
+                    </div>
+                </div>
+
+                <div className="chartlegend legendtopright p5 mediumdesc ">
+
+
                 </div>
 
                 <div className="linechartbox ">

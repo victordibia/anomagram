@@ -365,11 +365,12 @@ class Viz extends Component {
 
         return (
             <div>
-                <div className="bold mt10 sectiontitle mb10">
+                {/* <div className="bold mt10 sectiontitle mb10">
                     A Gentle Introduction to Anomaly Detection with Deep Learning (in the Browser!)
-                </div>
+                </div> */}
 
-                <div className="mynotif h100 lh10  lightbluehightlight maxh16  mb10">
+                <div className="mynotif mt10 h100 lh10  lightbluehightlight maxh16  mb10">
+                    <div className="boldtext mb5">  A Gentle Introduction to Anomaly Detection with Autoencoders (in the Browser!)</div>
                     {this.state.apptitle} is an interactive visualization tool for exploring
                     deep learning models applied to the task of anomaly detection (on stationary data).
                 </div>
