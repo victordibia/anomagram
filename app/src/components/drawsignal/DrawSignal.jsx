@@ -319,6 +319,14 @@ class DrawSignal extends Component {
                 </div>
             )
         })
+
+        let yaxis = this.axisList.map((data) => {
+            return (
+                <div style={{ height: this.chartHeight / this.axisList.length }} key={"axisbox" + data} className="axiscell ">
+                    <div className="axiscelltext mediumdesc">   {data}</div>
+                </div>
+            )
+        })
         return (
             // <div style={{ width: this.chartWidth + 25 }} className="mt2 border p10">
             <div className=" w100 " >
@@ -343,6 +351,8 @@ class DrawSignal extends Component {
                             </div>
                         </div>
                     </div>
+
+                    <div className="horizontalaxis"></div>
 
                     <div className="pt10">
 

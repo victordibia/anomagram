@@ -176,9 +176,7 @@ class Train extends Component {
         // setTimeout(() => {
         //     // this.createModel()
         // }, 100);
-        this.trainData = require("../../data/ecg/train_scaled.json") 
-       
-
+        this.trainData = require("../../data/ecg/train_scaled.json")   
         this.getChartContainerSizes()
 
         // this.setState({
@@ -878,7 +876,8 @@ class Train extends Component {
                                     <ComposeModel
                                         hiddenDims={this.state.hiddenDim}
                                         latentDim={[this.state.latentDim]}
-                                        isTraining={this.state.isTraining}
+                                isTraining={this.state.isTraining}
+                                isUpdatable={false}
                                         updateModelDims={this.updateModelDims}
                                         adv={this.state.showAdvanced + "b" + this.state.showIntroduction + chartState + this.firstEncode + "-" + compBoxSize}
                                     />

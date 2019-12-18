@@ -27,3 +27,8 @@
 .domain{
     stroke: rgba(255,255,255,0);
 }
+
+.legendbottomrightmod{
+    right: 10px;
+    bottom: 50px;
+}

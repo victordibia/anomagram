@@ -35,6 +35,8 @@ class ComposeModel extends Component {
 
         this.blueColor = "rgba(0, 0, 255, 0.89)"
         this.greyColor = "grey"
+
+        this.isUpdatable = this.props.isUpdatable
     }
     componentDidMount() {
         this.drawAllLines();
@@ -333,7 +335,7 @@ class ComposeModel extends Component {
                                 unitindex={layerindex}
                                 buttonaction="add"
                                 onClick={this.updateUnits.bind(this)}
-                                className="updatebutton unselectable mb3 clickable">
+                                className={"updatebutton unselectable mb3 clickable " + ((data === this.state.maxUnits || !this.isUpdatable) ? " disabled unclickable " : "")}>
                                 <Add16 className="unclickable"></Add16>
                             </div>
                             <div id="latentdiv" className="layerdiv  pt3 mb3">{eachLayer}</div>
@@ -342,7 +344,7 @@ class ComposeModel extends Component {
                                 unitindex={layerindex}
                                 buttonaction="subtract"
                                 onClick={this.updateUnits.bind(this)}
-                                className="updatebutton unselectable  clickable">
+                                className={"updatebutton unselectable  clickable " + ((data === this.state.minUnits || !this.isUpdatable) ? " disabled unclickable " : "")}>
                                 <Subtract16 className="unclickable"></Subtract16>
                             </div>
                         </div>
@@ -370,7 +372,7 @@ class ComposeModel extends Component {
                                 unitindex={layerindex}
                                 buttonaction="add"
                                 onClick={this.updateUnits.bind(this)}
-                                className={"updatebutton unselectable mb3 clickable " + (data === this.state.maxUnits ? " disabled unclickable " : "")}>
+                                className={"updatebutton unselectable mb3 clickable " + ((data === this.state.maxUnits || !this.isUpdatable) ? " disabled unclickable " : "")}>
                                 <Add16 className="unclickable"> </Add16>
                             </div>
                             <div layerdiv={"layerdiv" + layerindex} className="layerdiv  pt3 mb3">{eachLayer}</div>
@@ -379,7 +381,7 @@ class ComposeModel extends Component {
                                 unitindex={layerindex}
                                 buttonaction="subtract"
                                 onClick={this.updateUnits.bind(this)}
-                                className={"updatebutton unselectable mb3 clickable " + (data === this.state.minUnits ? " disabled unclickable " : "")}>
+                                className={"updatebutton unselectable mb3 clickable " + ((data === this.state.minUnits || !this.isUpdatable) ? " disabled unclickable " : "")}>
                                 <Subtract16 className="unclickable"></Subtract16>
                             </div>
 
@@ -409,14 +411,14 @@ class ComposeModel extends Component {
                             layergroup="encoder"
                             buttonaction="add"
                             onClick={this.updateLayerClick.bind(this)}
-                            className={"updatebutton unselectable mr5 clickable " + (this.state.hiddenDims.length === this.state.maxLayers ? " disabled unclickable " : "")}>
+                            className={"updatebutton unselectable mr5 clickable " + (this.state.hiddenDims.length === this.state.maxLayers || !this.isUpdatable ? " disabled unclickable " : "")}>
                             <Add16 className="unclickable"></Add16>
                         </div>
                         <div
                             layergroup="encoder"
                             buttonaction="subtract"
                             onClick={this.updateLayerClick.bind(this)}
-                            className={"updatebutton unselectable  clickable " + (this.state.hiddenDims.length === this.state.minLayers ? " disabled unclickable " : "")}>
+                            className={"updatebutton unselectable  clickable " + (this.state.hiddenDims.length === this.state.minLayers || !this.isUpdatable ? " disabled unclickable " : "")}>
                             <Subtract16 className="unclickable"></Subtract16>
                         </div>
                     </div>

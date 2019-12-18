@@ -5,9 +5,11 @@ import "./viz.css"
 import LineChart from "../linechart/LineChart"
 import SmallLineChart from "../linechart/SmallLineChart"
 import DrawSignal from "../drawsignal/DrawSignal"
+import ComposeModel from "../composemodel/ComposeModel"
 // import "../../data" 
-import * as tf from '@tensorflow/tfjs';
+// import * as tf from '@tensorflow/tfjs';
 
+let tf = null
 class Viz extends Component {
     constructor(props) {
         super(props)
@@ -61,6 +63,8 @@ class Viz extends Component {
         this.modelDataLastUpdated = true
 
 
+        this.hiddenDim = [6, 3]
+        this.latentDim = [2]
 
     }
 
@@ -93,11 +97,6 @@ class Viz extends Component {
         this.drawSectionWidth = this.refs["datasection"].offsetWidth
 
         // console.log(tf.memory());
-
-        this.xMinArray = require("../../data/ecg/transform/xmin.json")
-        this.xMaxArray = require("../../data/ecg/transform/xmax.json")
-
-        this.featureRange = require("../../data/ecg/transform/range.json")
     }
 
     componentWillUnmount() {
@@ -130,6 +129,12 @@ class Viz extends Component {
 
     loadModel() {
         this.setState({ isLoading: true })
+
+
+        this.xMinArray = require("../../data/ecg/transform/xmin.json")
+        this.xMaxArray = require("../../data/ecg/transform/xmax.json")
+        this.featureRange = require("../../data/ecg/transform/range.json")
+
         setTimeout(() => {
             let modelPath = "/webmodel/ecg/model.json"
             tf.loadLayersModel(modelPath).then((model) => {
@@ -372,7 +377,11 @@ class Viz extends Component {
                 <div className="mynotif mt10 h100 lh10  lightbluehightlight maxh16  mb10">
                     <div className="boldtext mb5">  A Gentle Introduction to Anomaly Detection with Autoencoders (in the Browser!)</div>
                     {this.state.apptitle} is an interactive visualization tool for exploring
-                    deep learning models applied to the task of anomaly detection (on stationary data).
+                    deep learning models applied to the task of anomaly detection (on stationary data). We can set
+                    <div className=" ">
+                        <span className=""> Disclaimer: </span> This prototype is built to demonstrate autoencoders
+                        and is not intended for use in any medical setting.
+                    </div>
                 </div>
 
 
@@ -405,31 +414,46 @@ class Viz extends Component {
                     </div>
                 </div>
                 <div className="lh10 ">
-                    We have trained a two layer autoencoder with 2600 samples of normal ECG signal data.
-                    Each ECG signal contains 140 recordings of the electrical signal of the heart, corresponding to a heartbeat.
-                    Our test set (above) contains both normal and abormal ECG signals, and our model is tasked with distinguishing normal from abnormal signal.
-
+                    {/* <div className="boldtext mb5"> .. detecting abnormal ecg signals </div> */}
+                    In the use case above, the task is to detect abnormal ECG signals, given an ECG sample which corresponds to a heart beat.
+                    This task is valuable because abnormal ECG readings are frequently indicative of underlying medical conditions.
+                    Each time, a signal is selected (or drawn), it is processed by an autoencoder which outputs a reconstruction of the signal.
+                Based on a threshold which we set ( <span className="boldtext">{this.state.threshold}</span>  ), flag the signal as abnormal if the
+                                                    reconstruction error (difference between input and reconstructed output) is greater than the threshold.
                 </div>
 
 
                 {
                     <div className=" ">
-                        <div className="sectiontitle mt10 mb5"> An Introduction to Autoencoders </div>
+                        <div className="sectiontitle mt10 mb5"> How does the Autoencoder work? </div>
                         <div className="">
                             <div className="flex">
                                 <div className="flex6 lh10 mb10 pr10">
-                                    An autoencoder is a neural network that learns to map input data to a low dimension representation
-                                        and then reconstruct the original input from this low dimension representation. The part of the network which learn the input to
-                                        low dimension mapping is termed an encoder, while the section that maps from low dimension back to original input is termed the decoder.
-                                    This capability of producing a low dimension representation is reminiscent dimensionality reduction approaches (e.g. PCA), and indeed
-                                    Autoencoders have been typically used for dimensionbality reduction and compression use cases. For an indepth treatment of autoencoders, please see ...
+                                    An <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer"> Autoencoder </a> is a type of
+                                    artificial neural network used to learn efficient (low dimensional) data representations in an unsupervised manner. It typically contains two components
+                                    - an encoder that learns to map input data to an the low dimension representation  and a decoder learns to reconstruct the original signal from the
+                                    low dimension representation. While autoencoder models have been widely applied for dimensionality reduction, they can also be used for anomaly detection.
+                                    If we train the model on normal data, it learns a reconstruction function that works well for normal looking data (low reconstruction error)
+                                    and works poorly for abnormal data (high reconstruction error).
+                                    We can then use reconstruction error as a signal for anomaly detection.
 
-                                    However, while
+                                    Note: We may not always have labelled data, but we may be able to assume (given the rare nature of anomalies) that they majority of data points for most
+                                    use cases are normal.
                             </div>
 
-                                <div className="border rad4 p10 flex4" style={{ height: "200px" }}>
-                                    small autoencoder viz
-                            </div>
+                                <div className="greyborder  p10 flex4"  >
+
+                                    <ComposeModel
+                                        hiddenDims={this.hiddenDim}
+                                        latentDim={[this.latentDim]}
+                                        isTraining={false}
+                                        isUpdatable={false}
+                                        updateModelDims={null}
+                                        adv={"track"}
+                                    />
+
+                                    <div className="smalldesc lhmedium p5 "> Example of a two layer autoencoder. Click the train model tab to train one from scratch.</div>
+                                </div>
                             </div>
 
                         </div>

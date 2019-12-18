@@ -216,7 +216,7 @@ class LineChart extends Component {
 
         return (
             <div className="positionrelative mainchartbox ">
-                <div className="chartlegend legendtopleft p5 mediumdesc ">
+                <div className="chartlegend legendbottomrightmod p5 mediumdesc ">
                     <div className="mb3 ">
                         <div className="legendcolorbox mr5  themeblue iblock"></div>
                         <div ref="trainlabel" className="iblock boldtext mr5"> Input  </div>
@@ -234,10 +234,7 @@ class LineChart extends Component {
                     </div>
                 </div>
 
-                <div className="chartlegend legendtopright p5 mediumdesc ">
 
-
-                </div>
 
                 <div className="linechartbox ">
 
