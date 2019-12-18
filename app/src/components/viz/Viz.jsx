@@ -65,20 +65,6 @@ class Viz extends Component {
     }
 
 
-    updateCurrentSignal(data) {
-        // console.log(data);
-        this.modelDataLastUpdated = !this.modelDataLastUpdated
-        // console.log(this.state.selectedData); 
-        this.setState({ selectedData: data }, () => {
-            this.getPrediction(data)
-        })
-
-
-
-
-
-    }
-
     loadData() {
         // let testECGDataPath = process.env.PUBLIC_URL + "/data/ecg/test_small.json"
         // let trainECGDataPath = process.env.PUBLIC_URL + "/data/ecg/train_small.json"
@@ -180,7 +166,10 @@ class Viz extends Component {
             });
 
             preds.array().then(array => {
-                this.setState({ predictedData: this.applyReverseTransform(array[0]) })
+                this.modelDataLastUpdated = !this.modelDataLastUpdated
+                this.setState({ selectedData: data, predictedData: this.applyReverseTransform(array[0]) }, () => {
+
+                })
             });
 
             mse.dispose()
@@ -193,19 +182,22 @@ class Viz extends Component {
 
 
 
+    updateCurrentSignal(data) {
+        this.getPrediction(data)
+    }
+
+
     clickDataPoint(e) {
 
         let selectedData = this.testData[e.target.getAttribute("indexvalue")].data
-
-
         // set data and get predictions on click 
         this.setSelectedData(e.target.getAttribute("indexvalue"), selectedData)
 
     }
 
     setSelectedData(index, data) {
-        this.modelDataLastUpdated = !this.modelDataLastUpdated
-        this.setState({ selectedIndex: index, selectedData: data }, () => {
+
+        this.setState({ selectedIndex: index }, () => {
             this.getPrediction(data)
         })
     }
@@ -314,7 +306,7 @@ class Viz extends Component {
                 ></DrawSignal>
             </div>
         )
-
+        let barColor = this.state.predictedMse ? this.state.predictedMse > this.state.threshold ? "#ff0000" : "#008000" : "#808080"
         let modelOutput = (
             <div className="  modeloutputbox rad5 ">
                 {/* <div className="mb10 boldtext"> Model Prediction</div> */}
@@ -334,7 +326,7 @@ class Viz extends Component {
                             <div className="mt5 mediumdesc mb5">
                                 {this.state.predictedMse &&
                                     <div className="mr10 boldtext ">
-                                        MODEL PREDICTION [<span className="smalldesc"> mse: </span>  {this.state.predictedMse.toFixed(3)}]:
+                                        MODEL PREDICTION [<span className=""> MSE = </span>  {this.state.predictedMse.toFixed(3)}]:
                                   {/* {this.testData[this.state.selectedIndex].target + "" === "1" ? "NORMAL" : "ABNORMAL"} */}
                                         &nbsp;
                                 {this.state.predictedMse > this.state.threshold ? "ABNORMAL" : "NORMAL"}
@@ -344,8 +336,8 @@ class Viz extends Component {
                                     <div className="mr10 boldtext ">
                                         MODEL PREDICTION : Select a signal or draw one!
                             </div>}
-                                {this.state.predictedMse && <div style={{ backgroundColor: this.state.predictedMse > this.state.threshold ? "red" : "green" }} ref="predictioncolordiv" className="mt5 colorbox redbox"></div>}
-                                {!this.state.predictedMse && <div style={{ backgroundColor: "grey" }} ref="predictioncolordiv" className="mt5 colorbox redbox"></div>}
+                                <div style={{ backgroundColor: barColor }} ref="predictioncolordiv" className="mt5 colorbox redbox"></div>
+
 
                             </div>
                         }
@@ -355,7 +347,7 @@ class Viz extends Component {
                     <LineChart
                         data={this.state.selectedData}
                         predictedData={this.state.predictedData}
-                        predictedColor={"pink"}
+                        predictedColor={barColor}
                         index={this.state.selectedIndex}
                         lastUpdated={this.modelDataLastUpdated}
                         color={this.chartColorMap[this.testData[this.state.selectedIndex].target].colornorm}
@@ -445,13 +437,18 @@ class Viz extends Component {
                         <div className="">
                             <div className="flex lh10 flexwrap">
                                 <div className="flex20 flexwrapitem  mb10 pr10">
-                                    <div className="pb5 boldtext"> Data Standardization  </div>
-                                    Most approaches to anomaly detection (and there are many) begin by constructing a model of
-                                normal behaviour and then exploit this model to identify deviations from normal (anomalies or abnormal data).
-                            Here is how we can use an autoencoder to model normal behaviour. If you recall, an autoencoder learns to compress
-                            and reconstruct data. Notably this learned mapping is specific to the data type/distribution distribution of the training data.
-                            In other words an autoencoder trained using 15 px images of dogs is unlikely to correctly reconstruct 20px images of the surface
-                            of the moon.
+                                    <div className="pb5 boldtext"> Data Transformation  </div>
+                                    The range of output values from the autoencoder is dependent on the type of activation function used in the final dense layer.
+                                    For example, the tanh activation function outputs values in the range of -1 and 1. The autoencoder is tasked with reconstructing the input data.
+                                    To achieve this, it makes sense to transform the input data such that it falls in the range which our network can output.
+                                    To this end,  we apply a min-max scaling functiion in which the original data (which  is in the 2 to -5 range) is
+                                    first transformed to the 0 -1 range. Our output activation function is also set to sigmoid which outputs values in the same 0-1 range.
+                                    The network is trained on this scaled data, and at test time we apply the same transformation to new test data and the reverse transform
+                                    to the predicted result before it is visualized. Note that the transformation parameters are
+                                    <a href=" https://sebastianraschka.com/faq/docs/scale-training-test.html" target="_blank" rel="noopener noreferrer"> computed only on train data</a>
+                                    , before being applied at
+                                   test time.
+
                             </div>
                                 <div className=" flex20 flexwrapitem mr10">
                                     <div className="pb5 boldtext"> Model Training </div>

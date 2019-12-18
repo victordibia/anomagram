@@ -21,6 +21,8 @@ class LineChart extends Component {
 
         // console.log(this.props);
 
+        this.backgrounOpacity = "a9"
+
 
     }
 
@@ -49,7 +51,7 @@ class LineChart extends Component {
 
         // consolse.log(data);
 
-        var n = data.length;
+        var n = data.length / 2;
 
         this.xScale = d3.scaleLinear()
             .domain([0, n - 1]) // input
@@ -69,10 +71,15 @@ class LineChart extends Component {
     updateGraph(data, predictedData) {
         let self = this
         // console.log(data)
-        this.setupScalesAxes(data)
+        this.setupScalesAxes(data.concat(predictedData))
         // Select the section we want to apply our changes to
         var svg = d3.select("div.linechartbox").transition();
 
+
+        let jointData = []
+        for (let i = 0; i < this.props.data.length; i++) {
+            jointData.push({ data: this.props.data[i], predictedData: this.props.predictedData[i] })
+        }
 
         // Make the changes
         svg.select(".line")   // change the line
@@ -86,6 +93,12 @@ class LineChart extends Component {
             .attr("stroke", this.props.predictedColor)
             .attr("d", this.line(predictedData));
 
+        svg.select(".msearea")
+            .duration(750)
+            .attr("fill", this.props.predictedColor + this.backgrounOpacity)
+            .attr("stroke", "none")
+            .attr("d", this.msearea(jointData)
+            );
 
         function customYAxis(g) {
             g.call(self.yAxis);
@@ -100,15 +113,24 @@ class LineChart extends Component {
 
     drawGraph() {
         let self = this
-        this.setupScalesAxes(this.state.data)
+        this.setupScalesAxes(this.state.data.concat(this.state.predictedData))
         let width = this.chartWidth, height = this.chartHeight, margin = this.chartMargin
 
+        let jointData = []
+        for (let i = 0; i < this.props.data.length; i++) {
+            jointData.push({ data: this.props.data[i], predictedData: this.props.predictedData[i] })
+        }
 
         // 7. d3's line generator
         this.line = d3.line()
             .x(function (d, i) { return self.xScale(i); }) // set the x values for the line generator
             .y(function (d) { return self.yScale(d); }) // set the y values for the line generator 
         // .curve(d3.curveMonotoneX) // apply smoothing to the line
+
+        this.msearea = d3.area()
+            .x(function (d, i) { return self.xScale(i); })
+            .y0(function (d) { return self.yScale(Math.min(d.data, d.predictedData)) })
+            .y1(function (d) { return self.yScale(Math.max(d.data, d.predictedData)) })
 
         // 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
         var dataset = this.state.data
@@ -165,6 +187,14 @@ class LineChart extends Component {
             .attr("stroke", this.props.predictedColor)
             .attr("d", this.line); // 11. Calls the line generator 
 
+        svg.append("path")
+            .datum(jointData)
+            .attr("class", "msearea") // Assign a class for styling 
+            .attr("fill", this.props.predictedColor + this.backgrounOpacity)
+            .attr("stroke", "none")
+            .attr("d", this.msearea
+            )
+
         // // 12. Appends a circle for each datapoint 
         // svg.selectAll(".dot")
         //     .data(dataset)
@@ -185,7 +215,19 @@ class LineChart extends Component {
 
 
         return (
-            <div>
+            <div className="positionrelative mainchartbox ">
+                <div className="chartlegend legendtopleft p5 mediumdesc ">
+                    <div className="mb3 ">
+                        <div className="legendcolorbox mr5  themeblue iblock"></div>
+                        <div ref="trainlabel" className="iblock boldtext mr5"> Input  </div>
+                        <div className="iblock "> </div>
+                    </div>
+                    <div>
+                        <div style={{ backgroundColor: this.props.predictedColor }} className="legendcolorbox mr5 iblock"></div>
+                        <div ref="validationlabel" className="iblock boldtext mr5"> Prediction</div>
+                        <div className="iblock "></div>
+                    </div>
+                </div>
 
                 <div className="linechartbox ">
 
