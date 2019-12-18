@@ -92,7 +92,7 @@ class Viz extends Component {
         this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth - 5 })
         this.drawSectionWidth = this.refs["datasection"].offsetWidth
 
-        console.log(tf.memory());
+        // console.log(tf.memory());
 
         this.xMinArray = require("../../data/ecg/transform/xmin.json")
         this.xMaxArray = require("../../data/ecg/transform/xmax.json")
@@ -144,6 +144,7 @@ class Viz extends Component {
     getPrediction(data) {
 
         if (!this.state.modelLoaded) {
+            this.setState({ selectedData: data })
             this.loadModel()
         } else {
             this.setState({ isLoading: true })

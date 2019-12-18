@@ -21,7 +21,7 @@ class LineChart extends Component {
 
         // console.log(this.props);
 
-        this.backgrounOpacity = "a9"
+        this.backgrounOpacity = "63"
 
 
     }
@@ -135,7 +135,7 @@ class LineChart extends Component {
         // 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
         var dataset = this.state.data
 
-        console.log(this.state);
+        // console.log(this.state);
 
 
         // d3.range(n).map(function (d) { return { "y": d3.randomUniform(1)() } })
