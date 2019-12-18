@@ -29,8 +29,9 @@ class Train extends Component {
         
         
         // Load sameple data
-        this.testData = require("../../data/ecg/test.json")
-        this.trainData = require("../../data/ecg/train.json")
+        this.testData = require("../../data/ecg/test_scaled.json")
+      
+        
 
         // this.testData = [{"data":[1,2,3,3]}]
         // this.trainData = [{"data":[1,2,3,3]}]
@@ -48,7 +49,7 @@ class Train extends Component {
         //     { id: "opt1", text: "0.001", value: 0.001, type: "regularizationrate" },
         //     { id: "opt2", text: "0.0001", value: 0.0001, type: "regularizationrate" }, 
         // ]
-        this.trainingDataOptions = [{ id: "opt1", text: "500", value: 500, type: "traindatasize" }, { id: "opt2", text: "1000", value: 1000, type: "traindatasize" }, { id: "opt3", text: "2000", value: 2000, type: "traindatasize" }]
+        this.trainingDataOptions = [{ id: "opt1", text: "500", value: 500, type: "traindatasize" }, { id: "opt2", text: "1000", value: 1000, type: "traindatasize" }, { id: "opt3", text: "2500", value: 2500, type: "traindatasize" }]
         this.testDataOptions = [{ id: "opt1", text: "100", value: 100, type: "testdatasize" }, { id: "opt2", text: "200", value: 200, type: "testdatasize" }, { id: "opt3", text: "500", value: 500, type: "testdatasize" }]
         this.optimizerOptions = [
             { id: "opt1", text: "Adam", value: "adam", type: "optimizer" },
@@ -67,9 +68,7 @@ class Train extends Component {
             { id: "opt6", text: "50%", value: 0.5, type: "abnormalpercentage" },
             { id: "opt7", text: "70%", value: 0.7, type: "abnormalpercentage" },
         ]
-
-        
-
+ 
 
         this.selectedAbnormalPercentage = 0
         this.selectedTrainDataOption = 0
@@ -166,6 +165,8 @@ class Train extends Component {
 
         this.modelWarmedUp = false;
         this.tensorsCreated = false;
+
+        this.trainUnmounted = false
     }
 
     componentDidMount() {
@@ -175,6 +176,8 @@ class Train extends Component {
         // setTimeout(() => {
         //     // this.createModel()
         // }, 100);
+        this.trainData = require("../../data/ecg/train_scaled.json") 
+       
 
         this.getChartContainerSizes()
 
@@ -213,22 +216,20 @@ class Train extends Component {
         if (this.createdModel) {
             // this.encoder.dispose()
             this.createdModel.dispose()
-            this.optimizer.dispose()
-
+            this.optimizer.dispose() 
         }
     }
 
     componentWillUnmount() {
-        this.setState({ isTraining: false })
+        this.trainUnmounted = true
         if (this.tensorsCreated) {
             this.xsTest.dispose()
             this.xsTrain.dispose() 
             this.destroyModelTensors()
         }
-       
+         
         // this.xsWarmup.dispose()
-        // console.log(tf.memory());
-
+        // console.log(tf.memory()); 
     }
     createModel() { 
 
@@ -340,11 +341,12 @@ class Train extends Component {
             this.trainMetricHolder.push(metricRow)
             // this.setState({ trainMetrics: this.trainMetricHolder });
             // console.log("Step loss", this.currentSteps, this.CumulativeSteps, res.history.loss[0], elapsedTime);
-            this.getPredictions();
+           
 
             // console.log(this.state.numSteps);
 
-            if (this.state.numSteps > this.currentSteps && this.state.isTraining  && (!this.state.modelStale)) {
+            if (this.state.numSteps > this.currentSteps && this.state.isTraining && !this.trainUnmounted  && (!this.state.modelStale)) {
+                this.getPredictions();
                 this.setState({ currentEpoch: this.currentSteps })
                 this.trainModel()
             } else {

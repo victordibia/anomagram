@@ -1,4 +1,4 @@
-.line {
+.line , .predictedline{
     fill: none;
     /* stroke: #0062ff; */
     stroke-width: 2;

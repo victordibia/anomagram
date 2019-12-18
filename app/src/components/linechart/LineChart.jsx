@@ -10,6 +10,7 @@ class LineChart extends Component {
 
         this.state = {
             data: this.props.data,
+            predictedData: this.props.predictedData,
             color: this.props.color
         }
 
@@ -35,7 +36,7 @@ class LineChart extends Component {
         if (this.props.lastUpdated !== prevProps.lastUpdated) {
             this.setState({ data: this.props.data })
             // console.log("stuff hass changed", this.props.data);
-            this.updateGraph(this.props.data)
+            this.updateGraph(this.props.data, this.props.predictedData)
 
         }
 
@@ -65,7 +66,7 @@ class LineChart extends Component {
 
     }
 
-    updateGraph(data) {
+    updateGraph(data, predictedData) {
         let self = this
         // console.log(data)
         this.setupScalesAxes(data)
@@ -78,6 +79,14 @@ class LineChart extends Component {
             .duration(750)
             .attr("stroke", this.state.color)
             .attr("d", this.line(data));
+
+        // Make the changes to predicted line
+        svg.select(".predictedline")   // change the line
+            .duration(750)
+            .attr("stroke", this.props.predictedColor)
+            .attr("d", this.line(predictedData));
+
+
         function customYAxis(g) {
             g.call(self.yAxis);
             svg.select(".domain").remove();
@@ -104,6 +113,8 @@ class LineChart extends Component {
         // 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
         var dataset = this.state.data
 
+        console.log(this.state);
+
 
         // d3.range(n).map(function (d) { return { "y": d3.randomUniform(1)() } })
 
@@ -128,6 +139,8 @@ class LineChart extends Component {
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
+
         // 3. Call the x axis in a group tag
         svg.append("g")
             .attr("class", "x axis")
@@ -144,6 +157,12 @@ class LineChart extends Component {
             .datum(dataset) // 10. Binds data to the line 
             .attr("class", "line") // Assign a class for styling 
             .attr("stroke", this.state.color)
+            .attr("d", this.line); // 11. Calls the line generator 
+
+        svg.append("path")
+            .datum(this.state.predictedData) // 10. Binds data to the line 
+            .attr("class", "predictedline") // Assign a class for styling 
+            .attr("stroke", this.props.predictedColor)
             .attr("d", this.line); // 11. Calls the line generator 
 
         // // 12. Appends a circle for each datapoint 
