@@ -64,4 +64,6 @@
 
 .encdecbox{
     min-height: 216px;
+    padding-left: 8px;
+    /* padding-right: 10px; */
 }

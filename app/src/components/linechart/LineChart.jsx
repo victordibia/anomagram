@@ -45,7 +45,7 @@ class LineChart extends Component {
     }
 
     setupScalesAxes(data) {
-        this.chartMargin = { top: 10, right: 5, bottom: 40, left: 20 }
+        this.chartMargin = { top: 10, right: 5, bottom: 25, left: 20 }
         this.chartWidth = this.minChartWidth - this.chartMargin.left - this.chartMargin.right
         this.chartHeight = this.minChartHeight - this.chartMargin.top - this.chartMargin.bottom;
 
@@ -234,11 +234,7 @@ class LineChart extends Component {
                     </div>
                 </div>
 
-
-
-                <div className="linechartbox ">
-
-                </div>
+                <div className="linechartbox "></div>
 
             </div>
         )

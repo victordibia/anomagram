@@ -3,10 +3,10 @@
 }
 
 .ecgdatabox{
-    max-height: 250px;
+    max-height: 275px;
     min-width: 340px; 
     /* overflow: scroll; */
-    /* border: 2px solid pink */
+    /* border: 2px solid pink; */
 }
 
 .ecgdatapoint{
@@ -36,6 +36,9 @@
 
  .modeloutputbox{
      /* background:#ffa32c; */
+ }
+ .autoencodervizbox{
+     min-width: 400px;
  }
 
  .indicatorcircle{

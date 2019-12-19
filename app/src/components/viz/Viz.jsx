@@ -7,9 +7,9 @@ import SmallLineChart from "../linechart/SmallLineChart"
 import DrawSignal from "../drawsignal/DrawSignal"
 import ComposeModel from "../composemodel/ComposeModel"
 // import "../../data" 
-// import * as tf from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs';
 
-let tf = null
+// let tf = null
 class Viz extends Component {
     constructor(props) {
         super(props)
@@ -42,6 +42,7 @@ class Viz extends Component {
             predictedData: this.zeroArr,
             predictedMse: null,
             selectedLegend: "All",
+            showAutoEncoderViz: true
         }
 
 
@@ -63,7 +64,7 @@ class Viz extends Component {
         this.modelDataLastUpdated = true
 
 
-        this.hiddenDim = [6, 3]
+        this.hiddenDim = [7, 3]
         this.latentDim = [2]
 
     }
@@ -97,6 +98,9 @@ class Viz extends Component {
         this.drawSectionWidth = this.refs["datasection"].offsetWidth
 
         // console.log(tf.memory());
+        // setTimeout(() => {
+        //     this.setState({ showAutoEncoderViz: true })
+        // }, 2000);
     }
 
     componentWillUnmount() {
@@ -377,8 +381,11 @@ class Viz extends Component {
                 <div className="mynotif mt10 h100 lh10  lightbluehightlight maxh16  mb10">
                     <div className="boldtext mb5">  A Gentle Introduction to Anomaly Detection with Autoencoders (in the Browser!)</div>
                     {this.state.apptitle} is an interactive visualization tool for exploring
-                    deep learning models applied to the task of anomaly detection (on stationary data). We can set
-                    <div className=" ">
+                    deep learning models applied to the task of anomaly detection (on stationary data).
+                    Given an ECG signal sample, an autoencoder model (running live in your browser) can predict if this signals
+                    is normal or abnormal. To try it out, you can select any of the test ECG signals from the ECG5000 dataset below,
+                    or better still, you can draw a signal to see the model's prediction!
+                    <div className=" mediumdesc boldtext">
                         <span className=""> Disclaimer: </span> This prototype is built to demonstrate autoencoders
                         and is not intended for use in any medical setting.
                     </div>
@@ -409,27 +416,45 @@ class Viz extends Component {
                              Threshold gauge etc
                      </div>
                     */}
-                    <div className="flexwrapitem">
+                    <div className="flexwrapitem ">
                         {modelOutput}
                     </div>
                 </div>
-                <div className="lh10 ">
-                    {/* <div className="boldtext mb5"> .. detecting abnormal ecg signals </div> */}
-                    In the use case above, the task is to detect abnormal ECG signals, given an ECG sample which corresponds to a heart beat.
-                    This task is valuable because abnormal ECG readings are frequently indicative of underlying medical conditions.
-                    Each time, a signal is selected (or drawn), it is processed by an autoencoder which outputs a reconstruction of the signal.
-                Based on a threshold which we set ( <span className="boldtext">{this.state.threshold}</span>  ), flag the signal as abnormal if the
-                                                    reconstruction error (difference between input and reconstructed output) is greater than the threshold.
-                </div>
+
 
 
                 {
                     <div className=" ">
-                        <div className="sectiontitle mt10 mb5"> How does the Autoencoder work? </div>
+
                         <div className="">
                             <div className="flex">
-                                <div className="flex6 lh10 mb10 pr10">
-                                    An <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer"> Autoencoder </a> is a type of
+                                <div className="flex20 lh10 mb10 pr10">
+                                    {this.state.showAutoEncoderViz && <div className="floatright autoencodervizbox  p10 flex6"  >
+
+                                        <ComposeModel
+                                            hiddenDims={this.hiddenDim}
+                                            latentDim={[this.latentDim]}
+                                            isTraining={false}
+                                            isUpdatable={false}
+                                            updateModelDims={null}
+                                            adv={"track"}
+                                        />
+
+                                        <div className="smalldesc lhmedium p5 "> Example of a two layer autoencoder. Click the train model tab to train one from scratch.</div>
+                                    </div>}
+                                    <div className="lh10 ">
+                                        {/* <div className="boldtext mb5"> .. detecting abnormal ecg signals </div> */}
+                                        In the use case above, the task is to detect abnormal ECG signals, given an ECG sample which corresponds to a heart beat.
+                                        This task is valuable because abnormal ECG readings are frequently indicative of underlying medical conditions.
+                    Each time, a signal is selected or drawn (<div className="legendcolorbox  themeblue colortransition5s iblock"></div>), it is processed by an
+                    autoencoder which outputs a reconstruction (<div style={{ backgroundColor: barColor }} className="legendcolorbox colortransition5s iblock"></div>) of the signal.
+                Based on a threshold which we set ( <span className="boldtext">{this.state.threshold}</span>  ), we then flag the signal as abnormal if the
+                                                                                                                                                                                                                                                                                                                                                                                                                            reconstruction error (difference between input and reconstructed output) is greater than the threshold.
+                </div>
+
+                                    <div className="sectiontitle mt10 mb5"> How does the Autoencoder work? </div>
+
+                                    An <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">Autoencoder</a> is a type of
                                     artificial neural network used to learn efficient (low dimensional) data representations in an unsupervised manner. It typically contains two components
                                     - an encoder that learns to map input data to an the low dimension representation  and a decoder learns to reconstruct the original signal from the
                                     low dimension representation. While autoencoder models have been widely applied for dimensionality reduction, they can also be used for anomaly detection.
@@ -439,21 +464,11 @@ class Viz extends Component {
 
                                     Note: We may not always have labelled data, but we may be able to assume (given the rare nature of anomalies) that they majority of data points for most
                                     use cases are normal.
-                            </div>
 
-                                <div className="greyborder  p10 flex4"  >
 
-                                    <ComposeModel
-                                        hiddenDims={this.hiddenDim}
-                                        latentDim={[this.latentDim]}
-                                        isTraining={false}
-                                        isUpdatable={false}
-                                        updateModelDims={null}
-                                        adv={"track"}
-                                    />
-
-                                    <div className="smalldesc lhmedium p5 "> Example of a two layer autoencoder. Click the train model tab to train one from scratch.</div>
                                 </div>
+
+
                             </div>
 
                         </div>

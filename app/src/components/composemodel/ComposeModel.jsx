@@ -397,8 +397,6 @@ class ComposeModel extends Component {
         return (
             <div className="mb10 ">
 
-
-
                 {/* Layer controls */}
 
                 <div className="flex w100 mb5 ">
@@ -406,7 +404,7 @@ class ComposeModel extends Component {
                     <div className="flex5 ">
                         <div className="smalldesc networktitle  p5"> Encoder {this.state.hiddenDims.length} Layers </div>
                     </div>
-                    <div className="buttonbar mr10 ml10 ">
+                    {this.props.isUpdatable && <div className="buttonbar mr10 ml10 ">
                         <div
                             layergroup="encoder"
                             buttonaction="add"
@@ -421,7 +419,7 @@ class ComposeModel extends Component {
                             className={"updatebutton unselectable  clickable " + (this.state.hiddenDims.length === this.state.minLayers || !this.isUpdatable ? " disabled unclickable " : "")}>
                             <Subtract16 className="unclickable"></Subtract16>
                         </div>
-                    </div>
+                    </div>}
                     <div className="unselectable flex5     ">
                         <div className="flex p5 networktitle  mediumdesc ">
                             <div className="flex flexjustifyleft "> </div>
