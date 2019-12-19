@@ -421,6 +421,16 @@ class Viz extends Component {
                     </div>
                 </div>
 
+                <div className="lh10 lightgreyback mt5 p10">
+                    {/* <div className="boldtext mb5"> .. detecting abnormal ecg signals </div> */}
+                    In the use case above, the task is to detect abnormal ECG signals, given an ECG sample which corresponds to a heart beat.
+                    This task is valuable because abnormal ECG readings are frequently indicative of underlying medical conditions.
+                    Each time, a signal is selected or drawn <div className="legendcolorbox  themeblue colortransition5s iblock"></div>, it is processed by an
+                    autoencoder which outputs a reconstruction <div style={{ backgroundColor: barColor }} className="legendcolorbox colortransition5s iblock"></div>) of the signal.
+                    The reconstruction error (mean squared error <strong>mse</strong> <div style={{ backgroundColor: barColor + "63" }} className="legendcolorbox colortransition5s iblock"></div> between the input and reconstructed output is also visualized
+                Based on a threshold which we set ( <span className="boldtext">{this.state.threshold}</span>  ), we then flag the signal as  abnormal if the reconstruction error is greater than the threshold.
+                </div>
+
 
 
                 {
@@ -442,30 +452,32 @@ class Viz extends Component {
 
                                         <div className="smalldesc lhmedium p5 "> Example of a two layer autoencoder. Click the train model tab to train one from scratch.</div>
                                     </div>}
-                                    <div className="lh10 ">
-                                        {/* <div className="boldtext mb5"> .. detecting abnormal ecg signals </div> */}
-                                        In the use case above, the task is to detect abnormal ECG signals, given an ECG sample which corresponds to a heart beat.
-                                        This task is valuable because abnormal ECG readings are frequently indicative of underlying medical conditions.
-                    Each time, a signal is selected or drawn (<div className="legendcolorbox  themeblue colortransition5s iblock"></div>), it is processed by an
-                    autoencoder which outputs a reconstruction (<div style={{ backgroundColor: barColor }} className="legendcolorbox colortransition5s iblock"></div>) of the signal.
-                Based on a threshold which we set ( <span className="boldtext">{this.state.threshold}</span>  ), we then flag the signal as abnormal if the
-                                                                                                                                                                                                                                                                                                                                                                                                                            reconstruction error (difference between input and reconstructed output) is greater than the threshold.
-                </div>
+
 
                                     <div className="sectiontitle mt10 mb5"> How does the Autoencoder work? </div>
 
                                     An <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">Autoencoder</a> is a type of
-                                    artificial neural network used to learn efficient (low dimensional) data representations in an unsupervised manner. It typically contains two components
-                                    - an encoder that learns to map input data to an the low dimension representation  and a decoder learns to reconstruct the original signal from the
-                                    low dimension representation. While autoencoder models have been widely applied for dimensionality reduction, they can also be used for anomaly detection.
-                                    If we train the model on normal data, it learns a reconstruction function that works well for normal looking data (low reconstruction error)
+                                    artificial neural network used to learn efficient (low dimensional) data representations in an unsupervised manner.
+                                    It is typically comprised of two components
+                                    - an <strong>encoder</strong> that learns to map input data to a the low dimension representation ( <strong>z</strong> )
+                                    and a <strong>decoder</strong> that learns to reconstruct the original signal from the
+                                    low dimension representation.
+                                    The training objective for the autoencoder model is to minimize the difference the reconstruction
+                                    error - the difference between the input data and the reconstructed output.
+                                    While autoencoder models have been widely applied for dimensionality reduction, they can also be used for anomaly detection.
+                                    If we train the model on normal data (or data with very few abnormal samples), it learns a reconstruction function that works well for normal looking data (low reconstruction error)
                                     and works poorly for abnormal data (high reconstruction error).
                                     We can then use reconstruction error as a signal for anomaly detection.
+                                    <br />
+                                    In particular, if we visualize a histrogram of mse errors generated by a trained autoencoder we hopefully
+                                    will observe that the distribution of errors for normal samples is overall smaller and
+                                    markedly separate from errors for abnormal data.
+                                    Click the <a href="/#/train" target="_blank" rel="noopener noreferrer"> Train a Model </a> tab to
+                                    interactively build an autoencoder, train and evaluate its performance and visualize the histogram of errors for normal and abnormal test data.
 
-                                    Note: We may not always have labelled data, but we may be able to assume (given the rare nature of anomalies) that they majority of data points for most
-                                    use cases are normal.
-
-
+                                    <br />
+                                    Note: We may not always have labelled data, but we can can assume (given the rare nature of anomalies) that the majority of data points for most
+                                    anomaly detection use cases are normal.
                                 </div>
 
 

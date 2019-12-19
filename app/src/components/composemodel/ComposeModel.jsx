@@ -420,6 +420,7 @@ class ComposeModel extends Component {
                             <Subtract16 className="unclickable"></Subtract16>
                         </div>
                     </div>}
+                    {!this.props.isUpdatable && <div> z </div>}
                     <div className="unselectable flex5     ">
                         <div className="flex p5 networktitle  mediumdesc ">
                             <div className="flex flexjustifyleft "> </div>
