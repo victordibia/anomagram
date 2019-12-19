@@ -335,19 +335,32 @@ class Viz extends Component {
                         {this.testData.length > 0 &&
                             <div className="mt5 mediumdesc mb5">
                                 {this.state.predictedMse &&
-                                    <div className="mr10 boldtext ">
+                                    <div className="mr10  ">
+                                        <div className="mr10 boldtext ">
                                         MODEL PREDICTION [<span className=""> MSE = </span>  {this.state.predictedMse.toFixed(3)}]:
-                                  {/* {this.testData[this.state.selectedIndex].target + "" === "1" ? "NORMAL" : "ABNORMAL"} */}
+                                        
                                         &nbsp;
-                                {this.state.predictedMse > this.state.threshold ? "ABNORMAL" : "NORMAL"}
+                                        {this.state.predictedMse > this.state.threshold ? "ABNORMAL" : "NORMAL"}
+                                            </div>
+
+                                        <div className="pt5 mediumdesc"> <strong>Explanation</strong>: <strong> mse = {this.state.predictedMse.toFixed(3)}</strong> is 
+                                        <strong>{this.state.predictedMse > this.state.threshold ? " above " : " below"}</strong> the threshold <strong> {this.state.threshold}</strong>
+                                    </div>
                                     </div>
                                 }
                                 {!this.state.predictedMse &&
-                                    <div className="mr10 boldtext ">
-                                        MODEL PREDICTION : Select a signal or draw one!
-                            </div>}
+                                <div className="mr10  ">
+                                        <div className=" boldtext ">
+                                        MODEL PREDICTION 
+                                        </div>
+                                      
+                                        <div className="pt5 mediumdesc">
+                                        Select a signal or draw one!
+                                        </div>
+                                    </div>
+                            }
                                 <div style={{ backgroundColor: barColor }} ref="predictioncolordiv" className="mt5 colorbox redbox"></div>
-
+                            
 
                             </div>
                         }
@@ -427,7 +440,7 @@ class Viz extends Component {
                     This task is valuable because abnormal ECG readings are frequently indicative of underlying medical conditions.
                     Each time, a signal is selected or drawn <div className="legendcolorbox  themeblue colortransition5s iblock"></div>, it is processed by an
                     autoencoder which outputs a reconstruction <div style={{ backgroundColor: barColor }} className="legendcolorbox colortransition5s iblock"></div>) of the signal.
-                    The reconstruction error (mean squared error <strong>mse</strong> <div style={{ backgroundColor: barColor + "63" }} className="legendcolorbox colortransition5s iblock"></div> between the input and reconstructed output is also visualized
+                    The reconstruction error (mean squared error <strong>mse</strong> <div style={{ backgroundColor: barColor + "63" }} className="legendcolorbox colortransition5s iblock"></div> between the input and reconstructed output is also visualized.
                 Based on a threshold which we set ( <span className="boldtext">{this.state.threshold}</span>  ), we then flag the signal as  abnormal if the reconstruction error is greater than the threshold.
                 </div>
 
