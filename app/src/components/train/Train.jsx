@@ -877,7 +877,7 @@ class Train extends Component {
                                         hiddenDims={this.state.hiddenDim}
                                         latentDim={[this.state.latentDim]}
                                 isTraining={this.state.isTraining}
-                                isUpdatable={false}
+                                isUpdatable={true}
                                         updateModelDims={this.updateModelDims}
                                         adv={this.state.showAdvanced + "b" + this.state.showIntroduction + chartState + this.firstEncode + "-" + compBoxSize}
                                     />

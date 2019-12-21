@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Loading } from 'carbon-components-react';
+import { Loading, Button } from 'carbon-components-react';
 // import { loadJSONData } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
@@ -42,7 +42,8 @@ class Viz extends Component {
             predictedData: this.zeroArr,
             predictedMse: null,
             selectedLegend: "All",
-            showAutoEncoderViz: true
+            showAutoEncoderViz: true,
+            isDataTransormed: false
         }
 
 
@@ -101,6 +102,22 @@ class Viz extends Component {
         // setTimeout(() => {
         //     this.setState({ showAutoEncoderViz: true })
         // }, 2000);
+
+        this.xMinArray = require("../../data/ecg/transform/xmin.json")
+        this.xMaxArray = require("../../data/ecg/transform/xmax.json")
+        this.featureRange = require("../../data/ecg/transform/range.json")
+        
+        this.sampleTestData = this.myStringify(this.applyTransform(this.testData[0].data.slice(0,50)))
+        this.sampleTransformedTestData = this.myStringify(this.testData[0].data.slice(0,50)) 
+         
+    }
+
+    myStringify(data) {
+        let result = ""
+        data.forEach(el => {
+            result += " " + el.toFixed(2) + ",  "; 
+        });
+        return result
     }
 
     componentWillUnmount() {
@@ -132,13 +149,7 @@ class Viz extends Component {
 
 
     loadModel() {
-        this.setState({ isLoading: true })
-
-
-        this.xMinArray = require("../../data/ecg/transform/xmin.json")
-        this.xMaxArray = require("../../data/ecg/transform/xmax.json")
-        this.featureRange = require("../../data/ecg/transform/range.json")
-
+        this.setState({ isLoading: true }) 
         setTimeout(() => {
             let modelPath = "/webmodel/ecg/model.json"
             tf.loadLayersModel(modelPath).then((model) => {
@@ -148,6 +159,7 @@ class Viz extends Component {
             });
         }, 700);
     }
+
 
     // Get predictions for a selected datapoint
     getPrediction(data) {
@@ -241,7 +253,9 @@ class Viz extends Component {
         // this.state.selectedLegend = e.target.getAttribute("action")
         this.setState({ selectedLegend: e.target.getAttribute("action") })
     }
-
+    toggelTransform(e) {
+        this.setState({isDataTransormed: !this.state.isDataTransormed})
+    }
     render() {
 
 
@@ -331,9 +345,15 @@ class Viz extends Component {
                             > </Loading>
                         </div>
                     </div>
-                    <div className="flexfull ">
+                    <div className="iblock thresholdbox flex flexjustifycenter mr5 p10">
+                        <div>
+                        <div   className="mediumdesc textaligncenter thresholdtext">{this.state.threshold}</div>
+                        <div className="smalldesc mt5">threshold</div>
+                        </div>
+                    </div>
+                    <div className="flexfull  ">
                         {this.testData.length > 0 &&
-                            <div className="mt5 mediumdesc mb5">
+                            <div className="mt5 mediumdesc ">
                                 {this.state.predictedMse &&
                                     <div className="mr10  ">
                                         <div className="mr10 boldtext ">
@@ -343,8 +363,8 @@ class Viz extends Component {
                                         {this.state.predictedMse > this.state.threshold ? "ABNORMAL" : "NORMAL"}
                                             </div>
 
-                                        <div className="pt5 mediumdesc"> <strong>Explanation</strong>: <strong> mse = {this.state.predictedMse.toFixed(3)}</strong> is 
-                                        <strong>{this.state.predictedMse > this.state.threshold ? " above " : " below"}</strong> the threshold <strong> {this.state.threshold}</strong>
+                                        <div className="pt5 mediumdesc"> <strong>Explanation:</strong> <strong> [mse = {this.state.predictedMse.toFixed(3)}]</strong> is 
+                                        <strong>{this.state.predictedMse > this.state.threshold ? " above " : " below"}</strong> the <strong> {this.state.threshold}</strong> threshold 
                                     </div>
                                     </div>
                                 }
@@ -352,14 +372,13 @@ class Viz extends Component {
                                 <div className="mr10  ">
                                         <div className=" boldtext ">
                                         MODEL PREDICTION 
-                                        </div>
-                                      
+                                        </div> 
                                         <div className="pt5 mediumdesc">
                                         Select a signal or draw one!
                                         </div>
                                     </div>
                             }
-                                <div style={{ backgroundColor: barColor }} ref="predictioncolordiv" className="mt5 colorbox redbox"></div>
+                                <div style={{ backgroundColor: barColor }} ref="predictioncolordiv" className="mt5  colorbox redbox"></div>
                             
 
                             </div>
@@ -384,6 +403,8 @@ class Viz extends Component {
         // if (this.refs["datasetexamplebox"]) {
         //     console.log(this.refs["datasetexamplebox"].offsetWidth);
         // } 
+        
+        
 
         return (
             <div>
@@ -392,14 +413,14 @@ class Viz extends Component {
                 </div> */}
 
                 <div className="mynotif mt10 h100 lh10  lightbluehightlight maxh16  mb10">
-                    <div className="boldtext mb5">  A Gentle Introduction to Anomaly Detection with Autoencoders (in the Browser!)</div>
+                    <div className="boldtext mb5">  A Gentle Introduction to Anomaly Detection with Autoencoders</div>
                     {this.state.apptitle} is an interactive visualization tool for exploring
-                    deep learning models applied to the task of anomaly detection (on stationary data).
+                    how a deep learning model can be applied to the task of anomaly detection (on stationary data).
                     Given an ECG signal sample, an autoencoder model (running live in your browser) can predict if this signals
                     is normal or abnormal. To try it out, you can select any of the test ECG signals from the ECG5000 dataset below,
                     or better still, you can draw a signal to see the model's prediction!
                     <div className=" mediumdesc boldtext">
-                        <span className=""> Disclaimer: </span> This prototype is built to demonstrate autoencoders
+                        <span className=""> Disclaimer: </span> This prototype is built for demonstration purposes only 
                         and is not intended for use in any medical setting.
                     </div>
                 </div>
@@ -463,7 +484,7 @@ class Viz extends Component {
                                             adv={"track"}
                                         />
 
-                                        <div className="smalldesc lhmedium p5 "> Example of a two layer autoencoder. Click the train model tab to train one from scratch.</div>
+                                        <div className="smalldesc lhmedium p5 "> Example of a two layer autoencoder. Click the <span className="italics">train a model</span> tab to train one from scratch.</div>
                                     </div>}
 
 
@@ -472,25 +493,29 @@ class Viz extends Component {
                                     An <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">Autoencoder</a> is a type of
                                     artificial neural network used to learn efficient (low dimensional) data representations in an unsupervised manner.
                                     It is typically comprised of two components
-                                    - an <strong>encoder</strong> that learns to map input data to a the low dimension representation ( <strong>z</strong> )
+                                    - an <strong>encoder</strong> that learns to map input data to a low dimension representation ( <strong>also called a bottleneck, denoted by z</strong> )
                                     and a <strong>decoder</strong> that learns to reconstruct the original signal from the
                                     low dimension representation.
                                     The training objective for the autoencoder model is to minimize the difference the reconstruction
                                     error - the difference between the input data and the reconstructed output.
                                     While autoencoder models have been widely applied for dimensionality reduction, they can also be used for anomaly detection.
-                                    If we train the model on normal data (or data with very few abnormal samples), it learns a reconstruction function that works well for normal looking data (low reconstruction error)
+                                    If we train the model on normal data (or data with very few abnormal samples), it learns a reconstruction function that works 
+                                    well for <span className="italics"> normal looking data  </span>(low reconstruction error)
                                     and works poorly for abnormal data (high reconstruction error).
                                     We can then use reconstruction error as a signal for anomaly detection.
                                     <br />
-                                    In particular, if we visualize a histrogram of mse errors generated by a trained autoencoder we hopefully
+                                    In particular, if we visualize a histrogram of reconstruction errors generated by a trained autoencoder, we hopefully
                                     will observe that the distribution of errors for normal samples is overall smaller and
-                                    markedly separate from errors for abnormal data.
+                                    markedly separate from the distribution of errors for abnormal data.
+                                    
+                                    <br />
+                                    <strong className="greycolor"> Note</strong>: We may not always have labelled data, but we can can assume (given the rare nature of anomalies) that the majority of data points for most
+                                    anomaly detection use cases are normal. See the section below that discusses the impact of data composition (% of abnormal data) on model performance.
+
+                                    <br /> 
                                     Click the <a href="/#/train" target="_blank" rel="noopener noreferrer"> Train a Model </a> tab to
                                     interactively build an autoencoder, train and evaluate its performance and visualize the histogram of errors for normal and abnormal test data.
 
-                                    <br />
-                                    Note: We may not always have labelled data, but we can can assume (given the rare nature of anomalies) that the majority of data points for most
-                                    anomaly detection use cases are normal.
                                 </div>
 
 
@@ -499,38 +524,71 @@ class Viz extends Component {
                         </div>
 
 
-                        <div className="sectiontitle mt10 mb5"> Modeling Normal Data  </div>
+                        <div className="sectiontitle mt10 mb5"> The Dataset  </div>
+                        <div className="mb10 lh10">
+                            This prototype uses the   <a href="http://www.timeseriesclassification.com/description.php?Dataset=ECG5000" target="_blank" rel="noopener noreferrer"> ECG5000 dataaset </a> which contains 
+                            5000 examples of ECG signals from a patient. Each sample (which has been sliced into 140 points corresponding to an extracted heartbeat) has been labelled  
+                            as normal or being indicative of a heart condition related to congestive heart failure.
+
+                        </div>
                         <div className="">
                             <div className="flex lh10 flexwrap">
-                                <div className="flex20 flexwrapitem  mb10 pr10">
+                                <div className="flex40 flexwrapitem  mb10 pr10">
                                     <div className="pb5 boldtext"> Data Transformation  </div>
-                                    The range of output values from the autoencoder is dependent on the type of activation function used in the final dense layer.
-                                    For example, the tanh activation function outputs values in the range of -1 and 1. The autoencoder is tasked with reconstructing the input data.
-                                    To achieve this, it makes sense to transform the input data such that it falls in the range which our network can output.
-                                    To this end,  we apply a min-max scaling functiion in which the original data (which  is in the 2 to -5 range) is
-                                    first transformed to the 0 -1 range. Our output activation function is also set to sigmoid which outputs values in the same 0-1 range.
-                                    The network is trained on this scaled data, and at test time we apply the same transformation to new test data and the reverse transform
-                                    to the predicted result before it is visualized. Note that the transformation parameters are
-                                    <a href=" https://sebastianraschka.com/faq/docs/scale-training-test.html" target="_blank" rel="noopener noreferrer"> computed only on train data</a>
-                                    , before being applied at
-                                   test time.
+                                    Prior to training the autoencoder, we first apply a minmax scaling transform to the input data 
+                                    which converts it from its original range (2 to -5) to a range of  0 -1  
+                                    This is done for two main reasons. First, existing research shows that neural networks in general train better when input values have 
+                                    zero mean and unit variance and lie between 0 and 1. Secondly, scaling the data supports the learning objective 
+                                    for the autoencoder (minimizing reconstruction error) and makes the results more interpretable. 
+                                    In general, the range of output values from the autoencoder is dependent on the type of activation function used in the output layer.
+                                    For example, the tanh activation function outputs values in the range of -1 and 1, sigmoid outputs values in the range of 0 - 1 
+                                    In the example above, we use the sigmoid activation function in the output layer of 
+                                    the autoencoder, allowing us directly compare the transformed input signal to the output data when computing the means square error metric during training.
+                                    In addition, having both input and output in the same range allows us to visualize the differences that contribute to the anomaly classification.
+                                    
+                                    <br />
+                                    <strong className="greycolor"> Note:</strong> 
+                                    The parameters of the scaling transform should be <a href=" https://sebastianraschka.com/faq/docs/scale-training-test.html" target="_blank" rel="noopener noreferrer"> computed only on train data</a> and 
+                                    and then <span className="italics"> applied </span> to test data. 
+                                    
 
                             </div>
                                 <div className=" flex20 flexwrapitem mr10">
-                                    <div className="pb5 boldtext"> Model Training </div>
-                                    Most approaches to anomaly detection (and there are many) begin by constructing a model of
+                                    
+                                    <div className="flexfull lh10 p10 overflowhidden  greyborder">
+                                     
+                                        <div className="mediumdesc pb5">
+                                            Example data {this.state.isDataTransormed ? "after " : "before"} transformation.
+                                        </div>
+                                    {this.state.isDataTransormed ?  this.sampleTestData + " ...": this.sampleTransformedTestData + " ..." }
+                                
+                                        <div className = "mt5 mr10">
+                                            <Button
+                                                className="bwidthtransform"
+                                            size={"small"}
+                                            renderIcon={null}
+                                            onClick={this.toggelTransform.bind(this)}
+                                        > {this.state.isDataTransormed ?  "Inverse Transform": "Transform"} </Button>
+
+                                        </div>
+                                    
+                                    </div>
+                                    
+                                    
+                                    {/* Most approaches to anomaly detection (and there are many) begin by constructing a model of
                                         normal behaviour and then exploit this model to identify deviations from normal (anomalies or abnormal data).
                                     Here is how we can use an autoencoder to model normal behaviour. If you recall, an autoencoder learns to compress
                                     and reconstruct data. Notably this learned mapping is specific to the data type/distribution distribution of the training data.
                                     In other words an autoencoder trained using 15 px images of dogs is unlikely to correctly reconstruct 20px images of the surface
-                                    of the moon.
-                            </div>
+                                    of the moon. */}
+                                </div>
 
 
-                                <div className="border rad4 p10 " style={{ width: "300px", height: "300px" }}>
+                                <div className="border displaynone rad4 p10 " style={{ width: "300px", height: "300px" }}>
                                     Interactive replay of training run visualization
                             </div>
                             </div>
+                             
 
                         </div>
 
@@ -595,7 +653,7 @@ class Viz extends Component {
                         </div>
 
 
-                        <div className="sectiontitle mt10 mb5"> Lottery Tickets: Winning Initializations </div>
+                        {/* <div className="sectiontitle mt10 mb5"> Lottery Tickets: Winning Initializations </div>
                         <div className="">
                             <div className="flex">
                                 <div className="flex6 lh10 mb10 pr10">
@@ -613,7 +671,7 @@ class Viz extends Component {
                             </div>
                             </div>
 
-                        </div>
+                        </div> */}
                     </div>
                 }
 

@@ -3,7 +3,7 @@
 }
 
 .ecgdatabox{
-    max-height: 275px;
+    max-height: 308px;
     min-width: 340px; 
     /* overflow: scroll; */
     /* border: 2px solid pink; */
@@ -111,4 +111,16 @@ black
 
 .lowerbar{
     border-bottom: 2px solid #0062ff;
+}
+
+.bwidthtransform{
+    width: 210px;
+}
+
+.thresholdtext{
+    font-size: 30px;
+}
+
+.thresholdbox{
+    background-color: rgba(241, 241, 241, 0.9);
 }

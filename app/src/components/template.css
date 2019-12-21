@@ -515,6 +515,12 @@
     font-style: italic;
 }
 
+.overflowhidden{
+    overflow: hidden;
+}
+.greycolor{
+    color: rgb(94, 94, 94);
+}
 .moreinfocircle{
     display: inline-block;
     width: 1.1em;
@@ -639,6 +645,10 @@
 
 .floatright{
     float: right;
+}
+
+.floatleft{
+    float: left;
 }
 @keyframes shadow-pulse{
      0% {
