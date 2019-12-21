@@ -65,6 +65,7 @@ class Train extends Component {
             { id: "opt4", text: "10%", value: 0.1, type: "abnormalpercentage" },
             { id: "opt5", text: "20%", value: 0.2, type: "abnormalpercentage" },
             { id: "opt2", text: "30%", value: 0.3, type: "abnormalpercentage" },
+            { id: "opt9", text: "40%", value: 0.4, type: "abnormalpercentage" },
             { id: "opt6", text: "50%", value: 0.5, type: "abnormalpercentage" },
             { id: "opt7", text: "70%", value: 0.7, type: "abnormalpercentage" },
         ]
@@ -1186,8 +1187,8 @@ class Train extends Component {
                 {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
 
                 <div ref="chartcontainer" className="flex chartcontainer flexwrap mt10">
-                    <div ref="composemodelbox" action="composer"  className={"traincomposerdiv flexwrapitem " + (this.state.showModelComposer ? " flex40":"")}> {modelComposerBlock} </div>
-                    <div ref="modelevalbox" action="metrics" className={"flexwrapitem " + (this.state.showModelEvaluationMetrics ? " flexfull":"")}> {modelMetricsBlock} </div>
+                    {this.state.showModelComposer && <div ref="composemodelbox" action="composer"  className={"traincomposerdiv flexwrapitem " + (this.state.showModelComposer ? " flex40":"")}> {modelComposerBlock} </div>}
+                    {this.state.showModelEvaluationMetrics &&  <div ref="modelevalbox" action="metrics" className={"flexwrapitem " + (this.state.showModelEvaluationMetrics ? " flexfull":"")}> {modelMetricsBlock} </div>}
                     <div ref="lossbox1" action="loss"  className="  flexwrapitem "> { lossChartBlock} </div>
                     <div action="mse" className="flexwrapitem  "> {mseHistogramBlock} </div>
                     

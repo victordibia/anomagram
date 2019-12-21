@@ -610,15 +610,18 @@ class Viz extends Component {
 
                         </div>
 
-                        <div className="sectiontitle mt10 mb10"> Effect of Model Parameters </div>
+                        <div className="sectiontitle mt10 mb10"> Insights on the Effect of Model Parameters </div>
+                        Some interesting insights that can be observed while modifying the training parameters for the model 
+                        are highlighted below.
                         <div className="flex flexwrap">
 
                             <div className="flex3 flexwrapitem mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                     <div className="pb5 boldtext"> Learning Rate </div>
-                                    Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
-                                    Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value.
-
+                                    As expected, the choice of learning rate and optimizer can significant impact how fast and 
+                                    how effective the model training process progresses.
+                                    For example, using the Adam training results in fast and accurate convergence even with a high learning rate,
+                                    while Rmsprop is more likely to get stuck in 
                                 </div>
 
 
@@ -627,29 +630,30 @@ class Viz extends Component {
                             <div className="flex3 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                     <div className="pb5 boldtext"> Regularization </div>
-                                    Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
-                                    Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value.
+                                    Neural networks can approximate complex functions and can likely overfit in the presence of limited data.
+                                    With a few samples (2500 normal samples), we can observe signs of overfitting (train loss less than validation loss).
+                                    Regularization (l1 and l2) can be an effective way to address this.
+                                    In the interactive panel, activation regularization is applied with regularization rate set to learning rate.
 
                                 </div>
 
 
                             </div>
 
-                            <div className="flex4 flexwrapitem  mr10">
+                            {/* <div className="flex4 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                     <div className="pb5 boldtext"> Batch Size </div>
-                                    Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
-                                    Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value.
-
+                                     Larger batch sizes lead to faster training. 
                                 </div>
-                            </div>
+                            </div> */}
 
                             <div className="flex4 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                     <div className="pb5 boldtext"> Abnormal Percentage </div>
-                                    Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
-                                    Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value.
-
+                                     The interactive panel allows you to include abnormal samples as a percentage of the total number of 
+                                   datapoints used to train the autoencoder model. We see that with 0% abnormal data the model AUC is ~96%.
+                                    At 30%, AUC drops to ~93%. At 50% abnormal datapoints, there is just not enough information in the data 
+                                    that allows the model learn a patter or normal and its performance is slightly above random chance (AUC of 56%)
                                 </div>
                             </div>
                         </div>
@@ -658,14 +662,17 @@ class Viz extends Component {
                         <div className="sectiontitle mt10 mb5"> Closing Notes </div>
                         <div className="">
                             <div className="flex">
-                                <div className="flex6 lh10 mb10 pr10">
+                                <div className="flexfull lh10 mb10 pr10">
                                     In this prototype, we have considered the task of detecting anomalies in ECG data.
-                                    We used an autoencoder the results look good.
+                                    We used an autoencoder the results look good. The autoencoder does a decent job of learning a model of 
+                                    normal data (in the presence of some abnormal points) However, it is important to note that a deep learning model
+                                    is not always the best tool for the job. Particularly, for univariate data,
+                                     models such as KMeans Clustering, PCA etc 
                             </div>
 
-                                <div className="border rad4 p10 flex4" style={{ height: "200px" }}>
+                                {/* <div className="border rad4 p10 flex4" style={{ height: "200px" }}>
                                     ROC curve and some metrics
-                            </div>
+                            </div> */}
                             </div>
 
                         </div>
