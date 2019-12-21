@@ -15,7 +15,7 @@ class Viz extends Component {
         super(props)
 
         this.modelChartWidth = Math.min(390, window.innerWidth - 25)
-        this.modelChartHeight = 280
+        this.modelChartHeight = 298
 
         // Allow the draw signal component update current signal with drawn signal
         this.updateCurrentSignal = this.updateCurrentSignal.bind(this)
@@ -345,9 +345,9 @@ class Viz extends Component {
                             > </Loading>
                         </div>
                     </div>
-                    <div className="iblock thresholdbox flex flexjustifycenter mr5 p10">
+                    <div className="iblock thresholdbox flex flexjustifycenter mr5 pl10 pr10 pt5 pb5">
                         <div>
-                        <div   className="mediumdesc textaligncenter thresholdtext">{this.state.threshold}</div>
+                        <div style={{fontSize:"18px"}} className="mediumdesc textaligncenter boldtext thresholdtext">{this.state.threshold}</div>
                         <div className="smalldesc mt5">threshold</div>
                         </div>
                     </div>
@@ -357,13 +357,13 @@ class Viz extends Component {
                                 {this.state.predictedMse &&
                                     <div className="mr10  ">
                                         <div className="mr10 boldtext ">
-                                        MODEL PREDICTION [<span className=""> MSE = </span>  {this.state.predictedMse.toFixed(3)}]:
+                                        MODEL PREDICTION :
                                         
                                         &nbsp;
                                         {this.state.predictedMse > this.state.threshold ? "ABNORMAL" : "NORMAL"}
                                             </div>
 
-                                        <div className="pt5 mediumdesc"> <strong>Explanation:</strong> <strong> [mse = {this.state.predictedMse.toFixed(3)}]</strong> is 
+                                        <div className="pt5 mediumdesc">  Explanation:   [mse = {this.state.predictedMse.toFixed(3)}]  is 
                                         <strong>{this.state.predictedMse > this.state.threshold ? " above " : " below"}</strong> the <strong> {this.state.threshold}</strong> threshold 
                                     </div>
                                     </div>
@@ -481,7 +481,7 @@ class Viz extends Component {
                                             isTraining={false}
                                             isUpdatable={false}
                                             updateModelDims={null}
-                                            adv={"track"}
+                                            adv={"track" + this.state.showDrawData}
                                         />
 
                                         <div className="smalldesc lhmedium p5 "> Example of a two layer autoencoder. Click the <span className="italics">train a model</span> tab to train one from scratch.</div>
@@ -558,7 +558,7 @@ class Viz extends Component {
                                     <div className="flexfull lh10 p10 overflowhidden  greyborder">
                                      
                                         <div className="mediumdesc pb5">
-                                            Example data {this.state.isDataTransormed ? "after " : "before"} transformation.
+                                            Example data <span className="italics">{this.state.isDataTransormed ? "after " : "before"}</span> transformation.
                                         </div>
                                     {this.state.isDataTransormed ?  this.sampleTestData + " ...": this.sampleTransformedTestData + " ..." }
                                 
@@ -596,6 +596,8 @@ class Viz extends Component {
                         <div className="">
                             <div className="flex">
                                 <div className="flex6 lh10 mb10 pr10">
+                                    For most anomaly detection problem, data is usually imbalanced.
+                                    For example, in a dataset of ECG signals
                                     Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
                                     Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value.
 
@@ -653,17 +655,12 @@ class Viz extends Component {
                         </div>
 
 
-                        {/* <div className="sectiontitle mt10 mb5"> Lottery Tickets: Winning Initializations </div>
+                        <div className="sectiontitle mt10 mb5"> Closing Notes </div>
                         <div className="">
                             <div className="flex">
                                 <div className="flex6 lh10 mb10 pr10">
-                                    Ever heard of a weird thing with neural networks called a lottery ticket?
-                                        While the problem in this example is relatively too simple (140 features, not so complex patters)
-                                    An observation of what happens each time the autoencoder is initialized can provide insights into the
-                                    how luck some nerual network initializations can be.
-                                    In essence, there are initializationsss that immeidately result in a high performance (good AUC) mpodel
-                                    and require very littl
-                                    while others are just plain bad.
+                                    In this prototype, we have considered the task of detecting anomalies in ECG data.
+                                    We used an autoencoder the results look good.
                             </div>
 
                                 <div className="border rad4 p10 flex4" style={{ height: "200px" }}>
@@ -671,7 +668,7 @@ class Viz extends Component {
                             </div>
                             </div>
 
-                        </div> */}
+                        </div>
                     </div>
                 }
 

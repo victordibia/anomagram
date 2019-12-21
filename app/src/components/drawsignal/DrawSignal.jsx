@@ -363,13 +363,13 @@ class DrawSignal extends Component {
                                 onClick={this.clearDrawing.bind(this)}
                             > Clear Drawing </Button>
                         </div >
-                        <div className="iblock">
+                        {/* <div className="iblock">
                             <Button
                                 size={"field"}
                                 renderIcon={null}
                                 onClick={this.drawSample.bind(this)}
                             > Draw Sample </Button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
