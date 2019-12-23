@@ -416,8 +416,8 @@ class Viz extends Component {
                     <div className="boldtext mb5">  A Gentle Introduction to Anomaly Detection with Autoencoders</div>
                     {this.state.apptitle} is an interactive visualization tool for exploring
                     how a deep learning model can be applied to the task of anomaly detection (on stationary data).
-                    Given an ECG signal sample, an autoencoder model (running live in your browser) can predict if this signals
-                    is normal or abnormal. To try it out, you can select any of the test ECG signals from the ECG5000 dataset below,
+                    Given an ECG signal sample, an autoencoder model (running live in your browser) can predict if it is
+                     normal or abnormal. To try it out, you can select any of the test ECG signals from the ECG5000 dataset below,
                     or better still, you can draw a signal to see the model's prediction!
                     <div className=" mediumdesc boldtext">
                         <span className=""> Disclaimer: </span> This prototype is built for demonstration purposes only 
@@ -457,12 +457,17 @@ class Viz extends Component {
 
                 <div className="lh10 lightgreyback mt5 p10">
                     {/* <div className="boldtext mb5"> .. detecting abnormal ecg signals </div> */}
-                    In the use case above, the task is to detect abnormal ECG signals, given an ECG sample which corresponds to a heart beat.
+                   The autoencoder has never seen any of the test signals above, but it is able to correcly predict (most of the time) 
+                    if this signal is normal or abnormal. So, how does the autoencoder figure out what a normal signal is? How does it create its prediction? 
+                      Why is the mean square error a useful metric for determining if the input signal is normal or abnormal?
+                      What is the threshold and how do I set it? Read on to learn more!
+                     
+                    {/* In the use case above, the task is to detect abnormal ECG signals, given an ECG sample which corresponds to a heart beat.
                     This task is valuable because abnormal ECG readings are frequently indicative of underlying medical conditions.
                     Each time, a signal is selected or drawn <div className="legendcolorbox  themeblue colortransition5s iblock"></div>, it is processed by an
                     autoencoder which outputs a reconstruction <div style={{ backgroundColor: barColor }} className="legendcolorbox colortransition5s iblock"></div>) of the signal.
                     The reconstruction error (mean squared error <strong>mse</strong> <div style={{ backgroundColor: barColor + "63" }} className="legendcolorbox colortransition5s iblock"></div> between the input and reconstructed output is also visualized.
-                Based on a threshold which we set ( <span className="boldtext">{this.state.threshold}</span>  ), we then flag the signal as  abnormal if the reconstruction error is greater than the threshold.
+                Based on a threshold which we set ( <span className="boldtext">{this.state.threshold}</span>  ), we then flag the signal as  abnormal if the reconstruction error is greater than the threshold. */}
                 </div>
 
 
