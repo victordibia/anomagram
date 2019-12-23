@@ -349,6 +349,8 @@ class Train extends Component {
                 this.setState({ currentEpoch: this.currentSteps })
                 this.trainModel()
             } else {
+                console.log(this.state.mseData);
+                
                 this.currentSteps = 0
                 this.setState({ isTraining: false })
             }
@@ -657,7 +659,8 @@ class Train extends Component {
     }
 
     render() {
-        // console.log(this.state.minThreshold, this.state.maxThreshold);
+        // console.log(this.state.mseData);
+        
         
         // Use chart state determine when to redraw model composer lines as UI has change
         let chartState = ""
