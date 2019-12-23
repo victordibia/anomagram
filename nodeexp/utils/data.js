@@ -1,8 +1,8 @@
 
 
 const getEcgData = function () {
-    let ecgTrain = require("./../../app/public/data/ecg/train_scaled.json")
-    let testEcg = require("./../../app/public/data/ecg/test_scaled.json")
+    let ecgTrain = require("./../../app/src/data/ecg/train_scaled.json")
+    let testEcg = require("./../../app/src/data/ecg/test_scaled.json")
     let trainEcg = []
     for (row in ecgTrain) {
         let val = ecgTrain[row]

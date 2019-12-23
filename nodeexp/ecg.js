@@ -13,14 +13,14 @@ let modelParams = {
     numFeatures: trainEcg[0].data.length,
     hiddenLayers: 2,
     latentDim: 2,
-    hiddenDim: [15, 7],
+    hiddenDim: [7, 3],
     learningRate: 0.01,
     adamBeta1: 0.5
 }
 
-let numSteps = 1
-let numEpochs = 20
-let batchSize = 256
+let numSteps = 50
+let numEpochs = 1
+let batchSize = 512
 
 let modelSavePath = "file://./webmodel/ecg"
 
@@ -54,11 +54,10 @@ async function train_data(model) {
     for (let i = 0; i < numSteps; i++) {
         startTime = new Date();
         const res = await model.fit(xs,
-            xs, { epochs: numEpochs, verbose: 0, batchSize: batchSize });
+            xs, { epochs: numEpochs, verbose: 0, batchSize: batchSize, validationData: [xsTest, xsTest] });
         endTime = new Date();
         elapsedTime = (endTime - startTime) / 1000
-        console.log("Step loss", i, res.history.loss[0], elapsedTime, xs.shape);
-
+        console.log("Step loss", i, res.history.loss[0], res.history.val_loss[0], xs.shape);
 
     }
 
@@ -67,7 +66,7 @@ async function train_data(model) {
         let preds = await model.predict(xsTest)
         pendTime = new Date();
         pelapsedTime = (pendTime - pstartTime) / 1000
-        console.log("prediction time", xsTest.shape, pelapsedTime)
+        // console.log("prediction time", xsTest.shape, pelapsedTime)
     }
 
 

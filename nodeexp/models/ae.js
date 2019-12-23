@@ -13,7 +13,7 @@ let buildModel = function (params) {
     const latentDim = params.latentDim
     const hiddenDim = params.hiddenDim
     const learningRate = params.learningRate, adamBeta1 = params.adamBeta1
-    const outputActivation = "tanh"
+    const outputActivation = "sigmoid"
     // console.log(numFeatures);
 
 
