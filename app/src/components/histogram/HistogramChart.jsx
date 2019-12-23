@@ -14,6 +14,7 @@ class HistogramChart extends Component {
         this.minChartHeight = this.props.data.chartHeight
 
         this.numTicks = 40
+        this.xTicks = 7
     }
 
     componentDidMount() {
@@ -81,7 +82,7 @@ class HistogramChart extends Component {
             .domain([0, d3.max(self.bins, d => d.length)]).nice()
             .range([this.chartHeight, 0])
 
-        this.xAxis = d3.axisBottom(this.xScale)
+        this.xAxis = d3.axisBottom(this.xScale).ticks(this.xTicks)
         this.yAxis = d3.axisRight(this.yScale)
             .tickSize(this.minChartWidth)
 
@@ -252,7 +253,7 @@ class HistogramChart extends Component {
                 (this.chartHeight + this.chartMargin.top + 43) + ")")
             .style("text-anchor", "middle")
             .attr("class", "axislabel x")
-            .text("Mean Square Error");
+            .text("Mean Squared Error");
 
 
         // text label for the y axis

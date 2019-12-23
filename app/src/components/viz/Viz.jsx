@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Loading, Button } from 'carbon-components-react';
+import { Loading, Button, Toggle } from 'carbon-components-react';
 // import { loadJSONData } from "../helperfunctions/HelperFunctions"
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
@@ -44,7 +44,8 @@ class Viz extends Component {
             predictedMse: null,
             selectedLegend: "All",
             showAutoEncoderViz: true,
-            isDataTransormed: false
+            isDataTransormed: false,
+            showBeforeTrainingHistogram: false
         }
 
 
@@ -263,6 +264,11 @@ class Viz extends Component {
     toggelTransform(e) {
         this.setState({isDataTransormed: !this.state.isDataTransormed})
     }
+
+    toggleTrainingMseViz(e) { 
+        this.setState({showBeforeTrainingHistogram: !this.state.showBeforeTrainingHistogram})
+    }
+
     render() {
 
 
@@ -570,7 +576,7 @@ class Viz extends Component {
                                     <div className="flexfull lh10 p10 overflowhidden  greyborder">
                                      
                                         <div className="mediumdesc pb5">
-                                            Example data <span className="italics">{this.state.isDataTransormed ? "after " : "before"}</span> transformation.
+                                            Example data <span className="italics">{this.state.isDataTransormed ? "after " : "before"}</span> minmax (0,1) scaling transformation.
                                         </div>
                                     {this.state.isDataTransormed ?  this.sampleTestData + " ...": this.sampleTransformedTestData + " ..." }
                                 
@@ -625,23 +631,27 @@ class Viz extends Component {
                               
                             </div>
 
-                                <div className="border rad4 p10 flexwrapitem flex20 floatright">
+                                <div className="  p10 flexwrapitem  floatright">
                                      <HistogramChart
                                             data={{
-                                                data: this.trainMse["pre"],
+                                                data: this.trainMse[this.state.showBeforeTrainingHistogram? "post":"pre"],
                                                 chartWidth: 350,
                                                 chartHeight: 240,
-                                                epoch: 2,
-                                                threshold: 0.1
+                                                epoch: 2 + this.state.showBeforeTrainingHistogram,
+                                                threshold: this.state.showBeforeTrainingHistogram ? 0.01 :0.03
                                             }}
                                         ></HistogramChart>
 
-                                    {/* <div className="mt10">
-                                        <Button
+                                    <div className="">
+
+                                    <Button
+                                            className="bwidthtransform"
                                             size={"small"}
-                                        
-                                        > Replay Training </Button>
-                                    </div> */}
+                                            renderIcon={null}
+                                            onClick={this.toggleTrainingMseViz.bind(this)}
+                                        > {this.state.showBeforeTrainingHistogram?  "After Training": "Before Training"} </Button>
+                
+                                    </div>
                             </div>
                             </div>
 
