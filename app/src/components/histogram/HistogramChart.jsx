@@ -33,7 +33,7 @@ class HistogramChart extends Component {
 
 
     setupScalesAxes(data) {
-        // console.log(data);
+        // console.log(this.minChartWidth);
 
         let self = this
 

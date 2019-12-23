@@ -484,8 +484,8 @@ class Viz extends Component {
 
                         <div className="">
                             <div className="flex">
-                                <div className="flex20 lh10 mb10 pr10">
-                                    {this.state.showAutoEncoderViz && <div className="floatright autoencodervizbox  p10 flex6"  >
+                                <div className="flex20  lh10 mb10 ">
+                                    {this.state.showAutoEncoderViz && <div className="pt10 pl10 floatright autoencodervizbox  flex6"  >
 
                                         <ComposeModel
                                             hiddenDims={this.hiddenDim}
@@ -565,7 +565,7 @@ class Viz extends Component {
                                     
 
                             </div>
-                                <div className=" flex20 flexwrapitem mr10">
+                                <div className=" flex20 flexwrapitem ">
                                     
                                     <div className="flexfull lh10 p10 overflowhidden  greyborder">
                                      
@@ -607,7 +607,7 @@ class Viz extends Component {
                         <div className="sectiontitle mt10 mb5"> Model Traininig </div>
                         <div className="">
                             <div className="flex flexwrap">
-                                <div className="flex40 flexwrapitem lh10 mb10 pr10">
+                                <div className="flex40 flexwrapitem lh10 mb10 ">
                                   The autoencoder is contains two layers in the encoder and and decoder (7 and 3 units) 
                                   and a bottleneck layer with two units. In this prototype the autoencoder is implemented using the 
                                 Tensorflow.js layers api (similar to the keras api). Adam optimizer is used with a learning rate of 0.01
@@ -629,19 +629,19 @@ class Viz extends Component {
                                      <HistogramChart
                                             data={{
                                                 data: this.trainMse["pre"],
-                                                chartWidth: 300,
+                                                chartWidth: 350,
                                                 chartHeight: 240,
                                                 epoch: 2,
                                                 threshold: 0.1
                                             }}
                                         ></HistogramChart>
 
-                                    <div className="mt10">
+                                    {/* <div className="mt10">
                                         <Button
                                             size={"small"}
                                         
                                         > Replay Training </Button>
-                                    </div>
+                                    </div> */}
                             </div>
                             </div>
 
