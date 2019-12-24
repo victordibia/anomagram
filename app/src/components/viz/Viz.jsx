@@ -39,9 +39,9 @@ class Viz extends Component {
             drawSectionHeight: this.modelChartHeight - 30,
             isLoading: false,
             modelLoaded: false,
-            threshold: 0.011,
+            threshold: 0.010,
             predictedData: this.zeroArr,
-            predictedMse: null,
+            predictedMse: 0,
             selectedLegend: "All",
             showAutoEncoderViz: true,
             isDataTransormed: false,
@@ -58,9 +58,9 @@ class Viz extends Component {
         this.chartColorMap = {
             0: { color: "grey", colornorm: "grey", name: "All" },
             1: { color: "#0062ff", colornorm: "#0062ff", name: "Normal" },
-            2: { color: "#ffa32c", colornorm: "grey", name: "R-on-T Premature Ventricular Contraction" },
+            2: { color: "orange", colornorm: "grey", name: "R-on-T Premature Ventricular Contraction" },
             // 3: { color: "violet", colornorm: "grey", name: "Supraventricular Premature or Ectopic Beat" },
-            4: { color: "orange", colornorm: "grey", name: "Premature Ventricular Contraction" },
+            4: { color: "indigo", colornorm: "grey", name: "Premature Ventricular Contraction" },
             5: { color: "red", colornorm: "grey", name: "Unclassifiable Beat" },
         }
 
@@ -365,14 +365,14 @@ class Viz extends Component {
                     </div>
                     <div className="iblock thresholdbox flex flexjustifycenter mr5 pl10 pr10 pt5 pb5">
                         <div>
-                        <div style={{fontSize:"18px"}} className="mediumdesc textaligncenter boldtext thresholdtext">{this.state.threshold}</div>
-                        <div className="smalldesc textaligncenter mt5">Threshold</div>
+                        <div style={{fontSize:"18px"}} className="mediumdesc textaligncenter boldtext thresholdtext">{this.state.predictedMse.toFixed(3) }</div>
+                        <div className="smalldesc textaligncenter mt5">mse</div>
                         </div>
                     </div>
                     <div className="flexfull  ">
                         {this.testData.length > 0 &&
                             <div className="mt5 mediumdesc ">
-                                {this.state.predictedMse &&
+                                {this.state.predictedMse !== 0 &&
                                     <div className="mr10  ">
                                         <div className="mr10 boldtext ">
                                         MODEL PREDICTION :
@@ -386,7 +386,7 @@ class Viz extends Component {
                                     </div>
                                     </div>
                                 }
-                                {!this.state.predictedMse &&
+                                {this.state.predictedMse == 0 &&
                                 <div className="mr10  ">
                                         <div className=" boldtext ">
                                         MODEL PREDICTION 
@@ -475,10 +475,10 @@ class Viz extends Component {
 
                 <div className="lh10 lightgreyback mt5 p10">
                     {/* <div className="boldtext mb5"> .. detecting abnormal ecg signals </div> */}
-                   The autoencoder has never seen any of the test signals above, but it is able to correcly predict (most of the time) 
-                    if this signal is normal or abnormal. So, how does the autoencoder figure out what a normal signal is? How does it create its prediction? 
-                      Why is the mean square error a useful metric for determining if the input signal is normal or abnormal?
-                      What is the threshold and how do I set it? Read on to learn more!
+                   The autoencoder is trained on only normal ECG signals. It has never seen any of the test signals above, but it is able to correcly predict (most of the time) 
+                    if this signal is normal or abnormal. So, how does the autoencoder figure out what a normal signal is?
+                      Why is  mean squared error a useful metric?
+                      What is the threshold and how is it set? Read on to learn more!
                      
                     {/* In the use case above, the task is to detect abnormal ECG signals, given an ECG sample which corresponds to a heart beat.
                     This task is valuable because abnormal ECG readings are frequently indicative of underlying medical conditions.
@@ -549,7 +549,7 @@ class Viz extends Component {
 
                         <div className="sectiontitle mt10 mb5"> The Dataset  </div>
                         <div className="mb10 lh10">
-                            This prototype uses the   <a href="http://www.timeseriesclassification.com/description.php?Dataset=ECG5000" target="_blank" rel="noopener noreferrer"> ECG5000 dataaset </a> which contains 
+                            This prototype uses the   <a href="http://www.timeseriesclassification.com/description.php?Dataset=ECG5000" target="_blank" rel="noopener noreferrer"> ECG5000 dataset </a> which contains 
                             5000 examples of ECG signals from a patient. Each sample (which has been sliced into 140 points corresponding to an extracted heartbeat) has been labelled  
                             as normal or being indicative of a heart condition related to congestive heart failure.
 
@@ -621,20 +621,20 @@ class Viz extends Component {
                                 <div className="flex40 flexwrapitem lh10 mb10 ">
                                   The autoencoder in this prototype (visualized above) has two layers in its encoder and decoder respectively.
                                   It is implemented using the Tensorflow.js layers api (similar to the keras api). The encoder/decoder are specified 
-                                  using dense layers, and the Adam optimizer (lr = 0.01) is used.  
+                                  using dense layers, relu activation function, and the Adam optimizer (lr = 0.01) is used for training.  
                                       As training progresses, the model's weights are updated to minimize the difference between the encoder input 
-                                      and decoder output for the training data (normal samples).
+                                      and decoder output for the training data (normal samples).  
                                     <br/>
                                     To illustrate the relevance of the training process to the anomaly detection task, we can visualize the 
-                                    the histrogram of reconstruction error generated by the momdel. At initialization (epoch=0), the untrained autoencoder 
+                                    the histrogram of reconstruction error generated by the model (see figure to the right). At initialization (epoch=0), the untrained autoencoder 
                                     has not learned to reconstruct normal data and hence makes fairly random guesses in its attempt
                                     to reconstruct any input data - thus we see a similar distribution of errors for both normal and abnormal data.
                                     As training progresses, the model gets better at reconstructing normal data, and its reconstruction error markedly 
                                     becomes smaller for normal samples leading to a distinct distribution for normal compared to abnormal data.
 
-                                    As both distributions <span className="italics">diverge</span>, we can determine a threshold or cutoff point; any data point 
+                                    As both distributions <span className="italics">diverge</span>, we can set a threshold or cutoff point; any data point 
                                     with error above this threshold is termed an anomaly and any point below this is termed normal. 
-                                    Using labelled test data, we can determmine a cut off point or threshold as the point that yields the best 
+                                    Using labelled test data (and some domain expertise), we can automatically determmine this threshold as the point that yields the best 
                                     anomaly classification accuracy. But is accuracy enough?
                                   
                               
@@ -659,10 +659,10 @@ class Viz extends Component {
                                         step={1}
                                         minLabel={""}
                                         maxLabel={""}
-                                        value={0}
+                                        value={this.state.trainVizEpoch}
                                         stepMuliplier={10}
                                         // disabled={this.state.isTraining ? true : false}
-                                        labelText={"Move slider to view mse histogram at each epoch "}
+                                        labelText={"Move slider to view mse histogram at each epoch. "}
                                         hideTextInput={true}
                                         onChange={this.updateTrainVizEpoch.bind(this)}
                                     />

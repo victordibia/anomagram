@@ -358,7 +358,7 @@ class DrawSignal extends Component {
 
                         <div className="iblock mr5">
                             <Button
-                                size={"field"}
+                                size={"small"}
                                 renderIcon={null}
                                 onClick={this.clearDrawing.bind(this)}
                             > Clear Drawing </Button>
