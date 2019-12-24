@@ -29,6 +29,7 @@ class Viz extends Component {
         this.testData = this.testData.slice(0, 70)
 
         this.zeroArr = new Array(this.testData[0].data.length).fill(0);
+        this.trainMse = require("../../data/viz/mse.json")
 
 
         this.state = {
@@ -52,6 +53,7 @@ class Viz extends Component {
             bestMetric: { acc: 0, fpr: 0, fnr: 0, tnr: 0, tpr: 0, threshold: 0, precision: 0, recall: 0 },
             minThreshold: 0,
             maxThreshold: 1,
+            vizThresold:this.trainMse["threshold"][0],
         }
 
 
@@ -76,7 +78,7 @@ class Viz extends Component {
         this.hiddenDim = [7, 3]
         this.latentDim = [2]
 
-        this.trainMse = require("../../data/viz/mse.json")
+       
 
         this.mseExplanations = {}
         this.mseExplanations["0"] = "Model is untrained, both normal and abnormal data have similar, overlapping distributions."
@@ -247,7 +249,8 @@ class Viz extends Component {
             let threshVal = this.state.minThreshold + (e.value / 100) * (this.state.maxThreshold - this.state.minThreshold)
             let bestMetric = computeAccuracyGivenThreshold(this.trainMse["mse"][49] , threshVal)
              
-            this.setState({ bestMetric: bestMetric }) 
+        this.setState({ bestMetric: bestMetric }) 
+        this.setState({vizThresold:threshVal})
 
     }
 
@@ -311,7 +314,8 @@ class Viz extends Component {
     // }
 
     updateTrainVizEpoch(e) { 
-        this.setState({trainVizEpoch: e.value})
+        this.setState({ trainVizEpoch: e.value })
+        this.setState({vizThresold: this.trainMse["threshold"][e.value]})
     }
 
     render() {
@@ -718,7 +722,7 @@ class Viz extends Component {
                                                 chartWidth: 380,
                                                 chartHeight: 260,
                                                 epoch: 2 + this.state.showBeforeTrainingHistogram,
-                                                threshold: this.trainMse["threshold"][this.state.trainVizEpoch]
+                                                threshold: this.state.vizThresold
                                             }}
                                     ></HistogramChart>
                                     
@@ -780,7 +784,8 @@ class Viz extends Component {
                             </div> */}
                                         <div className="mediumdesc lhmedium pb10">
                                             Example below illustrates performance of a trained autoencoder model. 
-                                            Changing the threshold value impacts the precision and recall metric.
+                                            Move the slider to see how threshold choices can be used to 
+                                            reflect precision recall preferences. 
                                             
                                         </div>
                             <div className="mb5 greyhighlight p10 touchnoscroll">
@@ -847,29 +852,32 @@ class Viz extends Component {
                         </div>
 
                         <div className="sectiontitle mt10 mb10"> Insights on the Effect of Model Parameters </div>
+                        <div className="mb10">
                         Some interesting insights that can be observed while modifying the training parameters for the model 
                         are highlighted below.
+                        </div>
                         <div className="flex flexwrap">
 
-                            <div className="flex3 flexwrapitem mr10">
+                            {/* <div className="flex3 flexwrapitem mr10">
                                 <div className="flex6 lh10 mb10 pr10">
-                                    <div className="pb5 boldtext"> Learning Rate </div>
-                                    As expected, the choice of learning rate and optimizer can significant impact how fast and 
-                                    how effective the model training process progresses.
-                                    For example, using the Adam training results in fast and accurate convergence even with a high learning rate,
-                                    while Rmsprop is more likely to get stuck in 
+                                    <div className="pb5 boldtext"> Optimizer </div>
+                                    As expected, the choice of optimizer and learning rate can significant impact how fast and 
+                                    how effectively the model training process progresses.
+                                    For example, using the Adam optimizer results in fast and stable convergence even with a high learning rate,
+                                    while Rmsprop is more likely to show unstable results or fail to converge in rare cases.
                                 </div>
 
 
-                            </div>
+                            </div> */}
 
-                            <div className="flex3 flexwrapitem  mr10">
+                            <div className="flex20 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                     <div className="pb5 boldtext"> Regularization </div>
-                                    Neural networks can approximate complex functions and can likely overfit in the presence of limited data.
-                                    With a few samples (2500 normal samples), we can observe signs of overfitting (train loss less than validation loss).
+                                    Neural networks can approximate complex functions. They are also likely overfit in the presence of limited data.
+                                    In this prototype, we have relatively few samples (2500 normal samples), and we can observe 
+                                    signs of overfitting (train loss less than validation loss). 
                                     Regularization (l1 and l2) can be an effective way to address this.
-                                    In the interactive panel, activation regularization is applied with regularization rate set to learning rate.
+                                    In the interactive panel, you can apply activation regularization (regularization rate is set to learning rate) and observe its impact!
 
                                 </div>
 
@@ -883,13 +891,13 @@ class Viz extends Component {
                                 </div>
                             </div> */}
 
-                            <div className="flex4 flexwrapitem  mr10">
+                            <div className="flex20 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                     <div className="pb5 boldtext"> Abnormal Percentage </div>
                                      The interactive panel allows you to include abnormal samples as a percentage of the total number of 
                                    datapoints used to train the autoencoder model. We see that with 0% abnormal data the model AUC is ~96%.
                                     At 30%, AUC drops to ~93%. At 50% abnormal datapoints, there is just not enough information in the data 
-                                    that allows the model learn a patter or normal and its performance is slightly above random chance (AUC of 56%)
+                                    that allows the model learn a patter or normal and its performance is slightly above random chance (AUC of 56%).
                                 </div>
                             </div>
                         </div>
