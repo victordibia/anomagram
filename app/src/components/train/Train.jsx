@@ -168,6 +168,9 @@ class Train extends Component {
         this.tensorsCreated = false;
 
         this.trainUnmounted = false
+
+        this.trainTempa = []
+        this.threshTempa = []
     }
 
     componentDidMount() {
@@ -349,7 +352,7 @@ class Train extends Component {
                 this.setState({ currentEpoch: this.currentSteps })
                 this.trainModel()
             } else {
-                console.log(this.state.mseData);
+                console.log(this.trainTempa, this.threshTempa);
                 
                 this.currentSteps = 0
                 this.setState({ isTraining: false })
@@ -416,7 +419,7 @@ class Train extends Component {
         this.setState({ minThreshold: _.min(uniqueMse) })
         this.setState({ maxThreshold: _.max(uniqueMse) })
 
-
+        this.threshTempa.push(bestMetric["threshold"])
     }
 
 
@@ -446,6 +449,7 @@ class Train extends Component {
             self.setState({ mseData: mseDataHolder })
 
             // console.log(mseDataHolder);
+            this.trainTempa.push(mseDataHolder)
 
         });
 
