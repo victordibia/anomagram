@@ -48,7 +48,10 @@ class Viz extends Component {
             showAutoEncoderViz: true,
             isDataTransormed: false,
             showBeforeTrainingHistogram: false,
-            trainVizEpoch:0
+            trainVizEpoch: 0,
+            bestMetric: { acc: 0, fpr: 0, fnr: 0, tnr: 0, tpr: 0, threshold: 0, precision: 0, recall: 0 },
+            minThreshold: 0,
+            maxThreshold: 1,
         }
 
 
@@ -127,6 +130,8 @@ class Viz extends Component {
         this.sampleTestData = this.myStringify(this.applyTransform(this.testData[0].data.slice(0,50)))
         this.sampleTransformedTestData = this.myStringify(this.testData[0].data.slice(0, 50)) 
         
+
+        this.computeAccuracyMetrics(this.trainMse["mse"][49])
          
     }
 
@@ -220,12 +225,8 @@ class Viz extends Component {
 
     }
 
-    computeAccuracyMetrics(data) {
-
-        let uniqueMse = _.uniq(_.map(data, 'mse'))
-
-        uniqueMse = _(uniqueMse).sortBy().value()
-        uniqueMse.reverse() 
+    computeAccuracyMetrics(data) { 
+        let uniqueMse = _.uniq(_.map(data, 'mse'))   
 
         let rocMetricHolder = [] 
 
@@ -235,7 +236,19 @@ class Viz extends Component {
         }); 
  
 
-        let bestMetric = _.maxBy(rocMetricHolder, "acc") 
+        let bestMetric = _.maxBy(rocMetricHolder, "acc")  
+        this.setState({ bestMetric: bestMetric })
+        this.setState({ minThreshold: _.min(uniqueMse) })
+        this.setState({ maxThreshold: _.max(uniqueMse) }) 
+        
+    }
+
+    updateThreshold(e) { 
+            let threshVal = this.state.minThreshold + (e.value / 100) * (this.state.maxThreshold - this.state.minThreshold)
+            let bestMetric = computeAccuracyGivenThreshold(this.trainMse["mse"][49] , threshVal)
+             
+            this.setState({ bestMetric: bestMetric }) 
+
     }
 
 
@@ -732,8 +745,8 @@ class Viz extends Component {
 
                         <div className="sectiontitle mt10 mb5"> Model Evaluation: Accuracy is NOT Enough </div>
                         <div className="">
-                            <div className="flex">
-                                <div className="flex6 lh10 mb10 pr10">
+                            <div className="flex flexwrap">
+                                <div className="flex40  flexwrapitem lh10 mb10 pr10">
                                     For most anomaly detection problems, data is usually imbalanced - the number of labelled normal samples vastly outnumbers
                                     abnormal samples. For example, for every 100 patients who take an
                                     ECG test, <a target="_blank" rel="noopener noreferrer" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3319226/">less than 23 are likely</a> to have 
@@ -760,8 +773,74 @@ class Viz extends Component {
 
                             </div>
 
-                                <div className="border rad4 p10 flex4" style={{ height: "200px" }}>
-                                    ROC curve and some metrics
+                                <div  className=" border p10 flex20 flexwrapitem" >
+                                <div className={"iblock perfmetrics w100 " + (this.state.isTraining ? " disabled " : " ")}>
+                            {/* <div className="charttitle mb5 ">
+                                Model Evaluation Metrics
+                            </div> */}
+                                        <div className="mediumdesc lhmedium pb10">
+                                            Example below illustrates performance of a trained autoencoder model. 
+                                            Changing the threshold value impacts the precision and recall metric.
+                                            
+                                        </div>
+                            <div className="mb5 greyhighlight p10 touchnoscroll">
+                                <Slider
+                                    className="w100 border"
+                                    min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
+                                    max={100}//{(this.state.maxThreshold.toFixed(4) * 1)}
+                                    step={2}
+                                    minLabel={"%"}
+                                    maxLabel={"%"}
+                                    value={((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)) * 100}
+                                    stepMuliplier={10}
+                                    disabled={this.state.isTraining ? true : false}
+                                    labelText={"Threshold " + (this.state.bestMetric.threshold).toFixed(4) + " [ " + (((this.state.bestMetric.threshold - this.state.minThreshold) / (this.state.maxThreshold - this.state.minThreshold)) * 100).toFixed(0) + " % ] "}
+                                    hideTextInput={true}
+                                    onChange={this.updateThreshold.bind(this)}
+                                />
+                            </div>
+                            <div className="flex">
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.acc * 100)) }} className="metricguage mb5  greyhighlight accuracybox  textaligncenter mr5 flex5" >
+                                    <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
+                                    <div className="metricdesc mediumdesc p5"> Best Accuracy </div>
+                                </div>
+                                 
+
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.precision * 100)) }} className="metricguage mb5 greyhighlight  textaligncenter flex5" >
+                                    <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.precision ).toFixed(2)} </div>
+                                    <div className="metricdesc mediumdesc p5"> Precision </div>
+                        </div>
+                        
+                        <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.recall * 100)) }} className="metricguage mb5 greyhighlight  textaligncenter flex5" >
+                                    <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.recall).toFixed(2)} </div>
+                                    <div className="metricdesc mediumdesc p5"> Recall </div>
+                                </div>
+
+                            </div>
+                            <div className="mb5 flex">
+
+                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fpr * 100)) }} className="metricguage flex5 mr5  greyhighlight  textaligncenter">
+                                    <div className="metricvalue textaligncenter"> {(this.state.bestMetric.fpr * 100).toFixed(2)}  % </div>
+                                    <div className="metricdesc mediumdesc p5"> False Positive Rate </div>
+                                </div>
+                                <div style={{ borderLeftColor: percentToRGB(100 - (this.state.bestMetric.fnr * 100)) }} className="metricguage flex5   greyhighlight  textaligncenter">
+                                    <div className="metricvalue"> {(this.state.bestMetric.fnr * 100).toFixed(2)} % </div>
+                                    <div className="metricdesc displayblock mediumdesc p5"> False Negative Rate </div>
+                                </div>
+
+                            </div>
+                            <div className="flex">
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tpr * 100)) }} className="metricguage flex5  mr5 greyhighlight  textaligncenter">
+                                    <div className="metricvalue"> {(this.state.bestMetric.tpr * 100).toFixed(2)} % </div>
+                                    <div className="metricdesc mr10 mediumdesc p5"> True Positive Rate </div>
+                                </div>
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.tnr * 100)) }} className="metricguage flex5  greyhighlight  textaligncenter">
+                                    <div className="metricvalue"> {(this.state.bestMetric.tnr * 100).toFixed(2)} % </div>
+                                    <div className="metricdesc mediumdesc p5"> True Negative Rate </div>
+                                </div>
+                            </div>
+
+                        </div>
                             </div>
                             </div>
 
