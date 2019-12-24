@@ -113,7 +113,7 @@ class Train extends Component {
             testDataSize: this.testDataOptions[this.selectedTestDataOption].value,
 
             modelStale: true,
-            bestMetric: { acc: 0, fpr: 0, fnr: 0, tnr: 0, tpr: 0, threshold: 0 },
+            bestMetric: { acc: 0, fpr: 0, fnr: 0, tnr: 0, tpr: 0, threshold: 0, precision:0, recall:0 },
             minThreshold: 0,
             maxThreshold: 1,
 
@@ -1030,14 +1030,25 @@ class Train extends Component {
                                 />
                             </div>
                             <div className="flex">
-                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.acc * 100)) }} className="metricguage mb5  greyhighlight  textaligncenter mr5 flex5" >
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.acc * 100)) }} className="metricguage mb5  greyhighlight accuracybox  textaligncenter mr5 flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
-                                    <div className="metricdesc mediumdesc p5"> Best Accuracy </div>
+                                    <div className="metricdesc mediumdesc p5">  Accuracy </div>
                                 </div>
                                 <div style={{ borderLeftColor: percentToRGB((this.state.auc * 100)) }} className="metricguage mb5 greyhighlight  textaligncenter flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.auc).toFixed(2)} </div>
                                     <div className="metricdesc mediumdesc p5"> AUC </div>
                                 </div>
+
+                                <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.precision * 100)) }} className="metricguage mb5 greyhighlight  textaligncenter flex5" >
+                                    <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.precision ).toFixed(2)} </div>
+                                    <div className="metricdesc mediumdesc p5"> Precision </div>
+                        </div>
+                        
+                        <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.recall * 100)) }} className="metricguage mb5 greyhighlight  textaligncenter flex5" >
+                                    <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.recall).toFixed(2)} </div>
+                                    <div className="metricdesc mediumdesc p5"> Recall </div>
+                                </div>
+
                             </div>
                             <div className="mb5 flex">
 

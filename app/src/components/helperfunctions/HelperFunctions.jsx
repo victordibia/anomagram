@@ -56,6 +56,8 @@ export function computeAccuracyGivenThreshold(data, threshold) {
         fpr: falsePositive / (trueNegative + falsePositive),
         fnr: falseNegative / (truePositive + falseNegative),
         tnr: trueNegative / (trueNegative + falsePositive),
+        precision: truePositive / (truePositive + falsePositive) || 0,
+        recall: truePositive / (truePositive + falseNegative)
 
     }
 

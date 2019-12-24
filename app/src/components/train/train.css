@@ -105,7 +105,7 @@
 }
 
 .metricvalue{
-    font-size: 2.0em;
+    font-size: 1.8em;
     /* padding-top: 0.28em; */
     /* min-width: 160px; */
     /* border: 1px solid grey; */
@@ -123,7 +123,7 @@
 
 .metricguage{
     border-left: solid 6px red;
-    padding: 7px 0px 6px 0px  ;
+    padding: 7px 10px 6px 10px  ;
 }
 
 .axislabel{
@@ -184,4 +184,8 @@
 
 .traincomposerdiv{
     min-width: 350px;
+}
+
+.accuracybox{
+    min-width: 140px;
 }

@@ -382,7 +382,7 @@ class Viz extends Component {
                                             </div>
 
                                         <div className="pt5 mediumdesc">  Explanation:   [mse = {this.state.predictedMse.toFixed(3)}]  is 
-                                        <strong>{this.state.predictedMse > this.state.threshold ? " above " : " below"}</strong> the <strong> {this.state.threshold}</strong> threshold 
+                                        <strong>{this.state.predictedMse > this.state.threshold ? " above " : " below"}</strong> the <strong> {this.state.threshold.toFixed(3)}</strong> threshold 
                                     </div>
                                     </div>
                                 }
@@ -700,10 +700,27 @@ class Viz extends Component {
                         <div className="">
                             <div className="flex">
                                 <div className="flex6 lh10 mb10 pr10">
-                                    For most anomaly detection problem, data is usually imbalanced.
-                                    For example, in a dataset of ECG signals
-                                    Data for this problem is likely imbalanced. The number of anomalies we encounter is likely to be much smaller than normal data.
-                                    Consider we have a bad classifiier that simply flags all our data points as normal, it would still have a high accuracy value.
+                                    For most anomaly detection problems, data is usually imbalanced - the number of labelled normal samples vastly outnumbers
+                                    abnormal samples. For example, for every 100 patients who take an
+                                    ECG test, <a target="_blank" rel="noopener noreferrer" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3319226/">less than 23 are likely</a> to have 
+                                    some type of abnormal reading. This sort of data imbalance introduces issues that make accuracy 
+                                    an inssufficient metric. Consider a naive model (actually a really bad model) 
+                                    that simply flagged every sample as normal, given our ECG scenario above, it would would have an accuracy <strong>77%</strong> despite being a really unskilled model. 
+                                    Clearly, using just the accuracy metric does not 
+                                    tell the complete story i.e. how often does the model flag an ECG as abnormal when it is indeed
+                                     abnormal (<strong>true positive</strong>), abnormal when it is normal (<strong>false positive</strong>)
+                                    normal when it is abnormal (<strong>false negative</strong>) and normal when it is indeed normal (<strong>true negative</strong>). 
+                                     
+                                    Two important metrics can be applied to address these issues -  <strong>precision</strong> (true positive / true positive + false positive )
+                                    and <strong>recall</strong> (true positive / true positive + false negative).
+                                
+                                    <br/>
+                                    
+                                    Depending on the use case, it may be desirable to optimize a model's performance for high precision or high recall. This can be 
+                                    manipulated by the selection of a threshold. The receiver operating characteristics (ROC) curve provides a visual assessment of a model's skill
+                                    and achieved by plotting the true positive rate against the false positive rate at various values of the threshold.
+                                    {/* In addition to the fact that anomalies can vary widely and evolve with time, this data imbalance problem 
+                                    makes it hard to treat anomaly detection as a classification problem */}
 
                             </div>
 
