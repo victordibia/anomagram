@@ -1032,7 +1032,7 @@ class Train extends Component {
                             <div className="flex">
                                 <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.acc * 100)) }} className="metricguage mb5  greyhighlight accuracybox  textaligncenter mr5 flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
-                                    <div className="metricdesc mediumdesc p5">  Accuracy </div>
+                                    <div className="metricdesc mediumdesc p5"> Best Accuracy </div>
                                 </div>
                                 <div style={{ borderLeftColor: percentToRGB((this.state.auc * 100)) }} className="metricguage mb5 greyhighlight  textaligncenter flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.auc).toFixed(2)} </div>

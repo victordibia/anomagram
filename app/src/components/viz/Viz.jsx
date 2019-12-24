@@ -7,7 +7,9 @@ import SmallLineChart from "../linechart/SmallLineChart"
 import DrawSignal from "../drawsignal/DrawSignal"
 import ComposeModel from "../composemodel/ComposeModel"
 import HistogramChart from "../histogram/HistogramChart"
+import { computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions"
 // import "../../data" 
+import * as _ from "lodash"
 import * as tf from '@tensorflow/tfjs';
 
 // let tf = null
@@ -72,6 +74,12 @@ class Viz extends Component {
         this.latentDim = [2]
 
         this.trainMse = require("../../data/viz/mse.json")
+
+        this.mseExplanations = {}
+        this.mseExplanations["0"] = "Model is untrained, both normal and abnormal data have similar, overlapping distributions."
+        this.mseExplanations["5"] = "Model is getting better at reconstructing normal data. Normal data now has a smaller range."
+        this.mseExplanations["25"] = "Both distributions are now separate. We can set a clear threshold that separates normal from abnormal data."
+        
     }
 
 
@@ -117,7 +125,8 @@ class Viz extends Component {
         this.featureRange = require("../../data/ecg/transform/range.json")
         
         this.sampleTestData = this.myStringify(this.applyTransform(this.testData[0].data.slice(0,50)))
-        this.sampleTransformedTestData = this.myStringify(this.testData[0].data.slice(0,50)) 
+        this.sampleTransformedTestData = this.myStringify(this.testData[0].data.slice(0, 50)) 
+        
          
     }
 
@@ -209,6 +218,24 @@ class Viz extends Component {
 
 
 
+    }
+
+    computeAccuracyMetrics(data) {
+
+        let uniqueMse = _.uniq(_.map(data, 'mse'))
+
+        uniqueMse = _(uniqueMse).sortBy().value()
+        uniqueMse.reverse() 
+
+        let rocMetricHolder = [] 
+
+        uniqueMse.forEach((each, i) => {
+            let metric = computeAccuracyGivenThreshold(data, each) 
+            rocMetricHolder.push(metric)  
+        }); 
+ 
+
+        let bestMetric = _.maxBy(rocMetricHolder, "acc") 
     }
 
 
@@ -507,7 +534,7 @@ class Viz extends Component {
                                             adv={"track" + this.state.showDrawData}
                                         />
 
-                                        <div className="smalldesc lhmedium p5 "> Example of a two layer autoencoder. Click the <span className="italics">train a model</span> tab to train one from scratch.</div>
+                                        <div className="mediumdesc lhmedium p5 "> Example of a two layer autoencoder. Click the <span className="italics">train a model</span> tab to train one from scratch.</div>
                                     </div>}
 
 
@@ -615,7 +642,7 @@ class Viz extends Component {
 
                         </div>
 
-                        <div className="sectiontitle mt10 mb5"> Model Implementation and Traininig </div>
+                        <div className="sectiontitle mt10 mb5"> Model Implementation and Training </div>
                         <div className="">
                             <div className="flex flexwrap">
                                 <div className="flex40 flexwrapitem lh10 mb10 ">
@@ -640,45 +667,52 @@ class Viz extends Component {
                               
                             </div>
 
-                                <div className="  p10 flexwrapitem  floatright">
+                                <div className="  pl10 flexwrapitem  floatright">
 
                                     <div className="flex"> 
 
-                                        <div className="iblock thresholdbox flex flexjustifycenter mr5 pl10 pr10 pt5 pb5">
+                                        {/* <div className="iblock thresholdbox flex flexjustifycenter mr5 pl10 pr10 pt5 pb5">
                                             <div>
                                             <div style={{fontSize:"18px"}} className="mediumdesc textaligncenter boldtext thresholdtext">{this.state.trainVizEpoch}</div>
                                             <div className="smalldesc textaligncenter mt5">Epoch</div>
                                             </div>
-                                        </div>
+                                        </div> */}
 
                                         <div className="flexfull">
-                                        <Slider
-                                        className=" border"
-                                        min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
-                                        max={49}//{(this.state.maxThreshold.toFixed(4) * 1)}
-                                        step={1}
-                                        minLabel={""}
-                                        maxLabel={""}
-                                        value={this.state.trainVizEpoch}
-                                        stepMuliplier={10}
-                                        // disabled={this.state.isTraining ? true : false}
-                                        labelText={"Move slider to view mse histogram at each epoch. "}
-                                        hideTextInput={true}
-                                        onChange={this.updateTrainVizEpoch.bind(this)}
-                                    />
-                                    </div>
+                                            <Slider
+                                            className=" border"
+                                            min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
+                                            max={49}//{(this.state.maxThreshold.toFixed(4) * 1)}
+                                            step={1}
+                                            minLabel={""}
+                                            maxLabel={""}
+                                            value={this.state.trainVizEpoch}
+                                            stepMuliplier={10}
+                                            // disabled={this.state.isTraining ? true : false}
+                                            labelText={"Move slider to view mse histogram at each epoch. "}
+                                            hideTextInput={true}
+                                            onChange={this.updateTrainVizEpoch.bind(this)}
+                                        />
+                                        </div>
 
                                     </div>
+                                    
+                                   
                                     
                                      <HistogramChart
                                             data={{
                                                 data: this.trainMse["mse"][this.state.trainVizEpoch],
-                                                chartWidth: 350,
-                                                chartHeight: 240,
+                                                chartWidth: 380,
+                                                chartHeight: 260,
                                                 epoch: 2 + this.state.showBeforeTrainingHistogram,
                                                 threshold: this.trainMse["threshold"][this.state.trainVizEpoch]
                                             }}
-                                        ></HistogramChart>
+                                    ></HistogramChart>
+                                    
+                                    <div className="mediumdesc lhmedium" style={{ width: "350px" }}>
+                                        <span className="boldtext">Epoch {this.state.trainVizEpoch}</span>
+                                        <span ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
+                                    </div>
 
                                     {/* <div className="">
 
@@ -705,8 +739,8 @@ class Viz extends Component {
                                     ECG test, <a target="_blank" rel="noopener noreferrer" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3319226/">less than 23 are likely</a> to have 
                                     some type of abnormal reading. This sort of data imbalance introduces issues that make accuracy 
                                     an inssufficient metric. Consider a naive model (actually a really bad model) 
-                                    that simply flagged every sample as normal, given our ECG scenario above, it would would have an accuracy <strong>77%</strong> despite being a really unskilled model. 
-                                    Clearly, using just the accuracy metric does not 
+                                    that simply flagged every sample as normal. Given our ECG scenario above, it would have an accuracy of <strong>77%</strong> despite being a really unskilled model. 
+                                    Clearly, accuracy alone does not 
                                     tell the complete story i.e. how often does the model flag an ECG as abnormal when it is indeed
                                      abnormal (<strong>true positive</strong>), abnormal when it is normal (<strong>false positive</strong>)
                                     normal when it is abnormal (<strong>false negative</strong>) and normal when it is indeed normal (<strong>true negative</strong>). 
@@ -716,8 +750,10 @@ class Viz extends Component {
                                 
                                     <br/>
                                     
-                                    Depending on the use case, it may be desirable to optimize a model's performance for high precision or high recall. This can be 
-                                    manipulated by the selection of a threshold. The receiver operating characteristics (ROC) curve provides a visual assessment of a model's skill
+                                    Depending on the use case, it may be desirable to optimize a model's performance for high precision or high recall. 
+                                    This tradeoff between precision and recall can be 
+                                    adjusted by the selection of a threshold (e.g. a low enough threshold will yield excellent recall but reduced precision). 
+                                    The receiver operating characteristics (ROC) curve provides a visual assessment of a model's skill
                                     and achieved by plotting the true positive rate against the false positive rate at various values of the threshold.
                                     {/* In addition to the fact that anomalies can vary widely and evolve with time, this data imbalance problem 
                                     makes it hard to treat anomaly detection as a classification problem */}
