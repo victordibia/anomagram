@@ -369,7 +369,9 @@ class Viz extends Component {
 
                     </div>
                 )
-            }
+            } else {
+                return( <div className="displaynone" key={"nosshow" + index}></div> )
+                }
         });
 
         let datasetExamples = (
@@ -545,7 +547,16 @@ class Viz extends Component {
                         <div className="">
                             <div className="flex">
                                 <div className="flex20  lh10 mb10 ">
-                                    {this.state.showAutoEncoderViz && <div className="pt10 pl10 floatright autoencodervizbox  flex6"  >
+                                    <div className="sectiontitle mt10 mb5"> How does the Autoencoder work? </div>
+                                    
+                                    {this.state.showAutoEncoderViz &&
+                                        
+                                        <div className=" pl10 floatright autoencodervizbox  "  >
+                                        
+                                        <div className="vizcaption w350 mediumdesc lhmedium pb5">
+                                        Example below shows the architecture of a two layer autoencoder with 7 and 3 units respectively.
+                                        Click the <span className="italics">train a model</span> tab to build and train one from scratch.
+                                        </div>
 
                                         <ComposeModel
                                             hiddenDims={this.hiddenDim}
@@ -556,11 +567,11 @@ class Viz extends Component {
                                             adv={"track" + this.state.showDrawData}
                                         />
 
-                                        <div className="mediumdesc lhmedium p5 "> Example of a two layer autoencoder. Click the <span className="italics">train a model</span> tab to train one from scratch.</div>
+                                       
                                     </div>}
 
 
-                                    <div className="sectiontitle mt10 mb5"> How does the Autoencoder work? </div>
+                                   
 
                                     An <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">Autoencoder</a> is a type of
                                     artificial neural network used to learn efficient (low dimensional) data representations in an unsupervised manner.
@@ -621,17 +632,17 @@ class Viz extends Component {
                                     <br />
                                     <strong className="greycolor"> Note:</strong> 
                                     The parameters of the scaling transform should be <a href=" https://sebastianraschka.com/faq/docs/scale-training-test.html" target="_blank" rel="noopener noreferrer"> computed only on train data</a> and 
-                                    and then <span className="italics"> applied </span> to test data. 
+                                     then <span className="italics"> applied </span> to test data. 
                                     
 
                             </div>
                                 <div className=" flex20 flexwrapitem ">
-                                    
-                                    <div className="flexfull lh10 p10 overflowhidden  greyborder">
-                                     
-                                        <div className="mediumdesc pb5">
-                                            Example data <span className="italics">{this.state.isDataTransormed ? "after " : "before"}</span> minmax (0,1) scaling transformation.
+                                   <div className="vizcaption  mediumdesc pb5">
+                                            Example below shows sample ECG data <span className="italics">{this.state.isDataTransormed ? "after " : "before"}</span> minmax (0,1) scaling transformation.
                                         </div>
+                                    <div className="flexfull  lh10 p10 overflowhidden  greyborder">
+                                     
+                                        
                                     {this.state.isDataTransormed ?  this.sampleTestData + " ...": this.sampleTransformedTestData + " ..." }
                                 
                                         <div className = "mt5 mr10">
@@ -792,7 +803,7 @@ class Viz extends Component {
                                 Model Evaluation Metrics
                             </div> */}
                                         <div className="mediumdesc lhmedium pb10">
-                                            Example below illustrates performance of a trained autoencoder model. 
+                                            Example below the performance of a trained autoencoder model. 
                                             Move the slider to see how threshold choices impact precision recall metrics. 
                                             
                                         </div>
@@ -909,13 +920,16 @@ class Viz extends Component {
                                     <div className="pb5 boldtext"> Abnormal Percentage </div>
                                     We may not always have labelled normal data to train a model.
                                     However, given the rarity of anomalies (and domain expertise), we can assume that unlabelled data is mostly  
-                                    comprised of normal samples. As the percentage of anomalies in training data changes, how are performance metrics affected?
+                                    comprised of normal samples. Does model performance degrade with an changes in the percentage of abnormal samples in the dataset? 
+                                    
 
-                                    The interactive panel allows you to include abnormal samples as a percentage of the total number of 
-                                    datapoints used to train the autoencoder model. We see that with 0% abnormal data, the model AUC is ~96%.
-                                   At 30%, AUC drops to ~93%. At 50% abnormal datapoints, there is just not enough information in the data 
-                                   that allows the model learn a pattern of normal behaviour and its performance is only slightly above random chance (AUC of 56%).
-
+                                    The <span className="italics"> train a model</span>  section, you can specify the percentage of abnormal samples  to include when 
+                                    training the autoencoder model. We see that with <strong>0%</strong> abnormal data, the model AUC is <strong>~96%</strong>.
+                                   At <strong>30%</strong> abnormal sample composition, AUC drops to <strong>~93%</strong>. 
+                                    At 50% abnormal datapoints, there is just not enough information in the data 
+                                    that allows the model learn a pattern of normal behaviour. It essentially learns to reconstruct normal and abnormal data well and mse is no longer a good measure of anomaly.
+                                    At this point, model performance is only slightly above random chance (AUC of 56%).
+ 
                                 </div>
                             </div>
                         </div>
