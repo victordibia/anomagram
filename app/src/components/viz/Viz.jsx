@@ -82,7 +82,7 @@ class Viz extends Component {
 
         this.mseExplanations = {}
         this.mseExplanations["0"] = "Model is untrained, both normal and abnormal data have similar, overlapping distributions."
-        this.mseExplanations["5"] = "Model is getting better at reconstructing normal data. Normal data now has a smaller range."
+        this.mseExplanations["5"] = "Model is getting better at reconstructing normal data. The distribution of normal data is concentrated within a lower range ."
         this.mseExplanations["25"] = "Both distributions are now separate. We can set a clear threshold that separates normal from abnormal data."
         
     }
@@ -250,7 +250,11 @@ class Viz extends Component {
             let bestMetric = computeAccuracyGivenThreshold(this.trainMse["mse"][49] , threshVal)
              
         this.setState({ bestMetric: bestMetric }) 
-        this.setState({vizThresold:threshVal})
+        this.setState({ vizThresold: threshVal })
+        
+        if (this.state.trainVizEpoch !== 49) {
+            this.setState({trainVizEpoch:49})
+        }
 
     }
 
@@ -335,7 +339,8 @@ class Viz extends Component {
             )
         });
 
-        let dataPoints = this.testData.slice(0, this.maxSmallChart).map((data, index) => {
+        let dataPoints = this.testData.slice(0, this.maxSmallChart)
+            .map((data, index) => {
             // console.log(this.testData[index].target);
             if (this.testData[index].target + "" !== "3") {
                 let isVisible = (this.state.selectedLegend === this.chartColorMap[this.testData[index].target].name) || this.state.selectedLegend === "All"
@@ -430,7 +435,7 @@ class Viz extends Component {
                                     </div>
                                     </div>
                                 }
-                                {this.state.predictedMse == 0 &&
+                                {this.state.predictedMse === 0 &&
                                 <div className="mr10  ">
                                         <div className=" boldtext ">
                                         MODEL PREDICTION 
@@ -565,7 +570,7 @@ class Viz extends Component {
                                     low dimension representation.
                                     The training objective for the autoencoder model is to minimize the difference the reconstruction
                                     error - the difference between the input data and the reconstructed output.
-                                    While autoencoder models have been widely applied for dimensionality reduction, they can also be used for anomaly detection.
+                                    While autoencoder models have been widely applied for dimensionality reduction (similar to techniques such as PCA), they can also be used for anomaly detection.
                                     If we train the model on normal data (or data with very few abnormal samples), it learns a reconstruction function that works 
                                     well for <span className="italics"> normal looking data  </span>(low reconstruction error)
                                     and works poorly for abnormal data (high reconstruction error).
@@ -714,7 +719,10 @@ class Viz extends Component {
 
                                     </div>
                                     
-                                   
+                                    <div className="mediumdesc mt10 mb10 lhmedium" style={{ width: "350px" }}>
+                                        <span className="boldtext">Epoch {this.state.trainVizEpoch}</span>
+                                        <span ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
+                                    </div>
                                     
                                      <HistogramChart
                                             data={{
@@ -726,10 +734,7 @@ class Viz extends Component {
                                             }}
                                     ></HistogramChart>
                                     
-                                    <div className="mediumdesc lhmedium" style={{ width: "350px" }}>
-                                        <span className="boldtext">Epoch {this.state.trainVizEpoch}</span>
-                                        <span ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
-                                    </div>
+                                   
 
                                     {/* <div className="">
 
@@ -770,24 +775,31 @@ class Viz extends Component {
                                     Depending on the use case, it may be desirable to optimize a model's performance for high precision or high recall. 
                                     This tradeoff between precision and recall can be 
                                     adjusted by the selection of a threshold (e.g. a low enough threshold will yield excellent recall but reduced precision). 
-                                    The receiver operating characteristics (ROC) curve provides a visual assessment of a model's skill
+                                    The receiver operating characteristics (ROC) curve provides a visual assessment of a model's skill (area under the curve - AUC)
                                     and achieved by plotting the true positive rate against the false positive rate at various values of the threshold.
                                     {/* In addition to the fact that anomalies can vary widely and evolve with time, this data imbalance problem 
                                     makes it hard to treat anomaly detection as a classification problem */}
 
                             </div>
 
-                                <div  className=" border p10 flex20 flexwrapitem" >
+                                <div className=" p10 flex20 flexwrapitem" >
+                                    
+
+                                    
+
                                 <div className={"iblock perfmetrics w100 " + (this.state.isTraining ? " disabled " : " ")}>
                             {/* <div className="charttitle mb5 ">
                                 Model Evaluation Metrics
                             </div> */}
                                         <div className="mediumdesc lhmedium pb10">
                                             Example below illustrates performance of a trained autoencoder model. 
-                                            Move the slider to see how threshold choices can be used to 
-                                            reflect precision recall preferences. 
+                                            Move the slider to see how threshold choices impact precision recall metrics. 
                                             
                                         </div>
+                                        
+
+                                        
+
                             <div className="mb5 greyhighlight p10 touchnoscroll">
                                 <Slider
                                     className="w100 border"
@@ -807,7 +819,7 @@ class Viz extends Component {
                             <div className="flex">
                                 <div style={{ borderLeftColor: percentToRGB((this.state.bestMetric.acc * 100)) }} className="metricguage mb5  greyhighlight accuracybox  textaligncenter mr5 flex5" >
                                     <div className="metricvalue textaligncenter  rad4"> {(this.state.bestMetric.acc * 100).toFixed(2)}  %</div>
-                                    <div className="metricdesc mediumdesc p5"> Best Accuracy </div>
+                                    <div className="metricdesc mediumdesc p5"> Accuracy </div>
                                 </div>
                                  
 
@@ -852,9 +864,9 @@ class Viz extends Component {
                         </div>
 
                         <div className="sectiontitle mt10 mb10"> Insights on the Effect of Model Parameters </div>
-                        <div className="mb10">
+                        <div className="mb10 lh10">
                         Some interesting insights that can be observed while modifying the training parameters for the model 
-                        are highlighted below.
+                        are highlighted below. You can explore them via the <span className="italics"> train a model</span> interactive tab.
                         </div>
                         <div className="flex flexwrap">
 
@@ -872,13 +884,14 @@ class Viz extends Component {
 
                             <div className="flex20 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
-                                    <div className="pb5 boldtext"> Regularization </div>
-                                    Neural networks can approximate complex functions. They are also likely overfit in the presence of limited data.
+                                    <div className="pb5 boldtext"> Regularization, Optimizer, Batch Size </div>
+                                    Neural networks can approximate complex functions. They are also likely overfit, given limited data.
                                     In this prototype, we have relatively few samples (2500 normal samples), and we can observe 
-                                    signs of overfitting (train loss less than validation loss). 
+                                    signs of overfitting (train loss is less than validation loss). 
                                     Regularization (l1 and l2) can be an effective way to address this.
-                                    In the interactive panel, you can apply activation regularization (regularization rate is set to learning rate) and observe its impact!
-
+                                    In addition, the choice of learning rate and optimizer can affect the speed and effectiveness (time to peak performance) of training.
+                                    In the <span className="italics"> train a model</span> interactive section, you can apply activation regularization - l1, l2 and l1l2 (regularization rate is set to learning rate) and observe its impact!
+                                    You can also try out 6 different optimizers (Adam, Adamax, Adadelta, Rmsprop,Momentum, Sgd), with various learning rates.
                                 </div>
 
 
@@ -894,10 +907,15 @@ class Viz extends Component {
                             <div className="flex20 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
                                     <div className="pb5 boldtext"> Abnormal Percentage </div>
-                                     The interactive panel allows you to include abnormal samples as a percentage of the total number of 
-                                   datapoints used to train the autoencoder model. We see that with 0% abnormal data the model AUC is ~96%.
-                                    At 30%, AUC drops to ~93%. At 50% abnormal datapoints, there is just not enough information in the data 
-                                    that allows the model learn a patter or normal and its performance is slightly above random chance (AUC of 56%).
+                                    We may not always have labelled normal data to train a model.
+                                    However, given the rarity of anomalies (and domain expertise), we can assume that unlabelled data is mostly  
+                                    comprised of normal samples. As the percentage of anomalies in training data changes, how are performance metrics affected?
+
+                                    The interactive panel allows you to include abnormal samples as a percentage of the total number of 
+                                    datapoints used to train the autoencoder model. We see that with 0% abnormal data, the model AUC is ~96%.
+                                   At 30%, AUC drops to ~93%. At 50% abnormal datapoints, there is just not enough information in the data 
+                                   that allows the model learn a pattern of normal behaviour and its performance is only slightly above random chance (AUC of 56%).
+
                                 </div>
                             </div>
                         </div>
@@ -908,10 +926,16 @@ class Viz extends Component {
                             <div className="flex">
                                 <div className="flexfull lh10 mb10 pr10">
                                     In this prototype, we have considered the task of detecting anomalies in ECG data.
-                                    We used an autoencoder the results look good. The autoencoder does a decent job of learning a model of 
-                                    normal data (in the presence of some abnormal points) However, it is important to note that a deep learning model
-                                    is not always the best tool for the job. Particularly, for univariate data,
-                                     models such as KMeans Clustering, PCA etc 
+                                    We used an autoencoder and demonstrate some fairly good results with minimal tuning. 
+                                    We have also explored how and why it works. This and other 
+                                    neural approaches (Sequence to Sequence Models, Variational Autoencoders, BiGANs etc) can be particularly 
+                                    effective for anomaly detection with multivariate or high dimensional datasets 
+                                    such as images (think convolutional layers instead of dense layers).
+                                    <br />
+                                    <strong className="greycolor"> Note</strong>: A deep learning model
+                                    is not always the best tool for the job. Particularly, for univariate data, autoregressive linear models 
+                                    (linear regression, VAR, ARIMA family of models for time series) can be very effective. 
+                                    
                             </div>
 
                                 {/* <div className="border rad4 p10 flex4" style={{ height: "200px" }}>
