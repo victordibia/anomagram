@@ -330,9 +330,27 @@ class DrawSignal extends Component {
         return (
             // <div style={{ width: this.chartWidth + 25 }} className="mt2 border p10">
             <div className=" w100 " >
-                <div className="pb10  mediumdesc">
-                    Click and drag to draw a signal. Please draw within the box.
+
+                <div className="mb10">
+                    <div className="pb10  mediumdesc">
+                        Click and drag to draw a signal. Please draw within the box.
                         </div>
+
+                    <div className="iblock mr5">
+                        <Button
+                            size={"small"}
+                            renderIcon={null}
+                            onClick={this.clearDrawing.bind(this)}
+                        > Clear Drawing </Button>
+                    </div >
+                    {/* <div className="iblock">
+                            <Button
+                                size={"field"}
+                                renderIcon={null}
+                                onClick={this.drawSample.bind(this)}
+                            > Draw Sample </Button>
+                        </div> */}
+                </div>
                 <div>
                     <div className=" w100 flex">
                         <div className=" axisbox mr5 iblock">
@@ -354,23 +372,7 @@ class DrawSignal extends Component {
 
                     <div className="horizontalaxis"></div>
 
-                    <div className="pt10">
 
-                        <div className="iblock mr5">
-                            <Button
-                                size={"small"}
-                                renderIcon={null}
-                                onClick={this.clearDrawing.bind(this)}
-                            > Clear Drawing </Button>
-                        </div >
-                        {/* <div className="iblock">
-                            <Button
-                                size={"field"}
-                                renderIcon={null}
-                                onClick={this.drawSample.bind(this)}
-                            > Draw Sample </Button>
-                        </div> */}
-                    </div>
                 </div>
             </div>
         )

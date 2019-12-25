@@ -40,7 +40,7 @@ class Train extends Component {
         // Model update method passed to model composer component
         this.updateModelDims = this.updateModelDims.bind(this)
 
-        this.stepOptions = [{ id: "opt1", text: "50", value: 50, type: "steps" }, { id: "opt2", text: "100", value: 100, type: "steps" }]
+        this.stepOptions = [{ id: "opt4", text: "30", value: 30, type: "steps" },{ id: "opt1", text: "50", value: 50, type: "steps" }, { id: "opt2", text: "100", value: 100, type: "steps" }]
         this.regularizerOptions = [{ id: "opt1", text: "None", value: "none", type: "regularizer" }, { id: "opt1", text: "l1", value: "l1", type: "regularizer" }, { id: "opt2", text: "l2", value: "l2", type: "regularizer" }, { id: "opt2", text: "l1l2", value: "l1l2", type: "regularizer" }]
         this.batchSizeOptions = [{ id: "opt1", text: "64", value: 64, type: "batchsize" }, { id: "opt2", text: "128", value: 128, type: "batchsize" }, { id: "opt3", text: "256", value: 256, type: "batchsize" }, { id: "opt3", text: "512", value: 512, type: "batchsize" }, { id: "opt3", text: "1024", value: 1024, type: "batchsize" }]
         this.learningRateOptions = [{ id: "opt1", text: "0.01", value: 0.01, type: "learningrate" }, { id: "opt2", text: "0.001", value: 0.001, type: "learningrate" }, { id: "opt3", text: "0.0001", value: 0.0001, type: "learningrate" },{ id: "opt5", text: "0.1", value: 0.1, type: "learningrate" },{ id: "opt6", text: "1", value: 1, type: "learningrate" },{ id: "opt7", text: "10", value: 10, type: "learningrate" }]
@@ -169,8 +169,7 @@ class Train extends Component {
 
         this.trainUnmounted = false
 
-        this.trainTempa = []
-        this.threshTempa = []
+       
     }
 
     componentDidMount() {
@@ -352,7 +351,7 @@ class Train extends Component {
                 this.setState({ currentEpoch: this.currentSteps })
                 this.trainModel()
             } else {
-                console.log(this.trainTempa, this.threshTempa);
+                 
                 
                 this.currentSteps = 0
                 this.setState({ isTraining: false })
@@ -419,7 +418,7 @@ class Train extends Component {
         this.setState({ minThreshold: _.min(uniqueMse) })
         this.setState({ maxThreshold: _.max(uniqueMse) })
 
-        this.threshTempa.push(bestMetric["threshold"])
+        
     }
 
 
@@ -448,8 +447,7 @@ class Train extends Component {
             });
             self.setState({ mseData: mseDataHolder })
 
-            // console.log(mseDataHolder);
-            this.trainTempa.push(mseDataHolder)
+            // console.log(mseDataHolder); 
 
         });
 

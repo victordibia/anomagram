@@ -42,7 +42,7 @@ class Viz extends Component {
             drawSectionHeight: this.modelChartHeight - 30,
             isLoading: false,
             modelLoaded: false,
-            threshold: 0.010,
+            threshold: 0.0075,
             predictedData: this.zeroArr,
             predictedMse: 0,
             selectedLegend: "All",
@@ -293,15 +293,13 @@ class Viz extends Component {
     }
     setDatasetDraw(e) {
         this.setState({ showDrawData: true })
-        // this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth })
-        // console.log(this.refs["datasection"].offsetWidth);
-
+        this.setState({ drawSectionWidth: Math.max(this.refs["datasetexamplebox"].offsetWidth , 350)})
+        // console.log(this.refs["datasetexamplebox"].offsetWidth); 
     }
     setDatasetECG(e) {
         this.setState({ showDrawData: false })
 
-        this.setSelectedData(0, this.testData[0].data)
-
+        this.setSelectedData(0, this.testData[0].data) 
     }
 
     clickLegend(e) {
@@ -500,8 +498,7 @@ class Viz extends Component {
                 <div className="mb10 lowerbar">
                     <div onClick={this.setDatasetECG.bind(this)} className={"datasettab clickable iblock mr5 " + (this.state.showDrawData ? "" : " active")}> ECG5000 Dataset</div>
                     <div onClick={this.setDatasetDraw.bind(this)} className={"datasettab clickable iblock mr10 " + (this.state.showDrawData ? " active" : " ")}> Draw your ECG data</div>
-
-
+ 
                 </div>
 
                 <div className="flex flexwrap ">
@@ -900,7 +897,8 @@ class Viz extends Component {
                                     In this prototype, we have relatively few samples (2500 normal samples), and we can observe 
                                     signs of overfitting (train loss is less than validation loss). 
                                     Regularization (l1 and l2) can be an effective way to address this.
-                                    In addition, the choice of learning rate and optimizer can affect the speed and effectiveness (time to peak performance) of training.
+                                    In addition, the choice of learning rate and optimizer can affect the speed and effectiveness 
+                                    (time to peak performance) of training. For example using Adam reaches peak accuracy within fewer epochs compared to optimizers like rmsprop and good old sgd.
                                     In the <span className="italics"> train a model</span> interactive section, you can apply activation regularization - l1, l2 and l1l2 (regularization rate is set to learning rate) and observe its impact!
                                     You can also try out 6 different optimizers (Adam, Adamax, Adadelta, Rmsprop,Momentum, Sgd), with various learning rates.
                                 </div>
