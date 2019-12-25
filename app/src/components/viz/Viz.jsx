@@ -681,7 +681,7 @@ class Viz extends Component {
                                     using dense layers, relu activation function, and the Adam optimizer (lr = 0.01) is used for training.  
                                       
                                   <div className=" mt10 mb10 lh10  lightbluehightlight maxh16  mb10">
-                                        Full Tensorflow.js code for the autoencoder can be found <a href="https://github.com/victordibia/anomagram/blob/master/app/src/components/train/models/ae.jsx" target="_blank" rel="noopener noreferrer"> Github </a>. 
+                                        Code for the autoencoder can be found <a href="https://github.com/victordibia/anomagram/blob/master/app/src/components/train/models/ae.jsx" target="_blank" rel="noopener noreferrer">Github</a>. 
                                   </div>
                                       As training progresses, the model's weights are updated to minimize the difference between the encoder input 
                                       and decoder output for the training data (normal samples).  

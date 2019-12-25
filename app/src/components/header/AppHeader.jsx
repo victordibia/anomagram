@@ -31,35 +31,38 @@ class AppHeader extends Component {
         return (
             <div>
                 <Header aria-label={this.appDescription}>
-                    <SkipToContent />
-                    <HeaderName prefix="">
-                        {/* <div className="decornone "><NavLink exact to="/"> </NavLink></div> */}
-                        <img className="headericon" src="images/icon.png" alt="" />
-                        {this.appName}
-                    </HeaderName>
-                    <HeaderNavigation aria-label={this.appDescription}>
-                        {/* <HeaderMenuItem element={Link} to="/" className="navbarlink "> Datasets </HeaderMenuItem>
-                        <HeaderMenuItem element={Link} to="/" className="navbarlink "> Datasets </HeaderMenuItem> */}
-                        {/* <HeaderMenuItem  element={Link} to="/models" className="navbarlink "> Models</HeaderMenuItem> */}
-                        <div role="menuitem" tabIndex={0} className="navbarlinks  "><NavLink exact to="/"> Introduction </NavLink></div>
-                        <div role="menuitem" className="navbarlinks "><NavLink to="/train"> Train a Model </NavLink></div>
-                        {/* <div className="navbarlinks "><NavLink to="/faq"> FAQ </NavLink></div> */}
-                        {/* <div className="navbarlinks "><NavLink to="/algebra"> Image Algebra </NavLink></div> */}
-                        {/* <div className="navbarlinks "><NavLink to="/energy"> Energy Explorer </NavLink></div> */}
-                    </HeaderNavigation>
-                    <HeaderGlobalBar>
-                        {/* <HeaderGlobalAction aria-label="Notifications">
-                    <Notification20 />
-                </HeaderGlobalAction>
-                */}
-                        {/* <HeaderGlobalAction aria-label="User Avatar">
-                    <UserAvatar20 />
-                </HeaderGlobalAction> */}
-                        <HeaderGlobalAction aria-label="App Switcher">
-                            <AppSwitcher20 />
-                        </HeaderGlobalAction>
-                    </HeaderGlobalBar>
+
+                    <div className="container-fluid w100 headerrow pl10 ">
+
+                        <div className="flex    h100">
+                            <div className="h100   flex flexjustifycenter  ">
+                                <img className="headericon" src="images/icon.png" alt="" />
+                            </div>
+                            <div className="h100   flex flexjustifycenter  mr10">
+                                <div className="whitetext boldtext  iblock mr10">  {this.appName} </div>
+                            </div>
+                            <div className="h100   flex flexjustifycenter  navbarlinks ">
+                                <NavLink exact to="/"> Introduction </NavLink>
+                            </div>
+                            <div className="h100   flex flexjustifycenter  navbarlinks mr10">
+                                <NavLink exact to="/train"> Train a Model </NavLink>
+                            </div>
+                        </div>
+
+                        {/* 
+                        <div className="iblock " prefix="">
+                            <div className="whitetext   iblock mr10">  {this.appName} </div>
+                        </div>
+
+                        <div className="h100 border  iblock aligntextcenter headericonbox  mr10">
+                            <div tabIndex={0} className="navbarlinks "><NavLink exact to="/"> Introduction </NavLink></div>
+                        </div> */}
+
+
+
+                    </div>
                 </Header>
+                <div></div>
                 <div className="headerboost">  </div>
             </div>
 
