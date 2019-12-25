@@ -1,12 +1,6 @@
-// Craft an autoencoder
-
-// const tf = require('@tensorflow/tfjs');
-// Craft an autoencoder
+// Craft an autoencoder 
 
 const tf = require('@tensorflow/tfjs');
-// const _ = require('lodash');
-
-
 
 export function buildModel(params) {
 
@@ -16,7 +10,7 @@ export function buildModel(params) {
     const outputActivation = params.outputActivation
     const regularizationRate = params.regularizationRate
     let layerRegularizer = null
-    // const
+
     if (params.regularizer === "l1") {
         layerRegularizer = tf.regularizers.l1({ l1: regularizationRate })
 
@@ -29,12 +23,6 @@ export function buildModel(params) {
 
 
     // Specify encoder 
-    // const input = tf.input({ shape: [numFeatures] })
-    // let encoderHidden = tf.layers.dense({ units: 15, activation: "relu" }).apply(input);
-    // encoderHidden = tf.layers.dense({ units: 7, activation: "relu" }).apply(encoderHidden);
-    // const z_ = tf.layers.dense({ units: latentDim }).apply(encoderHidden);
-    // const encoder = tf.model({ inputs: input, outputs: z_, name: "encoder" })
-
     const input = tf.input({ shape: [numFeatures] })
     let encoderHidden = tf.layers.dense({ units: hiddenDim[0], activation: "relu", kernelRegularizer: layerRegularizer }).apply(input);
     let i = 1
@@ -46,7 +34,7 @@ export function buildModel(params) {
     const encoder = tf.model({ inputs: input, outputs: z_, name: "encoder" })
 
 
-
+    // Specify decoder 
     const latentInput = tf.input({ shape: [latentDim] })
     let decoderHidden = tf.layers.dense({ units: hiddenDim[hiddenDim.length - 1], activation: "relu", kernelRegularizer: layerRegularizer }).apply(latentInput);
     let j = hiddenDim.length - 1
@@ -55,17 +43,16 @@ export function buildModel(params) {
         decoderHidden = tf.layers.dense({ units: hiddenDim[j], activation: "relu", kernelRegularizer: layerRegularizer }).apply(decoderHidden);
 
     }
-
     const decoderOutput = tf.layers.dense({ units: numFeatures, activation: outputActivation }).apply(decoderHidden);
     const decoder = tf.model({ inputs: latentInput, outputs: decoderOutput, name: "decoder" })
 
-    // link output of ender to decoder 
+    // link output of encoder to decoder 
     let output = decoder.apply(encoder.apply(input))
 
     // Construct AE with both encoder and decoder
     const ae = tf.model({ inputs: input, outputs: output, name: "autoencoder" })
 
-
+    // Compile with optimizer .. and we are done!
     ae.compile({ optimizer: params.optimizer, loss: "meanSquaredError" })
     return ae
 }

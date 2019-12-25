@@ -677,8 +677,12 @@ class Viz extends Component {
                             <div className="flex flexwrap">
                                 <div className="flex40 flexwrapitem lh10 mb10 ">
                                   The autoencoder in this prototype (visualized above) has two layers in its encoder and decoder respectively.
-                                  It is implemented using the Tensorflow.js layers api (similar to the keras api). The encoder/decoder are specified 
-                                  using dense layers, relu activation function, and the Adam optimizer (lr = 0.01) is used for training.  
+                                  It is implemented using the <a href="https://www.tensorflow.org/js/guide/layers_for_keras_users" target="_blank" rel="noopener noreferrer">Tensorflow.js layers api </a> (similar to the keras api). The encoder/decoder are specified 
+                                    using dense layers, relu activation function, and the Adam optimizer (lr = 0.01) is used for training.  
+                                      
+                                  <div className=" mt10 mb10 lh10  lightbluehightlight maxh16  mb10">
+                                        Full Tensorflow.js code for the autoencoder can be found <a href="https://github.com/victordibia/anomagram/blob/master/app/src/components/train/models/ae.jsx" target="_blank" rel="noopener noreferrer"> Github </a>. 
+                                  </div>
                                       As training progresses, the model's weights are updated to minimize the difference between the encoder input 
                                       and decoder output for the training data (normal samples).  
                                     <br/>
