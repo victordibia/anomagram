@@ -691,3 +691,9 @@
   .touchnoscroll{
     touch-action: none;
   }
+
+  .container-fluid{
+      max-width: 1220px; 
+      margin: auto;
+  }
+ 

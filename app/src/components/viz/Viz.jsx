@@ -82,7 +82,7 @@ class Viz extends Component {
 
         this.mseExplanations = {}
         this.mseExplanations["0"] = "Model is untrained, both normal and abnormal data have similar, overlapping distributions."
-        this.mseExplanations["5"] = "Model is getting better at reconstructing normal data. The distribution of normal data is concentrated within a lower range ."
+        this.mseExplanations["5"] = "Model is getting better at reconstructing normal data resulting in smaller MSE for normal data points."
         this.mseExplanations["25"] = "Both distributions are now separate. We can set a clear threshold that separates normal from abnormal data."
         
     }
@@ -634,7 +634,7 @@ class Viz extends Component {
 
                             </div>
                                 <div className=" flex20 flexwrapitem ">
-                                   <div className="vizcaption  mediumdesc pb5">
+                                   <div className="vizcaption lhmedium pt10  mediumdesc pb10">
                                             Example below shows sample ECG data <span className="italics">{this.state.isDataTransormed ? "after " : "before"}</span> minmax (0,1) scaling transformation.
                                         </div>
                                     <div className="flexfull  lh10 p10 overflowhidden  greyborder">
@@ -709,6 +709,15 @@ class Viz extends Component {
                                         </div> */}
 
                                         <div className="flexfull">
+                                        {/* <div className="w380 vizcaption pt10 lhmedium  mediumdesc pb5">
+                                              Chart below shows the distribution of MSE on test data during training.
+                                             
+                                            </div> */}
+                                        <div className="mediumdesc w380 mb10 lhmedium" >
+                                            <span className="boldtext">Epoch {this.state.trainVizEpoch}</span>
+                                            <span ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
+                                        </div>
+                                          
                                             <Slider
                                             className=" border"
                                             min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
@@ -727,16 +736,13 @@ class Viz extends Component {
 
                                     </div>
                                     
-                                    <div className="mediumdesc mt10 mb10 lhmedium" style={{ width: "350px" }}>
-                                        <span className="boldtext">Epoch {this.state.trainVizEpoch}</span>
-                                        <span ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
-                                    </div>
+                                    
                                     
                                      <HistogramChart
                                             data={{
                                                 data: this.trainMse["mse"][this.state.trainVizEpoch],
                                                 chartWidth: 380,
-                                                chartHeight: 260,
+                                                chartHeight: 240,
                                                 epoch: 2 + this.state.showBeforeTrainingHistogram,
                                                 threshold: this.state.vizThresold
                                             }}

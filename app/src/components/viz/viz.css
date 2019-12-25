@@ -129,5 +129,13 @@ black
 }
 
 .w350{
-    width: 350px;
+    max-width: 350px;
+}
+
+.w380{
+    max-width: 380px;
+}
+
+.w400{
+    max-width: 400px;
 }
