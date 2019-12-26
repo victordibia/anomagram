@@ -1,6 +1,6 @@
 ## Anomagram - React Web Application UI
 
-<img src="public/images/preview2.png">
+<img src="public/images/preview3.png">
 
 This folder contains the main React.js code for the Anomagram web application demonstration.
 It is bootstrapped using create-react-app library. Begin by running `npm install` to install dependencies.

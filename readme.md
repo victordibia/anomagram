@@ -24,6 +24,8 @@ In particular, if we visualize a histrogram of reconstruction errors generated b
 Note: We may not always have labelled data, but we can can assume (given the rare nature of anomalies) that the majority of data points for most anomaly detection use cases are normal. See the section below that discusses the impact of data composition (% of abnormal data) on model performance.
 Click the Train a Model tab to interactively build an autoencoder, train and evaluate its performance and visualize the histogram of errors for normal and abnormal test data.
 
+<img src="app/public/images/preview3.png">
+
 ## Dataset
 
 This prototype uses the ECG5000 dataset which contains 5000 examples of ECG signals from a patient. Each sample (which has been sliced into 140 points corresponding to an extracted heartbeat) has been labelled as normal or being indicative of heart conditions related to congestive heart failure - .
