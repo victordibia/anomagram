@@ -1,3 +1,12 @@
+/**
+ * @license
+ * Copyright 2019 Victor Dibia. https://github.com/victordibia
+ * Anomagram - Anomagram: Anomaly Detection with Autoencoders in the Browser.
+ * Licensed under the MIT License (the "License"); 
+ * =============================================================================
+ */
+
+ 
 import React, { Component } from "react";
 import {Loading,Dropdown, Slider, Checkbox, Tooltip } from "carbon-components-react"
 import "./train.css"
@@ -14,14 +23,11 @@ import { Reset16, PlayFilledAlt16, PauseFilled16 } from '@carbon/icons-react';
 import { buildModel } from "./models/ae"
 import * as _ from "lodash"
 
-// const _ = require('lodash');
+
 class Train extends Component {
 
     constructor(props) {
-        super(props)
-
-       
-        // tf.webgl.forceHalfFloat()
+        super(props) 
 
         this.chartWidth = 350;
         this.chartHeight = 250;
@@ -31,11 +37,6 @@ class Train extends Component {
         // Load sameple data
         this.testData = require("../../data/ecg/test_scaled.json")
       
-        
-
-        // this.testData = [{"data":[1,2,3,3]}]
-        // this.trainData = [{"data":[1,2,3,3]}]
-        // this.dummyMSe = require("../../data/dummy/mse.json")
 
         // Model update method passed to model composer component
         this.updateModelDims = this.updateModelDims.bind(this)
@@ -173,12 +174,7 @@ class Train extends Component {
     }
 
     componentDidMount() {
-        // this.loadSavedModel() 
-        // this.computeAccuracyMetrics(this.dummyMSe)
-
-        // setTimeout(() => {
-        //     // this.createModel()
-        // }, 100);
+         
         this.trainData = require("../../data/ecg/train_scaled.json")   
         this.getChartContainerSizes()
 
@@ -1188,20 +1184,7 @@ class Train extends Component {
                     </div>
                 }
                 <div ref="glowbar" className={"glowbar w0 "} style={{ width: Math.floor((this.currentSteps / this.state.numSteps) * 100) + "%" }}></div>
-
-
-
-                {/* start of top bar */}
-
-
-
-
-                {/* end of top bar */}
-
-
-
-                {/* <div className={"mb5 " + (this.state.isTraining ? " rainbowbar" : " displaynone")}></div> */}
-
+ 
                 <div ref="chartcontainer" className="flex chartcontainer flexwrap mt10">
                     {this.state.showModelComposer && <div ref="composemodelbox" action="composer"  className={"traincomposerdiv flexwrapitem " + (this.state.showModelComposer ? " flex40":"")}> {modelComposerBlock} </div>}
                     {this.state.showModelEvaluationMetrics &&  <div ref="modelevalbox" action="metrics" className={"flexwrapitem " + (this.state.showModelEvaluationMetrics ? " flexfull":"")}> {modelMetricsBlock} </div>}
@@ -1217,19 +1200,14 @@ class Train extends Component {
                     }
                 </div>
                 
-                <div> 
-                   {/* {this.hideLoss && <div ref="lossbox1d" action="loss"  className="flexwrapitem iblock"> {lossChartBlock} </div>} */}
-                   
-                    
-                </div>
-
+                 
                
                 
                 {
                      
-                    <div className="mediumdesc p10"> 
-                       Textures in use - Flaot32 Capable ? {this.state.floatCapable.toString()} | {this.state.floatEnabled.toString()}
-                    </div>
+                    // <div className="mediumdesc p10"> 
+                    //    Textures in use - Flaot32 Capable ? {this.state.floatCapable.toString()} | {this.state.floatEnabled.toString()}
+                    // </div>
                 }
                 <br />
                 <br />
