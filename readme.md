@@ -1,4 +1,4 @@
-## Anomagram: Interactive Visualization to Build, Train and Test an Autoencoder for Anomaly Detection in the Browser
+## Anomagram: Interactive Visualization for Autoencoders with Tensorflow.js
 
 <img src="app/public/images/preview2.png">
 
