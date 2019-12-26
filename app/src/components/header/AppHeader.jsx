@@ -36,9 +36,9 @@ class AppHeader extends Component {
 
                         <div className="flex    h100">
                             <div className="h100   flex flexjustifycenter mr10 ">
-                                <img className="headericon" src="images/icon.png" alt="" />
+                                <a href="/#">  <img className="headericon" src="images/icon.png" alt="" /></a>
                             </div>
-                            <div className="h100   flex flexjustifycenter  mr10">
+                            <div className="h100 apptitle  flex flexjustifycenter  mr10">
                                 <div className="whitetext boldtext  iblock mr10">  {this.appName} </div>
                             </div>
                             <div className="h100   flex flexjustifycenter  navbarlinks ">

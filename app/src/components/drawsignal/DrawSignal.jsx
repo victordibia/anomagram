@@ -38,7 +38,8 @@ class DrawSignal extends Component {
         this.pointColors = []
 
         this.scaleRange = [2, -5]
-        this.axisList = [2, 1, 0, -1, -2, -3, -4]
+        this.yaxisList = [2, 1, 0, -1, -2, -3, -4]
+        this.xaxisList = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130]
 
     }
 
@@ -312,29 +313,31 @@ class DrawSignal extends Component {
 
 
     render() {
-        let xaxis = this.axisList.map((data) => {
+        console.log();
+
+        let xaxis = this.yaxisList.map((data) => {
             return (
-                <div style={{ height: this.chartHeight / this.axisList.length }} key={"axisbox" + data} className="axiscell ">
+                <div style={{ height: this.chartHeight / this.yaxisList.length }} key={"axisbox" + data} className="axiscell ">
                     <div className="axiscelltext mediumdesc">   {data}</div>
                 </div>
             )
         })
 
-        // let yaxis = this.axisList.map((data) => {
-        //     return (
-        //         <div style={{ height: this.chartHeight / this.axisList.length }} key={"axisbox" + data} className="axiscell ">
-        //             <div className="axiscelltext mediumdesc">   {data}</div>
-        //         </div>
-        //     )
-        // })
+        let yaxis = this.xaxisList.map((data) => {
+            return (
+                <div style={{ width: (this.props.width - this.axisOffset) / this.xaxisList.length }} key={"xaxisbox" + data} className="xaxiscell iblock ">
+                    <div className="xaxiscelltext mediumdesc">   {data}</div>
+                </div>
+            )
+        })
         return (
             // <div style={{ width: this.chartWidth + 25 }} className="mt2 border p10">
             <div className=" w100 " >
 
-                <div className="mb10">
-                    <div className="pb10  mediumdesc">
-                        Click and drag to draw a signal. Please draw within the box.
-                        </div>
+                <div className="mb10 flex">
+                    <div className="pb10 flexfull  mediumdesc">
+                        <div className="h100 pt5 lhmedium ">  Click and drag to draw a signal. Please draw within the box.</div>
+                    </div>
 
                     <div className="iblock mr5">
                         <Button
@@ -370,7 +373,7 @@ class DrawSignal extends Component {
                         </div>
                     </div>
 
-                    <div className="horizontalaxis"></div>
+                    <div style={{ width: this.props.width - this.axisOffset + 5 }} className="horizontalaxis  ">{yaxis}</div>
 
 
                 </div>

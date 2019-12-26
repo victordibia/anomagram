@@ -26,7 +26,7 @@ class Viz extends Component {
         super(props)
 
         this.modelChartWidth = Math.min(390, window.innerWidth - 25)
-        this.modelChartHeight = 290
+        this.modelChartHeight = 270
 
         // Allow the draw signal component update current signal with drawn signal
         this.updateCurrentSignal = this.updateCurrentSignal.bind(this)
@@ -49,7 +49,7 @@ class Viz extends Component {
             selectedData: this.testData[0].data,
             showDrawData: false,
             drawSectionWidth: 350,
-            drawSectionHeight: this.modelChartHeight - 30,
+            drawSectionHeight: this.modelChartHeight ,
             isLoading: false,
             modelLoaded: false,
             threshold: 0.0075,
@@ -584,7 +584,7 @@ class Viz extends Component {
                                     anomaly detection use cases are normal. See the section below that discusses the impact of data composition (% of abnormal data) on model performance.
 
                                     <br /> 
-                                    Click the <a href="/#/train" target="_blank" rel="noopener noreferrer"> Train a Model </a> tab to
+                                    Click the <a href="#train" rel="noopener noreferrer">Train a Model</a> tab to
                                     interactively build an autoencoder, train and evaluate its performance and visualize the histogram of errors for normal and abnormal test data.
 
                                 </div>
@@ -689,10 +689,10 @@ class Viz extends Component {
                                     <div className="flex">  
                                         <div className="flexfull">
                                         
-                                            <div  className="mediumdesc w380 mb5 lhmedium" >Example below shows histogram of errors during training.</div>
+                                            <div  className="mediumdesc w380 mb5 lhmedium touchnoscroll" >Example below shows histogram of errors during training.</div>
                                             
                                             <Slider
-                                            className=" border"
+                                            className="touchnoscroll border"
                                             min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
                                             max={49}//{(this.state.maxThreshold.toFixed(4) * 1)}
                                             step={1}
@@ -904,8 +904,10 @@ class Viz extends Component {
                                     is not always the best tool for the job. Particularly, for univariate data (and low dimension data ) , autoregressive linear models 
                                     (linear regression, ARIMA family of models for time series), Clustering (PCA etc, KMeans), Nearest Neighbour (KNNs) can be very effective. 
                                     It is also important to note that the data used here is stationary (mean and variance do not change with time), and has been 
-                                    discretized (a typical ECG time series chunked into <span className="italics">slices</span> of 140 readings) which are used to construct 
-                                    the dataset.  
+                                    discretized (a typical ECG time series chunked into <span className="italics">slices</span> of 140 readings, where each slice constitutes
+                                    a sample in the dataset).
+                                    To apply an autoencoder (and other deep learning models) for anomaly detection it is
+                                     necessary  to handle stationarity (if it exists) and construct an appropriate dataset.
                                     
                             </div> 
                             </div>

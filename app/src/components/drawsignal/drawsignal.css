@@ -38,11 +38,26 @@
    position: relative;
   
 }
+
+.xaxiscell{
+    border-left: 1px solid grey;
+    margin-top: 4px;
+    /* position: relative;  */
+ }
+
+ .xaxiscelltext{
+    /* font-weight: bold; */
+    font-size: 0.75em;
+    padding-left: 2px;
+}
 .axiscelltext{
     position: absolute;
     top: 3px;
     right: 0px;
     padding-bottom: 3px;
-    font-weight: bold;
+    /* font-weight: bold; */
     font-size: 0.75em;
+}
+.horizontalaxis{
+    margin-left:15px;
 }

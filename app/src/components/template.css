@@ -396,6 +396,10 @@
     .flexwrapitem:nth-child(n+2) { flex-basis: 100%; }  
 }
 
+@media screen and (max-width:400px) { 
+    .apptitle { display: none; }  
+}
+
 
 @media screen and (max-width:800px) {
     .flexwrap8 { flex-wrap: wrap;  }
