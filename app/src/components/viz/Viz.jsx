@@ -1,19 +1,26 @@
+/**
+ * @license
+ * Copyright 2019 Victor Dibia. https://github.com/victordibia
+ * Anomagram - Anomagram: Anomaly Detection with Autoencoders in the Browser.
+ * Licensed under the MIT License (the "License"); 
+ * =============================================================================
+ */
+
+
 import React, { Component } from 'react'
-import { Loading, Button, Slider } from 'carbon-components-react';
-// import { loadJSONData } from "../helperfunctions/HelperFunctions"
+import { Loading, Button, Slider } from 'carbon-components-react'; 
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
 import SmallLineChart from "../linechart/SmallLineChart"
 import DrawSignal from "../drawsignal/DrawSignal"
 import ComposeModel from "../composemodel/ComposeModel"
 import HistogramChart from "../histogram/HistogramChart"
-import { computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions"
-// import "../../data" 
+import { computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions" 
 import * as _ from "lodash"
 import * as tf from '@tensorflow/tfjs';
 import * as d3 from "d3"
 
-// let tf = null
+ 
 class Viz extends Component {
     constructor(props) {
         super(props)
@@ -23,26 +30,18 @@ class Viz extends Component {
 
         // Allow the draw signal component update current signal with drawn signal
         this.updateCurrentSignal = this.updateCurrentSignal.bind(this)
+ 
 
-
-
-        let testData = require("../../data/ecg/test.json")
-       
-
+        // Define the composition and amount of test data shown
+        let testData = require("../../data/ecg/test.json") 
         let maxTestData = 50
         this.testData = this.subsetTestData(testData, maxTestData)
         
-        // console.log(_.countBy(this.testData, function(data){
-        //     return data.target;
-        // }));
-        // this.testData = this.testData.slice(0,50)
-
+        
         this.zeroArr = new Array(this.testData[0].data.length).fill(0);
         this.trainMse = {"threshold":[0]}
 
-        // this.trainMse = require("../../data/viz/mse.json")
-
-
+        //set state
         this.state = {
             apptitle: "Anomagram",
             trainData: [],
@@ -68,12 +67,7 @@ class Viz extends Component {
             vizThresold:this.trainMse["threshold"][0],
         }
 
-
-        // this.trainData = require("../../data/ecg/train.json")
-        // console.log(this.testData.length, this.trainData.length)
-
-        
-
+        // Hashmap storing test data legend metadata
         this.chartColorMap = {
             0: { color: "white", colornorm: "grey", name: "All" },
             1: { color: "#0062ff", colornorm: "#0062ff", name: "Normal" },
@@ -137,23 +131,12 @@ class Viz extends Component {
     }
 
 
-    componentDidMount() {
-        this.apptitle = "Amadioha"
+    componentDidMount() { 
 
-        // window.addEventListener("resize", this.onWindowResize.bind(this))
-        // console.log(this.refs["datasection"].offsetWidth)
         this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth - 5 })
-        this.drawSectionWidth = this.refs["datasection"].offsetWidth -5
+        this.drawSectionWidth = this.refs["datasection"].offsetWidth -5 
 
-        // console.log(tf.memory());
-        // setTimeout(() => {
-        //     this.setState({ showAutoEncoderViz: true })
-        // }, 2000);
-
-        
-
-        // setTimeout(() => { 
-
+        // Load minmax data transformation parameters
         this.xMinArray = require("../../data/ecg/transform/xmin.json")
         this.xMaxArray = require("../../data/ecg/transform/xmax.json")
         this.featureRange = require("../../data/ecg/transform/range.json")
@@ -164,8 +147,7 @@ class Viz extends Component {
         
         this.trainMse = require("../../data/viz/mse.json")
         this.setState({vizThresold:this.trainMse["threshold"][0]})
-        this.computeAccuracyMetrics(this.trainMse["mse"][49])
-        // }, 4000);
+        this.computeAccuracyMetrics(this.trainMse["mse"][49]) 
          
     }
 
@@ -194,8 +176,6 @@ class Viz extends Component {
 
     applyReverseTransform(data) {
         let holder = []
-        // df = ((df - xmin) / (xmax - xmin)) * (max_val - min_val) + min_val
-        // real_output = data * (b - a) + a
         for (let i = 0; i < data.length; i++) {
             holder[i] = ((data[i] - this.featureRange["min"]) / (this.featureRange["max"] - this.featureRange["min"])) * (this.xMaxArray[i] - this.xMinArray[i]) + this.xMinArray[i]
         }
@@ -218,7 +198,7 @@ class Viz extends Component {
     }
 
 
-    // Get predictions for a selected datapoint
+    // Get predictions for a selected data point
     getPrediction(data) {
 
         if (!this.state.modelLoaded) {
@@ -227,10 +207,7 @@ class Viz extends Component {
         } else {
             this.setState({ isLoading: true })
 
-            let transformedData = this.applyTransform(data)
-            // let revTrans = this.applyReverseTransform(transformedData)
-            // console.log(data.slice(0, 5), revTrans.slice(0, 5));
-
+            let transformedData = this.applyTransform(data) 
 
             // Get predictions  
             const [mse, preds] = tf.tidy(() => {
@@ -239,8 +216,7 @@ class Viz extends Component {
                 return [tf.sub(preds, dataTensor).square().mean(1), preds]
             })
 
-            mse.array().then(array => {
-                // console.log(array);
+            mse.array().then(array => { 
                 this.setState({ isLoading: false, predictedMse: array[0] })
             });
 
@@ -312,13 +288,7 @@ class Viz extends Component {
         })
     }
 
-    onWindowResize() {
-        console.log(this.refs["datasection"].offsetWidth);
-
-        this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth - 5 })
-    }
-
-
+     
     toggleDataOptions(e) {
         this.setState({ showDrawData: e })
 
@@ -334,18 +304,14 @@ class Viz extends Component {
         this.setSelectedData(0, this.testData[0].data) 
     }
 
-    clickLegend(e) {
-        // console.log(e.target);
-        // this.state.selectedLegend = e.target.getAttribute("action")
+    clickLegend(e) { 
         this.setState({ selectedLegend: e.target.getAttribute("action") })
     }
+
     toggelTransform(e) {
         this.setState({isDataTransormed: !this.state.isDataTransormed})
     }
-
-    // toggleTrainingMseViz(e) { 
-    //     this.setState({showBeforeTrainingHistogram: !this.state.showBeforeTrainingHistogram})
-    // }
+ 
 
     updateTrainVizEpoch(e) { 
         this.setState({ trainVizEpoch: e.value })
@@ -383,12 +349,8 @@ class Viz extends Component {
         });
 
         let dataPoints = this.testData.slice(0, this.maxSmallChart)
-            .map((data, index) => {
-            // console.log(this.testData[index].target);
-            
+            .map((data, index) => {  
                 let isVisible = (this.state.selectedLegend === this.chartColorMap[this.testData[index].target].name) || this.state.selectedLegend === "All"
-
-                
                 return (
                     <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (isVisible ? " " : " displaynone ") + (this.state.selectedIndex + "" === index + "" ? " active " : "")} indexvalue={index} targetval={data.target} >
                         <div indexvalue={index} className="boldtext  unclickable iblock ">
@@ -412,8 +374,7 @@ class Viz extends Component {
                         </div>
 
                     </div>
-                )
-            
+                ) 
         });
 
         let datasetExamples = (
@@ -518,11 +479,7 @@ class Viz extends Component {
         
 
         return (
-            <div>
-                {/* <div className="bold mt10 sectiontitle mb10">
-                    A Gentle Introduction to Anomaly Detection with Deep Learning (in the Browser!)
-                </div> */}
-
+            <div>  
                 <div className="mynotif mt10 h100 lh10  lightbluehightlight maxh16  mb10">
                     <div className="boldtext mb5">  A Gentle Introduction to Anomaly Detection with Autoencoders</div>
                     {this.state.apptitle} is an interactive visualization tool for exploring
@@ -555,29 +512,19 @@ class Viz extends Component {
                             {dataSketchPad}
                         </div>}
                     </div>
-
-                    {/* <div style={{width: "200px"}} className="flexwrapitem h100 p10 border">
-                             Threshold gauge etc
-                     </div>
-                    */}
+ 
                     <div className="flexwrapitem ">
                         {modelOutput}
                     </div>
                 </div>
 
                 <div className="lh10 lightgreyback mt5 p10">
-                    {/* <div className="boldtext mb5"> .. detecting abnormal ecg signals </div> */}
+                     
                    The autoencoder is trained using normal ECG data samples. It has never seen any of the test signals above, 
                     but correcly predicts (most of the time) if a given signal is normal or abnormal. So, how does the autoencoder 
                     identify anomalies? Why is  <span className="italics">mean squared error</span> a useful metric?
                     What is the <span className="italics">threshold</span>   and how is it set? Read on to learn more!
-                      
-                    {/* In the use case above, the task is to detect abnormal ECG signals, given an ECG sample which corresponds to a heart beat.
-                    This task is valuable because abnormal ECG readings are frequently indicative of underlying medical conditions.
-                    Each time, a signal is selected or drawn <div className="legendcolorbox  themeblue colortransition5s iblock"></div>, it is processed by an
-                    autoencoder which outputs a reconstruction <div style={{ backgroundColor: barColor }} className="legendcolorbox colortransition5s iblock"></div>) of the signal.
-                    The reconstruction error (mean squared error <strong>mse</strong> <div style={{ backgroundColor: barColor + "63" }} className="legendcolorbox colortransition5s iblock"></div> between the input and reconstructed output is also visualized.
-                Based on a threshold which we set ( <span className="boldtext">{this.state.threshold}</span>  ), we then flag the signal as  abnormal if the reconstruction error is greater than the threshold. */}
+                       
                 </div>
 
 
@@ -594,7 +541,7 @@ class Viz extends Component {
                                         
                                         <div className=" pl10 floatright autoencodervizbox  "  >
                                         
-                                        <div className="vizcaption w350 mediumdesc lhmedium pb5">
+                                        <div className="vizcaption w380 mediumdesc lhmedium pb5">
                                         Example below shows the architecture of a two layer autoencoder with 7 and 3 units respectively.
                                         Click the <span className="italics">train a model</span> tab to build and train one from scratch.
                                         </div>
@@ -696,15 +643,7 @@ class Viz extends Component {
 
                                         </div>
                                     
-                                    </div>
-                                    
-                                    
-                                    {/* Most approaches to anomaly detection (and there are many) begin by constructing a model of
-                                        normal behaviour and then exploit this model to identify deviations from normal (anomalies or abnormal data).
-                                    Here is how we can use an autoencoder to model normal behaviour. If you recall, an autoencoder learns to compress
-                                    and reconstruct data. Notably this learned mapping is specific to the data type/distribution distribution of the training data.
-                                    In other words an autoencoder trained using 15 px images of dogs is unlikely to correctly reconstruct 20px images of the surface
-                                    of the moon. */}
+                                    </div> 
                                 </div>
 
 
@@ -747,20 +686,9 @@ class Viz extends Component {
 
                                 {this.state.showMseViz && <div className="  pl10 flexwrapitem  floatright">
 
-                                    <div className="flex"> 
-
-                                        {/* <div className="iblock thresholdbox flex flexjustifycenter mr5 pl10 pr10 pt5 pb5">
-                                            <div>
-                                            <div style={{fontSize:"18px"}} className="mediumdesc textaligncenter boldtext thresholdtext">{this.state.trainVizEpoch}</div>
-                                            <div className="smalldesc textaligncenter mt5">Epoch</div>
-                                            </div>
-                                        </div> */}
-
+                                    <div className="flex">  
                                         <div className="flexfull">
-                                        {/* <div className="w380 vizcaption pt10 lhmedium  mediumdesc pb5">
-                                              Chart below shows the distribution of MSE on test data during training.
-                                             
-                                            </div> */}
+                                        
                                             <div  className="mediumdesc w380 mb5 lhmedium" >Example below shows histogram of errors during training.</div>
                                             
                                             <Slider
@@ -798,19 +726,7 @@ class Viz extends Component {
                                             threshold: this.state.vizThresold
                                         }}
                                     ></HistogramChart>}
-                                    
-                                   
-
-                                    {/* <div className="">
-
-                                    <Button
-                                            className="bwidthtransform"
-                                            size={"small"}
-                                            renderIcon={null}
-                                            onClick={this.toggleTrainingMseViz.bind(this)}
-                                        > {this.state.showBeforeTrainingHistogram?  "After Training": "Before Training"} </Button>
-                
-                                    </div> */}
+                                     
                             </div>}
                             </div>
 
@@ -844,8 +760,7 @@ class Viz extends Component {
                                     adjusted by the selection of a threshold (e.g. a low enough threshold will yield excellent recall but reduced precision). 
                                     The receiver operating characteristics (ROC) curve provides a visual assessment of a model's skill (area under the curve - AUC)
                                     and achieved by plotting the true positive rate against the false positive rate at various values of the threshold.
-                                    {/* In addition to the fact that anomalies can vary widely and evolve with time, this data imbalance problem 
-                                    makes it hard to treat anomaly detection as a classification problem */}
+                                     
 
                             </div>
 
@@ -855,9 +770,7 @@ class Viz extends Component {
                                     
 
                                 <div className={"iblock perfmetrics w100 " + (this.state.isTraining ? " disabled " : " ")}>
-                            {/* <div className="charttitle mb5 ">
-                                Model Evaluation Metrics
-                            </div> */}
+                            
                                         <div className="mediumdesc lhmedium pb10">
                                             Example below the performance of a trained autoencoder model. 
                                             Move the slider to see how threshold choices impact precision recall metrics. 
@@ -936,18 +849,7 @@ class Viz extends Component {
                         are highlighted below. You can explore them via the <span className="italics"> train a model</span> interactive tab.
                         </div>
                         <div className="flex flexwrap">
-
-                            {/* <div className="flex3 flexwrapitem mr10">
-                                <div className="flex6 lh10 mb10 pr10">
-                                    <div className="pb5 boldtext"> Optimizer </div>
-                                    As expected, the choice of optimizer and learning rate can significant impact how fast and 
-                                    how effectively the model training process progresses.
-                                    For example, using the Adam optimizer results in fast and stable convergence even with a high learning rate,
-                                    while Rmsprop is more likely to show unstable results or fail to converge in rare cases.
-                                </div>
-
-
-                            </div> */}
+ 
 
                             <div className="flex20 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
@@ -965,12 +867,7 @@ class Viz extends Component {
 
                             </div>
 
-                            {/* <div className="flex4 flexwrapitem  mr10">
-                                <div className="flex6 lh10 mb10 pr10">
-                                    <div className="pb5 boldtext"> Batch Size </div>
-                                     Larger batch sizes lead to faster training. 
-                                </div>
-                            </div> */}
+                           
 
                             <div className="flex20 flexwrapitem  mr10">
                                 <div className="flex6 lh10 mb10 pr10">
@@ -1010,11 +907,7 @@ class Viz extends Component {
                                     discretized (a typical ECG time series chunked into <span className="italics">slices</span> of 140 readings) which are used to construct 
                                     the dataset.  
                                     
-                            </div>
-
-                                {/* <div className="border rad4 p10 flex4" style={{ height: "200px" }}>
-                                    ROC curve and some metrics
-                            </div> */}
+                            </div> 
                             </div>
 
                         </div>
