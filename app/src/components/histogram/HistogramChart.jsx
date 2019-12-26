@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright 2019 Victor Dibia. https://github.com/victordibia
+ * Anomagram - Anomagram: Anomaly Detection with Autoencoders in the Browser.
+ * Licensed under the MIT License (the "License"); 
+ * =============================================================================
+ */
+
 import React, { Component } from "react";
 import "./histogram.css"
 import * as d3 from "d3"

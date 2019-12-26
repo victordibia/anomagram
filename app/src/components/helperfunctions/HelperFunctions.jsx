@@ -1,4 +1,11 @@
-// import { ToastNotification } from "carbon-components-react"
+/**
+ * @license
+ * Copyright 2019 Victor Dibia. https://github.com/victordibia
+ * Anomagram - Anomagram: Anomaly Detection with Autoencoders in the Browser.
+ * Licensed under the MIT License (the "License"); 
+ * =============================================================================
+ */
+
 
 export function showToast(type, message, duration = 4000) {
     let notifbox = document.getElementById("notificatiionbox")

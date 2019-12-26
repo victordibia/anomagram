@@ -1,5 +1,13 @@
-// Craft an autoencoder 
+/**
+ * @license
+ * Copyright 2019 Victor Dibia. https://github.com/victordibia
+ * Anomagram - Anomagram: Anomaly Detection with Autoencoders in the Browser.
+ * Licensed under the MIT License (the "License"); 
+ * =============================================================================
+ */
 
+
+// Craft an autoencoder
 const tf = require('@tensorflow/tfjs');
 
 export function buildModel(params) {
