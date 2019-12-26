@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import {
     Header,
-    HeaderName,
-    HeaderNavigation,
+    // HeaderName,
+    // HeaderNavigation,
     // Link,
     // HeaderMenuItem,
-    HeaderGlobalBar,
-    HeaderGlobalAction,
-    SkipToContent,
+    // HeaderGlobalBar,
+    // HeaderGlobalAction,
+    // SkipToContent,
 } from 'carbon-components-react/lib/components/UIShell';
 import {
     NavLink
@@ -16,7 +16,7 @@ import {
 import "./header.css"
 // import Notification20 from '@carbon/icons-react/lib/notification/20';
 // import UserAvatar20 from '@carbon/icons-react/lib/user--avatar/20';
-import AppSwitcher20 from '@carbon/icons-react/lib/app-switcher/20';
+// import AppSwitcher20 from '@carbon/icons-react/lib/app-switcher/20';
 
 class AppHeader extends Component {
     constructor(props) {
@@ -35,7 +35,7 @@ class AppHeader extends Component {
                     <div className="container-fluid w100 headerrow pl10 ">
 
                         <div className="flex    h100">
-                            <div className="h100   flex flexjustifycenter  ">
+                            <div className="h100   flex flexjustifycenter mr10 ">
                                 <img className="headericon" src="images/icon.png" alt="" />
                             </div>
                             <div className="h100   flex flexjustifycenter  mr10">

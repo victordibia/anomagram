@@ -82,7 +82,7 @@ class LineChart extends Component {
         }
 
         // Make the changes
-        svg.select(".line")   // change the line
+        svg.select(".line")   // change the input line
             .duration(750)
             .attr("stroke", this.state.color)
             .attr("d", this.line(data));
@@ -93,6 +93,7 @@ class LineChart extends Component {
             .attr("stroke", this.props.predictedColor)
             .attr("d", this.line(predictedData));
 
+        //make changes to the error area
         svg.select(".msearea")
             .duration(750)
             .attr("fill", this.props.predictedColor + this.backgrounOpacity)

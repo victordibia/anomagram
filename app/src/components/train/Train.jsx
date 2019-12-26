@@ -484,7 +484,7 @@ class Train extends Component {
 
     // visualizeMSE(mse)
     generateDataTensors() {
-        console.log("Generating data tensor");
+        // console.log("Generating data tensor");
         
         //shuffle data
         this.trainData = _.shuffle(this.trainData)

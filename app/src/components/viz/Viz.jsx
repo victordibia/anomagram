@@ -11,6 +11,7 @@ import { computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/
 // import "../../data" 
 import * as _ from "lodash"
 import * as tf from '@tensorflow/tfjs';
+import * as d3 from "d3"
 
 // let tf = null
 class Viz extends Component {
@@ -18,18 +19,28 @@ class Viz extends Component {
         super(props)
 
         this.modelChartWidth = Math.min(390, window.innerWidth - 25)
-        this.modelChartHeight = 298
+        this.modelChartHeight = 290
 
         // Allow the draw signal component update current signal with drawn signal
         this.updateCurrentSignal = this.updateCurrentSignal.bind(this)
 
 
 
-        this.testData = require("../../data/ecg/test.json")
-        this.testData = this.testData.slice(0, 70)
+        let testData = require("../../data/ecg/test.json")
+       
+
+        let maxTestData = 50
+        this.testData = this.subsetTestData(testData, maxTestData)
+        
+        // console.log(_.countBy(this.testData, function(data){
+        //     return data.target;
+        // }));
+        // this.testData = this.testData.slice(0,50)
 
         this.zeroArr = new Array(this.testData[0].data.length).fill(0);
-        this.trainMse = require("../../data/viz/mse.json")
+        this.trainMse = {"threshold":[0]}
+
+        // this.trainMse = require("../../data/viz/mse.json")
 
 
         this.state = {
@@ -47,6 +58,7 @@ class Viz extends Component {
             predictedMse: 0,
             selectedLegend: "All",
             showAutoEncoderViz: true,
+            showMseViz:true,
             isDataTransormed: false,
             showBeforeTrainingHistogram: false,
             trainVizEpoch: 0,
@@ -60,15 +72,15 @@ class Viz extends Component {
         // this.trainData = require("../../data/ecg/train.json")
         // console.log(this.testData.length, this.trainData.length)
 
-        this.loadData()
+        
 
         this.chartColorMap = {
             0: { color: "grey", colornorm: "grey", name: "All" },
             1: { color: "#0062ff", colornorm: "#0062ff", name: "Normal" },
             2: { color: "orange", colornorm: "grey", name: "R-on-T Premature Ventricular Contraction" },
-            // 3: { color: "violet", colornorm: "grey", name: "Supraventricular Premature or Ectopic Beat" },
+            3: { color: "violet", colornorm: "grey", name: "Ectopic Beat" },
             4: { color: "indigo", colornorm: "grey", name: "Premature Ventricular Contraction" },
-            5: { color: "red", colornorm: "grey", name: "Unclassifiable Beat" },
+            // 5: { color: "red", colornorm: "grey", name: "Unclassifiable Beat" },
         }
 
         this.maxSmallChart = 100
@@ -85,22 +97,40 @@ class Viz extends Component {
         this.mseExplanations["5"] = "Model is getting better at reconstructing normal data resulting in smaller MSE for normal data points."
         this.mseExplanations["25"] = "Both distributions are now separate. We can set a clear threshold that separates normal from abnormal data."
         
+
+        this.smallChartHeight = 30
+        this.smallChartWidth = 80
+
+        this.smallChartxScale = d3.scaleLinear()
+            .domain([0, this.testData[0].data.length - 1]) // input
+            .range([0, this.smallChartWidth]); // output
+
+
+        this.smallChartyScale = d3.scaleLinear()
+            .domain([d3.min(this.testData[0].data), d3.max(this.testData[0].data)]) // input 
+            .range([0, this.smallChartHeight]); // output
+        
+        
     }
 
 
-    loadData() {
-        // let testECGDataPath = process.env.PUBLIC_URL + "/data/ecg/test_small.json"
-        // let trainECGDataPath = process.env.PUBLIC_URL + "/data/ecg/train_small.json"
-        // loadJSONData(testECGDataPath).then(data => {
-        //     this.setState({ testData: data })
-        //     // console.log("test data loaded", data.length)
-        // })
-
-        // loadJSONData(trainECGDataPath).then(data => {
-        //     this.setState({ trainData: data })
-        // })
-
+    subsetTestData(testData, maxTestData) {
+        let maxCategories = { 1: 15, 2: 10, 3: 15, 4: 15, 5:0 }
+        let seenCategories = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+        let result = []
+        for (let i = 0; i < testData.length; i++) {  
+            let el = testData[i]
+            if (seenCategories[el.target] < maxCategories[el.target]) {
+                seenCategories[el.target] += 1
+                result.push(el)
+            }
+            if (result.length >= maxTestData) {
+                break;
+            }
+        };
+        return result
     }
+
     componentDidUpdate(prevProps, prevState) {
 
 
@@ -113,7 +143,7 @@ class Viz extends Component {
         // window.addEventListener("resize", this.onWindowResize.bind(this))
         // console.log(this.refs["datasection"].offsetWidth)
         this.setState({ drawSectionWidth: this.refs["datasection"].offsetWidth - 5 })
-        this.drawSectionWidth = this.refs["datasection"].offsetWidth
+        this.drawSectionWidth = this.refs["datasection"].offsetWidth -5
 
         // console.log(tf.memory());
         // setTimeout(() => {
@@ -122,8 +152,7 @@ class Viz extends Component {
 
         
 
-        
-        
+        // setTimeout(() => { 
 
         this.xMinArray = require("../../data/ecg/transform/xmin.json")
         this.xMaxArray = require("../../data/ecg/transform/xmax.json")
@@ -132,8 +161,11 @@ class Viz extends Component {
         this.sampleTestData = this.myStringify(this.applyTransform(this.testData[0].data.slice(0,50)))
         this.sampleTransformedTestData = this.myStringify(this.testData[0].data.slice(0, 50)) 
         
-
+        
+        this.trainMse = require("../../data/viz/mse.json")
+        this.setState({vizThresold:this.trainMse["threshold"][0]})
         this.computeAccuracyMetrics(this.trainMse["mse"][49])
+        // }, 4000);
          
     }
 
@@ -293,7 +325,7 @@ class Viz extends Component {
     }
     setDatasetDraw(e) {
         this.setState({ showDrawData: true })
-        this.setState({ drawSectionWidth: Math.max(this.refs["datasetexamplebox"].offsetWidth , 350)})
+        this.setState({ drawSectionWidth: Math.max(this.refs["datasetexamplebox"].offsetWidth -5 , 350)})
         // console.log(this.refs["datasetexamplebox"].offsetWidth); 
     }
     setDatasetECG(e) {
@@ -328,7 +360,7 @@ class Viz extends Component {
             let name = data[1].name
             // console.log(name); 
             return (
-                <div action={name} onClick={this.clickLegend.bind(this)} className={"iblock mr5 mb5 legendrow clickable" + (this.state.selectedLegend === name ? " active" : " ")} key={"legendrow" + index}>
+                <div action={name} onClick={this.clickLegend.bind(this)} className={"iblock mr5 mb5 unselectable legendrow clickable" + (this.state.selectedLegend === name ? " active" : " ")} key={"legendrow" + index}>
                     <div style={{ background: color }} className="unclickable indicatorcircle iblock mr5"></div>
                     <div className="iblock unclickable legendtext pl4 mediumdesc"> {name}</div>
 
@@ -340,15 +372,14 @@ class Viz extends Component {
         let dataPoints = this.testData.slice(0, this.maxSmallChart)
             .map((data, index) => {
             // console.log(this.testData[index].target);
-            if (this.testData[index].target + "" !== "3") {
+            
                 let isVisible = (this.state.selectedLegend === this.chartColorMap[this.testData[index].target].name) || this.state.selectedLegend === "All"
 
-                console.log();
-
+                
                 return (
                     <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (isVisible ? " " : " displaynone ") + (this.state.selectedIndex + "" === index + "" ? " active " : "")} indexvalue={index} targetval={data.target} >
                         <div indexvalue={index} className="boldtext  unclickable iblock ">
-                            <div className="positionrelative">
+                            <div  className="positionrelative">
                                 <div className="p3 indicatoroutrcircle  positionabsolute bottomright">
                                     <div style={{ background: this.chartColorMap[this.testData[index].target].color }} className="indicatorcircle "></div>
                                 </div>
@@ -357,8 +388,10 @@ class Viz extends Component {
                                         data: this.testData[index],
                                         index: index,
                                         color: this.chartColorMap[this.testData[index].target].colornorm,
-                                        chartWidth: 72,
-                                        chartHeight: 30
+                                        chartWidth: this.smallChartWidth,
+                                        chartHeight: this.smallChartHeight,
+                                        xScale: this.smallChartxScale,
+                                        yScale: this.smallChartyScale
                                     }}
                                 > </SmallLineChart>
                             </div>
@@ -367,9 +400,7 @@ class Viz extends Component {
 
                     </div>
                 )
-            } else {
-                return( <div className="displaynone" key={"nosshow" + index}></div> )
-                }
+            
         });
 
         let datasetExamples = (
@@ -493,7 +524,7 @@ class Viz extends Component {
                 </div>
 
 
-                <div className="mediumdesc pb5 "> Select  Data source</div>
+                <div className="mediumdesc pb5 "> Select a data source</div>
 
                 <div className="mb10 lowerbar">
                     <div onClick={this.setDatasetECG.bind(this)} className={"datasettab clickable iblock mr5 " + (this.state.showDrawData ? "" : " active")}> ECG5000 Dataset</div>
@@ -523,11 +554,11 @@ class Viz extends Component {
 
                 <div className="lh10 lightgreyback mt5 p10">
                     {/* <div className="boldtext mb5"> .. detecting abnormal ecg signals </div> */}
-                   The autoencoder is trained on only normal ECG signals. It has never seen any of the test signals above, but it is able to correcly predict (most of the time) 
-                    if this signal is normal or abnormal. So, how does the autoencoder figure out what a normal signal is?
-                      Why is  mean squared error a useful metric?
-                      What is the threshold and how is it set? Read on to learn more!
-                     
+                   The autoencoder is trained using normal ECG data samples. It has never seen any of the test signals above, 
+                    but correcly predicts (most of the time) if a given signal is normal or abnormal. So, how does the autoencoder 
+                    figure out what a normal signal is? Why is  <span className="italics">mean squared error</span> a useful metric?
+                    What is the <span className="italics">threshold</span>   and how is it set? Read on to learn more!
+                      
                     {/* In the use case above, the task is to detect abnormal ECG signals, given an ECG sample which corresponds to a heart beat.
                     This task is valuable because abnormal ECG readings are frequently indicative of underlying medical conditions.
                     Each time, a signal is selected or drawn <div className="legendcolorbox  themeblue colortransition5s iblock"></div>, it is processed by an
@@ -681,7 +712,7 @@ class Viz extends Component {
                                     using dense layers, relu activation function, and the Adam optimizer (lr = 0.01) is used for training.  
                                       
                                   <div className=" mt10 mb10 lh10  lightbluehightlight maxh16  mb10">
-                                        Code for the autoencoder can be found <a href="https://github.com/victordibia/anomagram/blob/master/app/src/components/train/models/ae.jsx" target="_blank" rel="noopener noreferrer">Github</a>. 
+                                    Tensorflow.js code for <a href="https://github.com/victordibia/anomagram/blob/master/app/src/components/train/models/ae.jsx" target="_blank" rel="noopener noreferrer">specifying the autoencoder</a> can be found in the project repository on <a href="https://github.com/victordibia/anomagram/" target="_blank" rel="noopener noreferrer">Github</a>. 
                                   </div>
                                       As training progresses, the model's weights are updated to minimize the difference between the encoder input 
                                       and decoder output for the training data (normal samples).  
@@ -701,7 +732,7 @@ class Viz extends Component {
                               
                             </div>
 
-                                <div className="  pl10 flexwrapitem  floatright">
+                                {this.state.showMseViz && <div className="  pl10 flexwrapitem  floatright">
 
                                     <div className="flex"> 
 
@@ -742,15 +773,15 @@ class Viz extends Component {
                                     
                                     
                                     
-                                     <HistogramChart
-                                            data={{
-                                                data: this.trainMse["mse"][this.state.trainVizEpoch],
-                                                chartWidth: 380,
-                                                chartHeight: 240,
-                                                epoch: 2 + this.state.showBeforeTrainingHistogram,
-                                                threshold: this.state.vizThresold
-                                            }}
-                                    ></HistogramChart>
+                                    {this.trainMse["mse"] && <HistogramChart
+                                        data={{
+                                            data: this.trainMse["mse"][this.state.trainVizEpoch],
+                                            chartWidth: 380,
+                                            chartHeight: 240,
+                                            epoch: 2 + this.state.showBeforeTrainingHistogram,
+                                            threshold: this.state.vizThresold
+                                        }}
+                                    ></HistogramChart>}
                                     
                                    
 
@@ -764,7 +795,7 @@ class Viz extends Component {
                                         > {this.state.showBeforeTrainingHistogram?  "After Training": "Before Training"} </Button>
                 
                                     </div> */}
-                            </div>
+                            </div>}
                             </div>
 
                         </div>
@@ -955,8 +986,8 @@ class Viz extends Component {
                                     such as images (think convolutional layers instead of dense layers).
                                     <br />
                                     <strong className="greycolor"> Note</strong>: A deep learning model
-                                    is not always the best tool for the job. Particularly, for univariate data, autoregressive linear models 
-                                    (linear regression, VAR, ARIMA family of models for time series) can be very effective. 
+                                    is not always the best tool for the job. Particularly, for univariate data (and low dimension data ) , autoregressive linear models 
+                                    (linear regression, ARIMA family of models for time series), Clustering (PCA etc, KMeans), Nearest Neighbour (KNNs) can be very effective. 
                                     
                             </div>
 
