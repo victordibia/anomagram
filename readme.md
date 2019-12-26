@@ -2,7 +2,7 @@
 
 <img src="app/public/images/preview2.png">
 
-An interactive experience built with [Tensorflow.js](http://tensorflow.org/js) to demonstrate how deep neural networks can be applied for the task of anomaly detection for non-time series (stationary) data.
+An interactive experience built with [Tensorflow.js](http://tensorflow.org/js) to demonstrate how deep neural networks (autoencoders) can be applied for the task of anomaly detection for non-time series (stationary) data.
 
 
 ## Gentle Introduction to Anomaly Detection
