@@ -1,8 +1,13 @@
 ## Anomagram: Interactive Visualization for Autoencoders with Tensorflow.js
 
+
+>  An interactive experience built with [Tensorflow.js](http://tensorflow.org/js) to demonstrate how deep neural networks (autoencoders) can be applied for the task of anomaly detection for non-time series (stationary) data.
+
 <img src="app/public/images/preview2.png">
 
-An interactive experience built with [Tensorflow.js](http://tensorflow.org/js) to demonstrate how deep neural networks (autoencoders) can be applied for the task of anomaly detection for non-time series (stationary) data.
+
+
+## Repository Structure
 
 
 ## Gentle Introduction to Anomaly Detection
@@ -29,7 +34,8 @@ Click the Train a Model tab to interactively build an autoencoder, train and eva
 ## Dataset
 
 This prototype uses the ECG5000 dataset which contains 5000 examples of ECG signals from a patient. Each sample (which has been sliced into 140 points corresponding to an extracted heartbeat) has been labelled as normal or being indicative of heart conditions related to congestive heart failure - .
-Data Transformation
+
+### Data Transformation
 Prior to training the autoencoder, we first apply a minmax scaling transform to the input data which converts it from its original range (2 to -5) to a range of 0 -1 This is done for two main reasons. First, existing research shows that neural networks in general train better when input values have zero mean and unit variance and lie between 0 and 1. Secondly, scaling the data supports the learning objective for the autoencoder (minimizing reconstruction error) and makes the results more interpretable. In general, the range of output values from the autoencoder is dependent on the type of activation function used in the output layer. For example, the tanh activation function outputs values in the range of -1 and 1, sigmoid outputs values in the range of 0 - 1 In the example above, we use the sigmoid activation function in the output layer of the autoencoder, allowing us directly compare the transformed input signal to the output data when computing the means square error metric during training. In addition, having both input and output in the same range allows us to visualize the differences that contribute to the anomaly classification.
 Note:The parameters of the scaling transform should be computed only on train data and then applied to test data.
 
