@@ -5,6 +5,11 @@
 
 <img src="app/public/images/preview2.png">
 
+#### Screenshot above shows the "train a model interface" that allows you to specify the configuration of an autoencoder (number of layers, number of units in each layer), specify training parameters (steps, batchsize, learning rate, optimizer, regularizer) train it, and evaluate (mse histogram, ROC chart, Loss charts) its performance on test dataset.
+
+<img src="app/public/images/preview4.png">
+
+#### Screenshot above part of the introduction interface where you can perform inference using a trained autoencoder implemented in Tensorflow js. The user can either run inference on a test data sample or draw an ECG signal as input and observe the model's behaviour.
 
 
 ## Repository Structure
