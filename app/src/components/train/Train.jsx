@@ -1187,7 +1187,7 @@ class Train extends Component {
  
                 <div ref="chartcontainer" className="flex chartcontainer flexwrap mt10">
                     {this.state.showModelComposer && <div ref="composemodelbox" action="composer"  className={"traincomposerdiv flexwrapitem " + (this.state.showModelComposer ? " flex40":"")}> {modelComposerBlock} </div>}
-                    {this.state.showModelEvaluationMetrics &&  <div ref="modelevalbox" action="metrics" className={"flexwrapitem " + (this.state.showModelEvaluationMetrics ? " ":"")}> {modelMetricsBlock} </div>}
+                    {this.state.showModelEvaluationMetrics &&  <div ref="modelevalbox" action="metrics" className={"flexwrapitem " + (this.state.showModelEvaluationMetrics ? " flexfull":"")}> {modelMetricsBlock} </div>}
                     <div ref="lossbox1" action="loss"  className="  flexwrapitem "> { lossChartBlock} </div>
                     <div action="mse" className="flexwrapitem  "> {mseHistogramBlock} </div>
                     {/* <div className="flex20 flexpushout"></div> */}

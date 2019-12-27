@@ -914,8 +914,8 @@ class Viz extends Component {
                                     To apply an autoencoder (and other deep learning models) for anomaly detection it is often
                                      necessary  to first handle stationarity (if it exists) and construct an appropriate dataset based on domain knowledge (chunk/discretize your data).
                                     Interested in learning more about other deep learning approaches to anomaly detection? My colleagues and I cover additional details on this
-                                    topic in the <a href="https://www.tensorflow.org/js/guide/layers_for_keras_users" target="_blank" rel="noopener noreferrer">Fast Forward Labs</a>  2020 report
-                                     on <a href="https://www.tensorflow.org/js/guide/layers_for_keras_users" target="_blank" rel="noopener noreferrer"> Deep Learning for Anomaly Detection.</a>  
+                                    topic in the upcoming <a href="http://experiments.fastforwardlabs.com/" target="_blank" rel="noopener noreferrer">Fast Forward Labs</a>  2020 report
+                                     on <a href="https://www.cloudera.com/products/fast-forward-labs-research.html" target="_blank" rel="noopener noreferrer"> Deep Learning for Anomaly Detection.</a>  
                                     
                             </div> 
                             </div>
