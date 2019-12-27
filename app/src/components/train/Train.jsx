@@ -1110,7 +1110,9 @@ class Train extends Component {
                             <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">
                                 Autoencoders</a> are neural networks which learn to reconstruct input data. We can leverage this property to detect anomalies.
                                 <div className="circlenumber iblock textaligncenter"> 1 </div>  <span className="boldtext"> Initialize . </span> Select model parameters
-                (number of layers, batchsize, learning rate, regularizer etc) and then initialize (compile) the model.
+                            (number of layers, batchsize, learning rate, regularizer etc) and then initialize (compile) the model. 
+                            <strong className="greycolor"> Hint</strong>: You can add/remove layers and units to 
+                            the autoencoder using  the visual model composer + and - buttons!
                         <div className="circlenumber iblock textaligncenter"> 2 </div>  <span className="boldtext"> Train. </span> This trains the autoencoder using normal data 
                         samples from the ECG5000 dataset.  Training the model on a dataset that consists of mainly normal data (an assumption that holds for most anomaly use cases), 
                         the model learns to reconstruct only normal data samples with very little reconstruction error. 

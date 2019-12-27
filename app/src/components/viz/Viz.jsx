@@ -188,7 +188,7 @@ class Viz extends Component {
     loadModel() {
         this.setState({ isLoading: true }) 
         setTimeout(() => {
-            let modelPath = "/webmodel/ecg/model.json"
+            let modelPath = process.env.PUBLIC_URL + "/webmodel/ecg/model.json"
             tf.loadLayersModel(modelPath).then((model) => {
                 this.loadedModel = model
                 this.setState({ modelLoaded: true, isLoading: false })
@@ -602,7 +602,7 @@ class Viz extends Component {
 
                         <div className="sectiontitle mt10 mb5"> The Dataset  </div>
                         <div className="mb10 lh10">
-                            This prototype uses the   <a href="http://www.timeseriesclassification.com/description.php?Dataset=ECG5000" target="_blank" rel="noopener noreferrer"> ECG5000 dataset </a> which contains 
+                            This prototype uses the   <a href="http://www.timeseriesclassification.com/description.php?Dataset=ECG5000" target="_blank" rel="noopener noreferrer"> ECG5000 dataset</a> which contains 
                             5000 examples of ECG signals from a patient. Each sample (which has been sliced into 140 points corresponding to an extracted heartbeat) has been labelled  
                             as normal or being indicative of  heart conditions related to congestive heart failure - {dataLegendSmall}.
 
@@ -612,7 +612,7 @@ class Viz extends Component {
                                 <div className="flex40 flexwrapitem  mb10 pr10">
                                     <div className="pb5 boldtext"> Data Transformation  </div>
                                     Prior to training the autoencoder, we first apply a minmax scaling transform to the input data 
-                                    which converts it from its original range (2 to -5) to a range of  0 - 1  
+                                    which converts it from its original range (-5 to 2) to a range of  (0 to 1)  
                                     This is done for two main reasons. First, existing research suggests that neural networks in general train better when input values  
                                      lie between 0 and 1 (or have zero mean and unit variance).  Secondly, scaling the data supports the learning objective 
                                     for the autoencoder (minimizing reconstruction error) and makes the results more interpretable. 
@@ -683,8 +683,10 @@ class Viz extends Component {
 
                                     As both distributions <span className="italics">diverge</span>, we can set a threshold or cutoff point; any data point 
                                     with error above this threshold is termed an anomaly and any point below this is termed normal. 
-                                    Using labelled test data (and some domain expertise), we can automatically determmine this threshold as the point that yields the best 
-                                    anomaly classification accuracy. But is accuracy enough?
+                                    Using labelled test data (and some domain expertise), we can automatically determine this threshold as the point that yields the best 
+                                    anomaly classification accuracy. 
+                                    {/* For example, in the visualization on the right, the threshold is automatically set as the point */}
+                                    But is accuracy enough?
                                   
                               
                             </div>
@@ -763,8 +765,8 @@ class Viz extends Component {
                                     Depending on the use case, it may be desirable to optimize a model's performance for high precision or high recall. 
                                     This tradeoff between precision and recall can be 
                                     adjusted by the selection of a threshold (e.g. a low enough threshold will yield excellent recall but reduced precision). 
-                                    The receiver operating characteristics (ROC) curve provides a visual assessment of a model's skill (area under the curve - AUC)
-                                    and achieved by plotting the true positive rate against the false positive rate at various values of the threshold.
+                                    In addition, the Receiver Operating Characteristics (ROC) curve provides a visual assessment of a model's skill (area under the curve - AUC)
+                                    and is achieved by plotting the true positive rate against the false positive rate at various values of the threshold.
                                      
 
                             </div>
