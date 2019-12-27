@@ -1,5 +1,12 @@
+/**
+ * @license
+ * Copyright 2019 Victor Dibia. https://github.com/victordibia
+ * Anomagram - Anomagram: Anomaly Detection with Autoencoders in the Browser.
+ * Licensed under the MIT License (the "License"); 
+ * =============================================================================
+ */
+
 import React, { Component } from "react";
-// import { Button } from "carbon-components-react"
 import { LeaderLine, animOptions } from "../helperfunctions/HelperFunctions"
 import { Add16, Subtract16 } from '@carbon/icons-react';
 import "./composemodel.css"
@@ -87,9 +94,7 @@ class ComposeModel extends Component {
     removeLayerLines(lineId) {
 
         // Remove lines associated with a deleted layer
-        // Remove it from the DOM and also from the holder array 
-
-
+        // Remove it from the DOM and also from the holder array  
         let toRemove = new Map()
         this.lineHolder.forEach(function (each, i) {
             if (each.startId === lineId || each.endId === lineId) {
@@ -100,7 +105,7 @@ class ComposeModel extends Component {
             }
         })
 
-        // Remove lines queed up for deletion
+        // Remove lines queued up for deletion
         let newHolder = []
         this.lineHolder.forEach(function (each, i) {
             if (toRemove.get(i) == null) {
@@ -111,8 +116,6 @@ class ComposeModel extends Component {
 
         // console.log("old", this.lineHolder.length, newHolder.length);
         this.lineHolder = newHolder
-
-
     }
 
 
@@ -213,22 +216,17 @@ class ComposeModel extends Component {
 
         }
 
-        // Updaate parent state once dims change
+        // Update parent state once dims change
         if (this.state.hiddenDims.length !== prevState.hiddenDims.length || this.state.latentDim[0] !== prevState.latentDim[0]) {
             // console.log("latent or hidden changed");
 
             this.props.updateModelDims(this.state.hiddenDims, this.state.latentDim)
         }
 
-        // console.log(this.lineHolder.length);
 
         if (prevProps.adv !== this.props.adv) {
             this.redrawAllLines();
         }
-
-
-
-
 
     }
 
@@ -364,28 +362,27 @@ class ComposeModel extends Component {
             })
             return (
                 <div key={"enclayer" + layerindex} className="iblock encdecbox  mr10 flex flexfull flexjustifycenter ">
-                    <div className="iblock  mb5 mt5">
-                        <div>
-                            <div className="smalldesc mb3 unselectable ">{data} units</div>
-                            <div
-                                layergroup="encoder"
-                                unitindex={layerindex}
-                                buttonaction="add"
-                                onClick={this.updateUnits.bind(this)}
-                                className={"updatebutton unselectable mb3 clickable " + ((data === this.state.maxUnits || !this.isUpdatable) ? " disabled unclickable " : "")}>
-                                <Add16 className="unclickable"> </Add16>
-                            </div>
-                            <div layerdiv={"layerdiv" + layerindex} className="layerdiv  pt3 mb3">{eachLayer}</div>
-                            <div
-                                layergroup="encoder"
-                                unitindex={layerindex}
-                                buttonaction="subtract"
-                                onClick={this.updateUnits.bind(this)}
-                                className={"updatebutton unselectable mb3 clickable " + ((data === this.state.minUnits || !this.isUpdatable) ? " disabled unclickable " : "")}>
-                                <Subtract16 className="unclickable"></Subtract16>
-                            </div>
-
+                    <div className="iblock    mb5 mt5">
+                        <div className="smalldesc mb3 unselectable ">{data} units</div>
+                        <div
+                            layergroup="encoder"
+                            unitindex={layerindex}
+                            buttonaction="add"
+                            onClick={this.updateUnits.bind(this)}
+                            className={"updatebutton unselectable mb3 clickable " + ((data === this.state.maxUnits || !this.isUpdatable) ? " disabled unclickable " : "")}>
+                            <Add16 className="unclickable"> </Add16>
                         </div>
+                        <div layerdiv={"layerdiv" + layerindex} className="layerdiv  pt3 mb3">{eachLayer}</div>
+                        <div
+                            layergroup="encoder"
+                            unitindex={layerindex}
+                            buttonaction="subtract"
+                            onClick={this.updateUnits.bind(this)}
+                            className={"updatebutton unselectable mb3 clickable " + ((data === this.state.minUnits || !this.isUpdatable) ? " disabled unclickable " : "")}>
+                            <Subtract16 className="unclickable"></Subtract16>
+                        </div>
+
+
                     </div>
                 </div >
             )

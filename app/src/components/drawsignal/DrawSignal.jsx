@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright 2019 Victor Dibia. https://github.com/victordibia
+ * Anomagram - Anomagram: Anomaly Detection with Autoencoders in the Browser.
+ * Licensed under the MIT License (the "License"); 
+ * =============================================================================
+ */
+
 import React, { Component } from "react";
 import "./drawsignal.css"
 import * as d3 from "d3"
@@ -15,10 +23,8 @@ class DrawSignal extends Component {
 
         this.axisOffset = 20
         this.chartWidth = this.props.width - this.axisOffset
-        // this.chartWidth = 450
         this.chartHeight = this.props.height
 
-        // console.log(this.props, this.chartHeight, this.chartWidth);
 
         this.smallChartWidth = 150
         this.smallChartHeight = 40
@@ -38,17 +44,17 @@ class DrawSignal extends Component {
         this.pointColors = []
 
         this.scaleRange = [2, -5]
+
+        // Add x and y axis labelss for drawsignal
         this.yaxisList = [2, 1, 0, -1, -2, -3, -4]
         this.xaxisList = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130]
 
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // console.log("props changing", this.props);
 
         // console.log(prevProps.data.epoch, this.props.data.epoch)
         if ((this.props.width !== prevProps.width)) {
-            // console.log("props updated");
             this.chartWidth = this.props.width - this.axisOffset
             this.setUpCanvasSize()
         }
@@ -94,8 +100,6 @@ class DrawSignal extends Component {
 
 
         this.zeroArr = new Array(this.signalCount).fill(0);
-        // this.zeroArr[0] = 2
-        // this.zeroArr[this.signalCount - 1] = -5
 
     }
 
@@ -364,7 +368,7 @@ class DrawSignal extends Component {
                             <div className={"unclickable positionabsolute  smallchartbox " + (this.state.signalExtracted ? " " : " displaynone")} >
                                 <canvas className="smallchart" ref="drawsignaloutcanvas" id="smallsignalcanvas"></canvas>
                                 <div className={"smalldesc extractedsignal " + (this.state.signalExtracted ? " " : " displaynone")}> Extracted signal </div>
-                                {/* <div className={"smalldesc pt5 " + (this.state.signalExtracted ? " " : " displaynone")}> draw signal </div> */}
+
                             </div>
                             <div style={{ height: this.chartHeight }} className="">
 

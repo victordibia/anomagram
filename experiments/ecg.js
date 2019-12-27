@@ -1,5 +1,16 @@
+/**
+ * @license
+ * Copyright 2019 Victor Dibia. https://github.com/victordibia
+ * Anomagram - Anomagram: Anomaly Detection with Autoencoders in the Browser.
+ * Licensed under the MIT License (the "License"); 
+ * =============================================================================
+ * This module trains a two layer autoencoder on the ECG5000 dataset and exports a trianed model
+ * which is used in the React web application.
+ */
 
-// const tf = require('@tensorflow/tfjs'); 
+
+
+// const tf = require('@tensorflow/tfjs');
 const tf = require('@tensorflow/tfjs-node');
 const _ = require('lodash');
 const dataUtils = require("./utils/data.js")

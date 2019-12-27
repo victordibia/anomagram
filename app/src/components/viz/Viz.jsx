@@ -289,10 +289,10 @@ class Viz extends Component {
     }
 
      
-    toggleDataOptions(e) {
-        this.setState({ showDrawData: e })
+    // toggleDataOptions(e) {
+    //     this.setState({ showDrawData: e })
 
-    }
+    // }
     setDatasetDraw(e) {
         this.setState({ showDrawData: true })
         this.setState({ drawSectionWidth: Math.max(this.refs["datasetexamplebox"].offsetWidth -5 , 350)})
@@ -301,7 +301,7 @@ class Viz extends Component {
     setDatasetECG(e) {
         this.setState({ showDrawData: false })
 
-        this.setSelectedData(0, this.testData[0].data) 
+        // this.setSelectedData(0, this.testData[0].data) 
     }
 
     clickLegend(e) { 
@@ -328,9 +328,7 @@ class Viz extends Component {
             return (
                 <div action={name} onClick={this.clickLegend.bind(this)} className={"iblock mr5 mb5 unselectable legendrow clickable" + (this.state.selectedLegend === name ? " active" : " ")} key={"legendrow" + index}>
                     <div style={{ background: color }} className="unclickable indicatorcircle iblock mr5"></div>
-                    <div className="iblock unclickable legendtext pl4 mediumdesc"> {name}</div>
-
-
+                    <div className="iblock unclickable legendtext pl4 mediumdesc"> {name}</div> 
                 </div>
             )
         });
@@ -342,8 +340,7 @@ class Viz extends Component {
             return (
                 <div action={name}  className={"iblock mr5  unselectable " + (data[1].name === "All" || data[1].name === "Normal"  ? " displaynone" : "") } key={"legendsmallrow" + index}>
                     <div style={{ background: color }} className="unclickable indicatorcircle iblock mr5"></div>
-                    <div className="iblock unclickable legendtext mediumdesc"> {name}</div>
-  
+                    <div className="iblock unclickable legendtext mediumdesc"> {name}</div> 
                 </div>
             )
         });
@@ -352,9 +349,9 @@ class Viz extends Component {
             .map((data, index) => {  
                 let isVisible = (this.state.selectedLegend === this.chartColorMap[this.testData[index].target].name) || this.state.selectedLegend === "All"
                 return (
-                    <div onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (isVisible ? " " : " displaynone ") + (this.state.selectedIndex + "" === index + "" ? " active " : "")} indexvalue={index} targetval={data.target} >
-                        <div indexvalue={index} className="boldtext  unclickable iblock ">
-                            <div  className="positionrelative">
+                    <div  indexvalue={index} onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (isVisible ? " " : " displaynone ") + (this.state.selectedIndex + "" === index + "" ? " active " : "")} indexvalue={index} targetval={data.target} >
+                        {/* <div  className="boldtext  unclickable iblock "> */}
+                            <div  indexvalue={index}  className="unclickable positionrelative">
                                 <div className="p3 indicatoroutrcircle  positionabsolute bottomright">
                                     <div style={{ background: this.chartColorMap[this.testData[index].target].color }} className="indicatorcircle "></div>
                                 </div>
@@ -369,10 +366,8 @@ class Viz extends Component {
                                         yScale: this.smallChartyScale
                                     }}
                                 > </SmallLineChart>
-                            </div>
-
-                        </div>
-
+                            </div> 
+                        {/* </div>  */}
                     </div>
                 ) 
         });
@@ -504,7 +499,7 @@ class Viz extends Component {
 
                 <div className="flex flexwrap ">
 
-                    <div ref="datasection" className=" flexwrapitem  flex20 mr10 " >
+                    <div ref="datasection" className=" flexwrapitem  flex40 mr10 " >
                         {<div ref="datasetexamplebox" className={" " + (this.state.showDrawData ? " displaynone" : " ")}>
                             {datasetExamples}
                         </div>}
@@ -513,12 +508,13 @@ class Viz extends Component {
                         </div>}
                     </div>
  
-                    <div className="flexwrapitem ">
-                        {modelOutput}
+                    <div className="flexwrapitem flex20 flex  ">
+                       <div > {modelOutput}</div>
+                        <div className="flex20 flexpushout "></div>
                     </div>
                 </div>
 
-                <div className="lh10 lightgreyback mt5 p10">
+                <div className="lh10 lightgreyback mt5 p10 ">
                      
                    The autoencoder is trained using normal ECG data samples. It has never seen any of the test signals above, 
                     but correcly predicts (most of the time) if a given signal is normal or abnormal. So, how does the autoencoder 
@@ -567,9 +563,18 @@ class Viz extends Component {
                                     - an <strong>encoder</strong> that learns to map input data to a low dimension representation ( <strong>also called a bottleneck, denoted by z</strong> )
                                     and a <strong>decoder</strong> that learns to reconstruct the original signal from the
                                     low dimension representation.
-                                    The training objective for the autoencoder model is to minimize the difference the reconstruction
+                                    The training objective for the autoencoder model is to minimize the reconstruction
                                     error - the difference between the input data and the reconstructed output.
-                                    While autoencoder models have been widely applied for dimensionality reduction (similar to techniques such as PCA), they can also be used for anomaly detection.
+                                    
+                                    <div className="boldtext  pt5"> Applying Autoencoders for Anomaly Detection</div>
+                                    
+                                    <div className="lh10  p10 "> 
+                                        An anomaly (outlier, abnormality) is defined as “an observation which deviates so much from 
+                                        other observations as to arouse suspicions that it was generated by a different mechanism” - Hawkins 1980.
+                                    </div>
+                                    
+                                    While autoencoder models have been widely applied for dimensionality reduction (similar to techniques such as PCA), 
+                                    they can also be used for anomaly detection.
                                     If we train the model on normal data (or data with very few abnormal samples), it learns a reconstruction function that works 
                                     well for <span className="italics"> normal looking data  </span>(low reconstruction error)
                                     and works poorly for abnormal data (high reconstruction error).
@@ -583,9 +588,9 @@ class Viz extends Component {
                                     <strong className="greycolor"> Note</strong>: We may not always have labelled data, but we can can assume (given the rare nature of anomalies) that the majority of data points for most
                                     anomaly detection use cases are normal. See the section below that discusses the impact of data composition (% of abnormal data) on model performance.
 
-                                    <br /> 
-                                    Click the <a href="#train" rel="noopener noreferrer">Train a Model</a> tab to
-                                    interactively build an autoencoder, train and evaluate its performance and visualize the histogram of errors for normal and abnormal test data.
+                              
+                                    Click the <a className="italics" href="#train" rel="noopener noreferrer">train a model</a> tab to
+                                    interactively build and train an autoencoder,  evaluate its performance and visualize the histogram of errors for normal and abnormal test data.
 
                                 </div>
 
@@ -657,8 +662,8 @@ class Viz extends Component {
 
                         <div className="sectiontitle mt10 mb5"> Model Implementation and Training </div>
                         <div className="">
-                            <div className="flex flexwrap">
-                                <div className="flex40 flexwrapitem lh10 mb10 ">
+                            <div className="flex flexwrap8">
+                                <div className="flex40 flexwrapitem8 lh10 mb10 ">
                                   The autoencoder in this prototype (visualized above) has two layers in its encoder and decoder respectively.
                                   It is implemented using the <a href="https://www.tensorflow.org/js/guide/layers_for_keras_users" target="_blank" rel="noopener noreferrer">Tensorflow.js layers api </a> (similar to the keras api). The encoder/decoder are specified 
                                     using dense layers, relu activation function, and the Adam optimizer (lr = 0.01) is used for training.  
@@ -670,7 +675,7 @@ class Viz extends Component {
                                       and decoder output for the training data (normal samples).  
                                     <br/>
                                     To illustrate the relevance of the training process to the anomaly detection task, we can visualize the 
-                                    the histrogram of reconstruction error generated by the model (see figure to the right). At initialization (epoch 0), the untrained autoencoder 
+                                    the histogram of reconstruction error generated by the model (see figure to the right). At initialization (epoch 0), the untrained autoencoder 
                                     has not learned to reconstruct normal data and hence makes fairly random guesses in its attempt
                                     to reconstruct any input data - thus we see a similar distribution of errors for both normal and abnormal data.
                                     As training progresses, the model gets better at reconstructing normal data, and its reconstruction error markedly 
@@ -684,7 +689,7 @@ class Viz extends Component {
                               
                             </div>
 
-                                {this.state.showMseViz && <div className="  pl10 flexwrapitem  floatright">
+                                {this.state.showMseViz && <div className="  pl10 flexwrapitem8  floatright">
 
                                     <div className="flex">  
                                         <div className="flexfull">
@@ -906,8 +911,11 @@ class Viz extends Component {
                                     It is also important to note that the data used here is stationary (mean and variance do not change with time), and has been 
                                     discretized (a typical ECG time series chunked into <span className="italics">slices</span> of 140 readings, where each slice constitutes
                                     a sample in the dataset).
-                                    To apply an autoencoder (and other deep learning models) for anomaly detection it is
-                                     necessary  to handle stationarity (if it exists) and construct an appropriate dataset.
+                                    To apply an autoencoder (and other deep learning models) for anomaly detection it is often
+                                     necessary  to first handle stationarity (if it exists) and construct an appropriate dataset based on domain knowledge (chunk/discretize your data).
+                                    Interested in learning more about other deep learning approaches to anomaly detection? My colleagues and I cover additional details on this
+                                    topic in the <a href="https://www.tensorflow.org/js/guide/layers_for_keras_users" target="_blank" rel="noopener noreferrer">Fast Forward Labs</a>  2020 report
+                                     on <a href="https://www.tensorflow.org/js/guide/layers_for_keras_users" target="_blank" rel="noopener noreferrer"> Deep Learning for Anomaly Detection.</a>  
                                     
                             </div> 
                             </div>
