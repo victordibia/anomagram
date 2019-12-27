@@ -349,7 +349,7 @@ class Viz extends Component {
             .map((data, index) => {  
                 let isVisible = (this.state.selectedLegend === this.chartColorMap[this.testData[index].target].name) || this.state.selectedLegend === "All"
                 return (
-                    <div  indexvalue={index} onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (isVisible ? " " : " displaynone ") + (this.state.selectedIndex + "" === index + "" ? " active " : "")} indexvalue={index} targetval={data.target} >
+                    <div  indexvalue={index} onClick={this.clickDataPoint.bind(this)} key={"testrow" + index} className={"mb5 p5 clickable  ecgdatapoint rad3 iblock mr5" + (isVisible ? " " : " displaynone ") + (this.state.selectedIndex + "" === index + "" ? " active " : "")}  targetval={data.target} >
                         {/* <div  className="boldtext  unclickable iblock "> */}
                             <div  indexvalue={index}  className="unclickable positionrelative">
                                 <div className="p3 indicatoroutrcircle  positionabsolute bottomright">

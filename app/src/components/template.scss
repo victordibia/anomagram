@@ -1,27 +1,30 @@
-@import '@carbon/themes/scss/themes'; 
+@import 'carbon-components/scss/globals/scss/styles.scss';
+
+
+// @import '@carbon/themes/scss/themes'; 
 
 // $carbon--theme: $carbon--theme--g100;
 // @include carbon--theme();
  
 
-$feature-flags: (
-  ui-shell: true,
-);
-@import 'carbon-components/scss/globals/scss/styles.scss';
+// $feature-flags: (
+//   ui-shell: true,
+// );
+
 // @import  './mytheme.scss';
 
 
 
 
 
-// @include my-theme()
+// // @include my-theme()
 
-// @include mytheme();
+// // @include mytheme();
 
-.bx--header{
-    background-color:#292929;
-    // border: 10px solid green;
-}
+// .bx--header{
+//     background-color:#292929;
+//     // border: 10px solid green;
+// }
 
 .bx--checkbox-label-text{
     font-size: 0.9em;
