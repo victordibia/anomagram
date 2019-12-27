@@ -16,6 +16,11 @@
             "src": "/images/iconblack394.png",
             "type": "image/png",
             "sizes": "394x394"
+        },
+        {
+            "src": "/images/iconblack3x.png",
+            "type": "image/png",
+            "sizes": "591x591"
         }
     ],
     "start_url": ".",
