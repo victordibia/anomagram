@@ -8,22 +8,22 @@
             "type": "image/x-icon"
         },
         {
-            "src": "/anomagram/images/iconblack197.png",
+            "src": "/images/iconblack197.png",
             "type": "image/png",
             "sizes": "197x197"
         },
         {
-            "src": "/anomagram//images/iconblack394.png",
+            "src": "/images/iconblack394.png",
             "type": "image/png",
             "sizes": "394x394"
         },
         {
-            "src": "/anomagram//images/iconblack3x.png",
+            "src": "/images/iconblack3x.png",
             "type": "image/png",
             "sizes": "591x591"
         }
     ],
-    "start_url": ".",
+    "start_url": "/",
     "display": "standalone",
     "theme_color": "#000000",
     "background_color": "#ffffff"
