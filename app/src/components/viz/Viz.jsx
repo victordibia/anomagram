@@ -612,9 +612,9 @@ class Viz extends Component {
                                 <div className="flex40 flexwrapitem  mb10 pr10">
                                     <div className="pb5 boldtext"> Data Transformation  </div>
                                     Prior to training the autoencoder, we first apply a minmax scaling transform to the input data 
-                                    which converts it from its original range (2 to -5) to a range of  0 -1  
-                                    This is done for two main reasons. First, existing research shows that neural networks in general train better when input values have 
-                                    zero mean and unit variance and lie between 0 and 1. Secondly, scaling the data supports the learning objective 
+                                    which converts it from its original range (2 to -5) to a range of  0 - 1  
+                                    This is done for two main reasons. First, existing research suggests that neural networks in general train better when input values  
+                                     lie between 0 and 1 (or have zero mean and unit variance).  Secondly, scaling the data supports the learning objective 
                                     for the autoencoder (minimizing reconstruction error) and makes the results more interpretable. 
                                     In general, the range of output values from the autoencoder is dependent on the type of activation function used in the output layer.
                                     For example, the tanh activation function outputs values in the range of -1 and 1, sigmoid outputs values in the range of 0 - 1 
