@@ -13,7 +13,7 @@ import {
     HashRouter,
 
 } from "react-router-dom";
-
+import ReactGA from 'react-ga';
 // import { InlineNotification } from 'carbon-components-react';
 
 
@@ -29,7 +29,7 @@ import ComposeModel from "./composemodel/ComposeModel"
 import { createBrowserHistory } from 'history';
 
 
-// ReactGA.initialize("UA-131578973-1")
+ReactGA.initialize("UA-131578973-2")
 const history = createBrowserHistory({
     basename: "", // The base URL of the app (see below)
     forceRefresh: false, // Set true to force full page refreshes
@@ -37,11 +37,11 @@ const history = createBrowserHistory({
     // A function to use to confirm navigation with the user (see below)
     getUserConfirmation: (message, callback) => callback(window.confirm(message))
 });
-// history.listen(location => {
-//     ReactGA.set({ page: location.hash })
-//     ReactGA.pageview(location.hash)
-//     // console.log(location.pathname, location.hash)
-// })
+history.listen(location => {
+    ReactGA.set({ page: location.hash })
+    ReactGA.pageview(location.hash)
+    // console.log(location.pathname, location.hash)
+})
 
 let linkHolder = {}
 
