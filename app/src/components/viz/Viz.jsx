@@ -297,12 +297,12 @@ class Viz extends Component {
         this.setState({ showDrawData: true })
         this.setState({ drawSectionWidth: Math.max(this.refs["datasetexamplebox"].offsetWidth -5 , 350)})
         // console.log(this.refs["datasetexamplebox"].offsetWidth); 
-        registerGAEvent("introduction", "showdraw",  "", this.componentLoadedTime)
+        registerGAEvent("introduction", "showdraw",  "showdraw", this.componentLoadedTime)
         
     }
     setDatasetECG(e) {
         this.setState({ showDrawData: false })
-        registerGAEvent("introduction", "showdataset",  "", this.componentLoadedTime)
+        registerGAEvent("introduction", "showdataset",  "showdataset", this.componentLoadedTime)
         // this.setSelectedData(0, this.testData[0].data) 
     }
 

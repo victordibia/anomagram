@@ -540,7 +540,7 @@ class Train extends Component {
     }
 
     trainButtonClick(e) {
-        registerGAEvent("trainmodel", "trainbutton", "", this.componentLoadedTime)
+        registerGAEvent("trainmodel", "trainbutton", this.state.isTraining.toString(), this.componentLoadedTime)
         if (this.state.isTraining) {
             this.setState({ isTraining: false })
         } else {
@@ -552,7 +552,7 @@ class Train extends Component {
     }
 
     resetModelButtonClick(e) { 
-        registerGAEvent("trainmodel", "compilebutton",  "", this.componentLoadedTime)
+        registerGAEvent("trainmodel", "compilebutton",  "compilebutton", this.componentLoadedTime)
         this.CumulativeSteps = 0 
         this.trainMetricHolder = []
         this.setState({

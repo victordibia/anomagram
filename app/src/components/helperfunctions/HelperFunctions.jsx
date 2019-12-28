@@ -13,7 +13,7 @@ ReactGA.initialize("UA-131578973-2")
 export function registerGAEvent(componentName, eventCategory, eventAction, componentLoadTime) {
     let eventTime = (new Date()).getTime() - componentLoadTime
     if (window.location.hostname !== "localhost") {
-        console.log("GA", eventCategory, eventTime, eventAction, componentName)
+        // console.log("GA", eventCategory, eventTime, eventAction, componentName)
         ReactGA.event({
             category: eventCategory,
             action: eventAction,
