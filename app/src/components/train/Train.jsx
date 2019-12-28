@@ -82,6 +82,8 @@ class Train extends Component {
         this.trainMetricHolder = []
         this.CumulativeSteps = 0;
 
+        this.interfaceTimedDelay=  700
+
         this.state = {
             apptitle: "Anomagram",
             isTraining: false,
@@ -143,6 +145,7 @@ class Train extends Component {
             floatCapable: false,
             floatEnabled: false,
             isCreating: false,
+ 
         }
 
         this.showOptions = [
@@ -468,6 +471,7 @@ class Train extends Component {
         mse.dispose()
         // console.log(tf.memory());
 
+        
     }
 
     updateModelDims(hiddenDims, latentDim) {
@@ -541,7 +545,7 @@ class Train extends Component {
             this.setState({ isTraining: true })
             setTimeout(() => {
                 this.trainModel()
-            }, 700);
+            }, this.interfaceTimedDelay);
         }
     }
 
@@ -555,12 +559,13 @@ class Train extends Component {
             CumulativeSteps: 0,
             trainMetrics: this.trainMetricHolder 
         })
+        
           
        
         // this.setState({ mseData: [] }) 
         setTimeout(() => {
             this.createModel()
-        }, 700);
+        }, this.interfaceTimedDelay);
         
     }
 
@@ -706,7 +711,7 @@ class Train extends Component {
                                     <Reset16 style={{ fill: "white" }} className="unselectable unclickable" />
 
                                 </div>
-                                <div className=" displayblock smalldesc textaligncenter pt5 "> Initialize  </div>
+                                <div className=" displayblock smalldesc textaligncenter pt5 "> Compile  </div>
                             </div>
 
                         </div>
@@ -741,7 +746,7 @@ class Train extends Component {
             </div>
         )
         let configBar = (
-            <div style={{ zIndex: 100 }} className="w100   unselectable greyhighlight  flex flexjustifyleft flexjustifycenter  ">
+            <div ref="modelconfigbar" style={{ zIndex: 100 }} className="w100   unselectable greyhighlight  flex flexjustifyleft flexjustifycenter modelconfigbar  ">
                 <div className="pl10 pt10 pr10 pb5  iblock">
                     <div className="iblock mr10">
                         <div className="mediumdesc pb7 pt5"> Steps <span className="boldtext"> {this.state.numSteps} </span>  - {this.state.CumulativeSteps}  </div>
@@ -847,8 +852,9 @@ class Train extends Component {
                 
                     <div className="   pt5 pb3">  
                         {this.state.modelStale && <div className="smallblueball pulse iblock"></div>}
-                        {(this.state.modelStale && this.state.CumulativeSteps === 0 )&& <span className="mediumdesc"> Select model parameters and click <span className="boldtext "> initialize </span> to compile model.</span>}
-                        {(this.state.modelStale && this.state.CumulativeSteps > 0) && <span className="mediumdesc"> Model configuration has changed. Click <span className="boldtext "> initialize </span> to recompile model.</span>}
+                        {(this.state.modelStale && this.state.CumulativeSteps === 0) && <span className="mediumdesc"> Select model parameters
+                        and click <span className="boldtext "> Compile </span> to <span className="">initialize</span> the model.</span>}
+                        {(this.state.modelStale && this.state.CumulativeSteps > 0) && <span className="mediumdesc"> Model configuration has changed. Click <span className="boldtext "> Compile </span> to recompile model.</span>}
                     { !this.state.modelStale && <span className="mediumdesc"> Model compiled based on selected parameters. Ready to <span className="boldtext"> train </span>. </span> }
                     </div>
                 </div>
@@ -872,7 +878,7 @@ class Train extends Component {
                         <div className=" mr10 ">
                             <div>
                                 <div className="charttitle mb5 ">
-                                    Model Composer
+                                    Model Composer {this.state.isCreating.toString()}
                             </div>
                                 <div>
                                     <ComposeModel
@@ -881,7 +887,7 @@ class Train extends Component {
                                 isTraining={this.state.isTraining}
                                 isUpdatable={true}
                                         updateModelDims={this.updateModelDims}
-                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction + chartState + this.firstEncode + "-" + compBoxSize}
+                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction.toString() + chartState + this.firstEncode + "-" + compBoxSize  +"-" }
                                     />
                                 </div>
                             </div>
@@ -1109,10 +1115,11 @@ class Train extends Component {
                         <div>
                             <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">
                                 Autoencoders</a> are neural networks which learn to reconstruct input data. We can leverage this property to detect anomalies.
-                                <div className="circlenumber iblock textaligncenter"> 1 </div>  <span className="boldtext"> Initialize . </span> Select model parameters
-                            (number of layers, batchsize, learning rate, regularizer etc) and then initialize (compile) the model. 
+                                <div className="circlenumber iblock textaligncenter"> 1 </div>  <span className="boldtext"> Compile Model . </span> Select model parameters
+                            (number of layers, batchsize, learning rate, regularizer etc) and then click <span className="italics">compile</span> to initialize the model. 
+                        
                             <strong className="greycolor"> Hint</strong>: You can add/remove layers and units to 
-                            the autoencoder using  the visual model composer + and - buttons!
+                            the autoencoder using  the visual model composer + and - buttons. Remember to click <span className="italics">compile</span> after every change!
                         <div className="circlenumber iblock textaligncenter"> 2 </div>  <span className="boldtext"> Train. </span> This trains the autoencoder using normal data 
                         samples from the ECG5000 dataset.  Training the model on a dataset that consists of mainly normal data (an assumption that holds for most anomaly use cases), 
                         the model learns to reconstruct only normal data samples with very little reconstruction error. 

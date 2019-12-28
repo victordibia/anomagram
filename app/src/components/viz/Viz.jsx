@@ -602,9 +602,9 @@ class Viz extends Component {
 
                         <div className="sectiontitle mt10 mb5"> The Dataset  </div>
                         <div className="mb10 lh10">
-                            This prototype uses the   <a href="http://www.timeseriesclassification.com/description.php?Dataset=ECG5000" target="_blank" rel="noopener noreferrer"> ECG5000 dataset</a> which contains 
-                            5000 examples of ECG signals from a patient. Each sample (which has been sliced into 140 points corresponding to an extracted heartbeat) has been labelled  
-                            as normal or being indicative of  heart conditions related to congestive heart failure - {dataLegendSmall}.
+                            This prototype uses the   <a href="http://www.timeseriesclassification.com/description.php?Dataset=ECG5000" target="_blank" rel="noopener noreferrer"> ECG5000 dataset</a> which
+                            contains 5000 examples of ECG signals from a patient. Each data sample (corresponds to an extracted heartbeat containing 140 points) has been labelled as normal 
+                            or being indicative of heart conditions related to congestive heart failure - {dataLegendSmall}.
 
                         </div>
                         <div className="">

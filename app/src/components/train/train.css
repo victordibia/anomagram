@@ -132,7 +132,8 @@
 }
 
 .modelconfigbar{
-    max-height: 16em;
+    /* max-height: 7em; */
+    /* border: 1px solid pink; */
 }
 
 .maintrainbox{
@@ -182,6 +183,15 @@
     /* width: 34px; */
 }
 
+.opacitytransition{
+    transition: width 0.7s,  opacity 0.7s;
+    -webkit-transition: width 0.7s, opacity 0.7s;
+}
+
+.testa{
+    border: 1px solid green;
+    width:100px;
+}
 .traincomposerdiv{
     /* min-width: 350px; */
 }
