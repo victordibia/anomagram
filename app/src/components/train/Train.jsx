@@ -11,7 +11,7 @@ import React, { Component } from "react";
 import {Loading,Dropdown, Slider, Checkbox, Tooltip } from "carbon-components-react"
 import "./train.css"
 import * as tf from '@tensorflow/tfjs';
-import { computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions"
+import {registerGAEvent, computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions"
 import ROCChart from "../rocchart/ROCChart"
 // custom charts 
 import HistogramChart from "../histogram/HistogramChart"
@@ -186,6 +186,7 @@ class Train extends Component {
         //     floatEnabled: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_ENABLED')
         // }) 
 
+        this.componentLoadedTime = (new Date()).getTime()
 
     }
 
@@ -539,6 +540,7 @@ class Train extends Component {
     }
 
     trainButtonClick(e) {
+        registerGAEvent("trainmodel", "trainbutton", "", this.componentLoadedTime)
         if (this.state.isTraining) {
             this.setState({ isTraining: false })
         } else {
@@ -550,6 +552,7 @@ class Train extends Component {
     }
 
     resetModelButtonClick(e) { 
+        registerGAEvent("trainmodel", "compilebutton",  "", this.componentLoadedTime)
         this.CumulativeSteps = 0 
         this.trainMetricHolder = []
         this.setState({
@@ -571,6 +574,8 @@ class Train extends Component {
 
     updateModelParam(e) {
         // model state is set to stale each time a parameter is updated.
+        registerGAEvent("trainmodel", "modelparameter",  e.selectedItem.type, this.componentLoadedTime)
+        
         this.setState({ modelStale: true })
         switch (e.selectedItem.type) {
             case "steps":
@@ -619,6 +624,8 @@ class Train extends Component {
 
     showOptionsClick(e) {
         // console.log(e.target.checked, e.target.getAttribute("action"));
+        registerGAEvent("trainmodel", "selectchart",  e.target.getAttribute("action"), this.componentLoadedTime)
+        
         switch (e.target.getAttribute("action")) {
             case "histogram":
                 this.setState({ showMseHistogram: e.target.checked })

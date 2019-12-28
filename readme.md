@@ -1,7 +1,7 @@
 ## Anomagram: Interactive Visualization for Autoencoders with Tensorflow.js
 
 
->  [View demo](http://victordibia.github.io/anomagram) An interactive experience built with [Tensorflow.js](http://tensorflow.org/js) to demonstrate how deep neural networks (autoencoders) can be applied to the task of anomaly detection.
+>  [Anomagram](http://victordibia.github.io/anomagram) is an interactive experience built with [Tensorflow.js](http://tensorflow.org/js) to demonstrate how deep neural networks (autoencoders) can be applied to the task of anomaly detection.
 
 <img width="100%" src="app/public/images/inference.gif">
 

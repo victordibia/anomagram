@@ -15,7 +15,7 @@ import SmallLineChart from "../linechart/SmallLineChart"
 import DrawSignal from "../drawsignal/DrawSignal"
 import ComposeModel from "../composemodel/ComposeModel"
 import HistogramChart from "../histogram/HistogramChart"
-import { computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions" 
+import { registerGAEvent, computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions" 
 import * as _ from "lodash"
 import * as tf from '@tensorflow/tfjs';
 import * as d3 from "d3"
@@ -149,6 +149,7 @@ class Viz extends Component {
         this.setState({vizThresold:this.trainMse["threshold"][0]})
         this.computeAccuracyMetrics(this.trainMse["mse"][49]) 
          
+        this.componentLoadedTime = (new Date()).getTime()
     }
 
     myStringify(data) {
@@ -275,6 +276,9 @@ class Viz extends Component {
 
     clickDataPoint(e) {
 
+        registerGAEvent("introduction", "ecgdatapointclick",  e.target.getAttribute("indexvalue"), this.componentLoadedTime)
+        
+        this.lastclicked = "model"
         let selectedData = this.testData[e.target.getAttribute("indexvalue")].data
         // set data and get predictions on click 
         this.setSelectedData(e.target.getAttribute("indexvalue"), selectedData)
@@ -288,19 +292,17 @@ class Viz extends Component {
         })
     }
 
-     
-    // toggleDataOptions(e) {
-    //     this.setState({ showDrawData: e })
-
-    // }
+      
     setDatasetDraw(e) {
         this.setState({ showDrawData: true })
         this.setState({ drawSectionWidth: Math.max(this.refs["datasetexamplebox"].offsetWidth -5 , 350)})
         // console.log(this.refs["datasetexamplebox"].offsetWidth); 
+        registerGAEvent("introduction", "showdraw",  "", this.componentLoadedTime)
+        
     }
     setDatasetECG(e) {
         this.setState({ showDrawData: false })
-
+        registerGAEvent("introduction", "showdataset",  "", this.componentLoadedTime)
         // this.setSelectedData(0, this.testData[0].data) 
     }
 
@@ -309,7 +311,8 @@ class Viz extends Component {
     }
 
     toggelTransform(e) {
-        this.setState({isDataTransormed: !this.state.isDataTransormed})
+        this.setState({ isDataTransormed: !this.state.isDataTransormed })
+        registerGAEvent("introduction", "transformdata",  !this.state.isDataTransormed.toString(), this.componentLoadedTime)
     }
  
 
