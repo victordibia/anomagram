@@ -60,7 +60,7 @@ class Viz extends Component {
             showMseViz:true,
             isDataTransormed: false,
             showBeforeTrainingHistogram: false,
-            trainVizEpoch: 0,
+            trainVizEpoch: 2,
             bestMetric: { acc: 0, fpr: 0, fnr: 0, tnr: 0, tpr: 0, threshold: 0, precision: 0, recall: 0 },
             minThreshold: 0,
             maxThreshold: 1,
@@ -88,6 +88,7 @@ class Viz extends Component {
 
         this.mseExplanations = {}
         this.mseExplanations["0"] = "Model is untrained, both normal and abnormal data have similar, overlapping distributions."
+        this.mseExplanations["2"] = "Model is untrained, both normal and abnormal data have similar, overlapping distributions."
         this.mseExplanations["5"] = "Model is getting better at reconstructing normal data resulting in smaller MSE for normal data points."
         this.mseExplanations["25"] = "Both distributions are now separate. We can set a clear threshold that separates normal from abnormal data."
         
@@ -694,32 +695,33 @@ class Viz extends Component {
                               
                             </div>
 
-                                {this.state.showMseViz && <div className="  pl10 flexwrapitem8  floatright">
+                                {this.state.showMseViz &&
+                                    <div className="  pl10 flexwrapitem8  floatright">
 
                                     <div className="flex">  
                                         <div className="flexfull">
-                                        
-                                            <div  className="mediumdesc w380 mb5 lhmedium touchnoscroll" >Example below shows histogram of errors during training.</div>
-                                            
-                                            <Slider
-                                            className="touchnoscroll border"
-                                            min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
-                                            max={49}//{(this.state.maxThreshold.toFixed(4) * 1)}
-                                            step={1}
-                                            minLabel={""}
-                                            maxLabel={""}
-                                            value={this.state.trainVizEpoch}
-                                            stepMuliplier={10}
-                                            // disabled={this.state.isTraining ? true : false}
-                                            labelText={"Move slider to view mse histogram at each epoch. "}
-                                            hideTextInput={true}
-                                            onChange={this.updateTrainVizEpoch.bind(this)}
-                                            />
-                                            <div className="mediumdesc w380 mt10 mb5 lhmedium" >
-                                               
-                                               <span className="boldtext">Epoch {this.state.trainVizEpoch}</span>
-                                               <span ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
-                                               </div>
+                                            <div className="greyhighlight pl10 mb10 pt10 pb10"> 
+                                                <div  className="mediumdesc w380 mb5 lhmedium touchnoscroll " >Example below shows histogram of errors during training.</div>
+                                                
+                                                <Slider
+                                                className="touchnoscroll border"
+                                                min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
+                                                max={49}//{(this.state.maxThreshold.toFixed(4) * 1)}
+                                                step={1}
+                                                minLabel={""}
+                                                maxLabel={""}
+                                                value={this.state.trainVizEpoch}
+                                                stepMuliplier={10}
+                                                // disabled={this.state.isTraining ? true : false}
+                                                labelText={"Move slider to view mse histogram at each epoch. "}
+                                                hideTextInput={true}
+                                                onChange={this.updateTrainVizEpoch.bind(this)}
+                                                />
+                                                <div className="mediumdesc w380 mt10  lhmedium" > 
+                                                    <span className="boldtext">Epoch {this.state.trainVizEpoch}</span>
+                                                    <span ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
+                                                </div>
+                                            </div>
                                              
                                         </div>
 

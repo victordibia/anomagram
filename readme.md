@@ -3,13 +3,15 @@
 
 >  [Anomagram](http://victordibia.github.io/anomagram) is an interactive experience built with [Tensorflow.js](http://tensorflow.org/js) to demonstrate how deep neural networks (autoencoders) can be applied to the task of anomaly detection.
 
-<img width="100%" src="app/public/images/inference.gif">
-
-Screenshot above shows the _train a model_ interface that allows you to specify the configuration of an autoencoder (number of layers, number of units in each layer), specify training parameters (steps, batchsize, learning rate, optimizer, regularizer) train it, and evaluate (mse histogram, ROC chart, Loss charts) its performance on test dataset.
 
 <img width="100%" src="app/public/images/training.gif">
 
 Screenshot above shows the _introduction_ interface where you can perform inference using a trained autoencoder implemented in Tensorflow js. The user can either run inference on a test data sample or draw an ECG signal as input and observe the model's behaviour. 
+
+<img width="100%" src="app/public/images/inference.gif">
+
+Screenshot above shows the _train a model_ interface that allows you to specify the configuration of an autoencoder (number of layers, number of units in each layer), specify training parameters (steps, batchsize, learning rate, optimizer, regularizer) train it, and evaluate (mse histogram, ROC chart, Loss charts) its performance on test dataset.
+
 
 
 ## Repository Structure

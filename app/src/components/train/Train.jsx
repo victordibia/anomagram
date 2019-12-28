@@ -30,7 +30,7 @@ class Train extends Component {
         super(props) 
 
         this.chartWidth = 350;
-        this.chartHeight = 250;
+        this.chartHeight = 200;
 
         
         
@@ -134,7 +134,7 @@ class Train extends Component {
 
 
             showAdvanced: true,
-            showIntroduction: true,
+            showIntroduction: false,
             showWarmingUp: true,
 
             
@@ -1099,7 +1099,7 @@ class Train extends Component {
                 </div>} */}
 
                 {/* show advanced options pannel */}
-                <div style={{ zIndex: 100 }} onClick={this.toggleIntroDrawer.bind(this)} className="unselectable mt10 p10 clickable  flex greymoreinfo">
+                <div style={{ zIndex: 100 }} onClick={this.toggleIntroDrawer.bind(this)} className="unselectable mt10 p10 clickable displaynone  flex greymoreinfo">
                     <div className="iblock flexfull minwidth485">
                         <strong>
                             {!this.state.showIntroduction && <span>&#x25BC;  </span>} {this.state.showIntroduction && <span>&#x25B2;  </span>}
@@ -1143,7 +1143,7 @@ class Train extends Component {
                     </div>}
 
                 {/* show advanced options pannel */}
-                <div style={{ zIndex: 100 }} onClick={this.toggleAdvancedDrawer.bind(this)} className="unselectable mt10 p10 clickable  flex greymoreinfo">
+                <div style={{ zIndex: 100 }} onClick={this.toggleAdvancedDrawer.bind(this)} className="unselectable mt10 p10 clickable displaynone  flex greymoreinfo">
                     <div className="iblock flexfull minwidth485">
                         <strong>
                             {!this.state.showAdvanced && <span>&#x25BC;  </span>} {this.state.showAdvanced && <span>&#x25B2;  </span>}
@@ -1165,7 +1165,7 @@ class Train extends Component {
                 
 
                 {(this.state.showAdvanced) &&
-                    <div className=" modelconfigdiv p10 "> 
+                    <div className=" modelconfigdiv p10 mt10 "> 
 
                         <div className="flex flexwrap ">
                             <div className="flexwrapitem">
