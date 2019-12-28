@@ -878,7 +878,7 @@ class Train extends Component {
                         <div className=" mr10 ">
                             <div>
                                 <div className="charttitle mb5 ">
-                                    Model Composer {this.state.isCreating.toString()}
+                                    Model Composer  
                             </div>
                                 <div>
                                     <ComposeModel

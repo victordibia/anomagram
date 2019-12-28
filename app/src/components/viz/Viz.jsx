@@ -480,8 +480,8 @@ class Viz extends Component {
                     {this.state.apptitle} is an interactive visualization tool for exploring
                     how a deep learning model can be applied to the task of anomaly detection (on stationary data).
                     Given an ECG signal sample, an autoencoder model (running live in your browser) can predict if it is
-                     normal or abnormal. To try it out, you can select any of the test ECG signals from the ECG5000 dataset below,
-                    or better still, you can draw a signal to see the model's prediction!
+                     normal or abnormal. To try it out, <strong>click</strong> any of the test ECG signals from the ECG5000 dataset below,
+                    or better still, draw a signal to see the model's prediction!
                     <div className=" mediumdesc boldtext">
                         <span className=""> Disclaimer: </span> This prototype is built for demonstration purposes only 
                         and is not intended for use in any medical setting.
@@ -557,7 +557,7 @@ class Viz extends Component {
 
                                    
 
-                                    An <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">Autoencoder</a> is a type of
+                                    An <a href="https://en.wikipedia.org/wiki/Autoencoder" target="_blank" rel="noopener noreferrer">Autoencoder</a> [1] is a type of
                                     artificial neural network used to learn efficient (low dimensional) data representations in an unsupervised manner.
                                     It is typically comprised of two components
                                     - an <strong>encoder</strong> that learns to map input data to a low dimension representation ( <strong>also called a bottleneck, denoted by z</strong> )
@@ -923,6 +923,15 @@ class Viz extends Component {
                             </div>
 
                         </div>
+
+                        <div className="sectiontitle mt10 mb5"> Further Reading </div>
+                        <div className="flex">
+                                <div className=" lh10 mb10 pr10">
+                                 [1] Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. MIT Press 2016 <a href="http://www.deeplearningbook.org/contents/autoencoders.html" target="_blank" rel="noopener noreferrer">Deep learning. Chapter 14, Autoencoders</a>  
+                                </div> 
+                        </div>
+
+
                     </div>
                 }
 
