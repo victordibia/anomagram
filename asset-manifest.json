@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/anomagram/static/css/main.242e784f.chunk.css",
-    "main.js": "/anomagram/static/js/main.1a4542e9.chunk.js",
-    "main.js.map": "/anomagram/static/js/main.1a4542e9.chunk.js.map",
+    "main.css": "/anomagram/static/css/main.83fc1838.chunk.css",
+    "main.js": "/anomagram/static/js/main.dbf8c0b9.chunk.js",
+    "main.js.map": "/anomagram/static/js/main.dbf8c0b9.chunk.js.map",
     "runtime-main.js": "/anomagram/static/js/runtime-main.3157e794.js",
     "runtime-main.js.map": "/anomagram/static/js/runtime-main.3157e794.js.map",
     "static/js/2.b0426e2c.chunk.js": "/anomagram/static/js/2.b0426e2c.chunk.js",
     "static/js/2.b0426e2c.chunk.js.map": "/anomagram/static/js/2.b0426e2c.chunk.js.map",
     "index.html": "/anomagram/index.html",
-    "precache-manifest.97e772a04264129378e9b4785f70558a.js": "/anomagram/precache-manifest.97e772a04264129378e9b4785f70558a.js",
+    "precache-manifest.3c56fafc2f428683def89d61b9a2628d.js": "/anomagram/precache-manifest.3c56fafc2f428683def89d61b9a2628d.js",
     "service-worker.js": "/anomagram/service-worker.js",
-    "static/css/main.242e784f.chunk.css.map": "/anomagram/static/css/main.242e784f.chunk.css.map"
+    "static/css/main.83fc1838.chunk.css.map": "/anomagram/static/css/main.83fc1838.chunk.css.map"
   },
   "entrypoints": [
     "static/js/runtime-main.3157e794.js",
     "static/js/2.b0426e2c.chunk.js",
-    "static/css/main.242e784f.chunk.css",
-    "static/js/main.1a4542e9.chunk.js"
+    "static/css/main.83fc1838.chunk.css",
+    "static/js/main.dbf8c0b9.chunk.js"
   ]
 }
