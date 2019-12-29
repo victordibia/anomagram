@@ -34,9 +34,11 @@ class Viz extends Component {
  
 
         // Define the composition and amount of test data shown
-        let testData = require("../../data/ecg/test.json") 
-        let maxTestData = 50
-        this.testData = this.subsetTestData(testData, maxTestData)
+        this.testData = require("../../data/ecg/test_small.json") 
+        // let maxTestData = 50
+        // this.testData = this.subsetTestData(testData, maxTestData)
+        
+        // console.log(this.testData);
         
         
         this.zeroArr = new Array(this.testData[0].data.length).fill(0);
@@ -112,22 +114,7 @@ class Viz extends Component {
     }
 
 
-    subsetTestData(testData, maxTestData) {
-        let maxCategories = { 1: 15, 2: 10, 3: 15, 4: 15, 5:0 }
-        let seenCategories = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-        let result = []
-        for (let i = 0; i < testData.length; i++) {  
-            let el = testData[i]
-            if (seenCategories[el.target] < maxCategories[el.target]) {
-                seenCategories[el.target] += 1
-                result.push(el)
-            }
-            if (result.length >= maxTestData) {
-                break;
-            }
-        };
-        return result
-    }
+    
 
     componentDidUpdate(prevProps, prevState) {
 

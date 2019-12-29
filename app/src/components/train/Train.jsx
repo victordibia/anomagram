@@ -33,10 +33,6 @@ class Train extends Component {
         this.chartHeight = 250;
 
         
-        
-        // Load sameple data
-        this.testData = require("../../data/ecg/test_scaled.json")
-      
 
         // Model update method passed to model composer component
         this.updateModelDims = this.updateModelDims.bind(this)
@@ -86,7 +82,9 @@ class Train extends Component {
 
         this.state = {
             apptitle: "Anomagram",
-            isTraining: false,
+            isTraining: false, 
+            trainLoaded: false,
+            testLoaded: false,
             trainDataShape: [0, 0],
             testDataShape: [0, 0],
             mseData: [],
@@ -96,7 +94,7 @@ class Train extends Component {
             selectedData: 0,
 
             currentEpoch: 0,
-            numFeatures: this.testData[0].data.length,
+            numFeatures: 140,
             hiddenLayers: 2,
             latentDim: 2,
             hiddenDim: [7, 3],
@@ -164,8 +162,8 @@ class Train extends Component {
         this.xsTest = []
         this.yTest = []
 
-        this.trainDataPath = "data/ecg/train.json"
-        this.testDataPath = "data/ecg/test.json" 
+        this.trainDataPath = process.env.PUBLIC_URL + "/data/ecg/train_scaled.json"
+        this.testDataPath = process.env.PUBLIC_URL + "/data/ecg/test_scaled.json" 
         this.momentum = 0.9 
 
         this.modelWarmedUp = false;
@@ -176,32 +174,45 @@ class Train extends Component {
        
     }
 
-    componentDidMount() {
-         
-        this.trainData = require("../../data/ecg/train_scaled.json")   
-        this.getChartContainerSizes()
+    componentDidMount() { 
 
-        // this.setState({
-        //     floatCapable: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_CAPABLE'),
-        //     floatEnabled: tf.ENV.getBool('WEBGL_RENDER_FLOAT32_ENABLED')
-        // }) 
-
+        this.getChartContainerSizes() 
         this.componentLoadedTime = (new Date()).getTime()
 
+
+
+        // load test and train data
+        this.fetchData(this.trainDataPath).then((trainData) => {
+            console.log("train data loaded"); 
+            this.trainData = trainData
+            this.setState({trainLoaded: true})
+        });
+        
+        this.fetchData(this.testDataPath).then((testData) => {
+            console.log("test data loaded"); 
+            this.testData = testData
+            this.setState({testLoaded: true})
+        }); 
+
+    }
+
+    fetchData(dataPath) {
+       return fetch(dataPath)
+        .then((response) => {
+            return response.json();
+        })  
     }
 
     componentDidUpdate(prevProps, prevState) {
         if ((prevState.isTraining !== this.state.isTraining) && this.state.isTraining === false) {
-            // console.log("training ended"); 
+             
         }
 
-        if (this.currentSteps === 0 && prevState.mseData[0] !== this.state.mseData[0]) {
-            // console.log("mse updated at 0");
+        if (this.currentSteps === 0 && prevState.mseData[0] !== this.state.mseData[0]) { 
             this.computeAccuracyMetrics(this.state.mseData)
         }
 
-        if (this.state.CumulativeSteps !== prevState.CumulativeSteps) {
-            // console.log(this.state.CumulativeSteps);
+        if (this.state.CumulativeSteps !== prevState.CumulativeSteps) { 
             this.computeAccuracyMetrics(this.state.mseData)
         }
 
@@ -681,10 +692,6 @@ class Train extends Component {
             } 
         }); 
 
-        
-
-        //get size of chart containers
-       
          
 
         let showCheckBoxes = this.showOptions.map((data) => {
@@ -702,6 +709,13 @@ class Train extends Component {
                 </div>
             )
         })
+
+        let isDataLoaded = this.state.testLoaded && this.state.trainLoaded 
+        let loadingText = (
+            <div className=" pb10">
+                Loading <span> train </span> <span> and test </span> data ... 
+            </div>
+        )
 
         let trainResetButtons = (
             <div>
@@ -736,7 +750,7 @@ class Train extends Component {
                     </div>
 
                     <div ref className="iblock  mr10">
-                        <div ref="activeloaderdiv" className="resetbox" style={{opacity: (this.state.isTraining || this.state.isCreating) ? 1:0, width: (this.state.isTraining || this.state.isCreating)  ?  "34px": "0px"  }} >
+                        <div ref="activeloaderdiv" className="resetbox" style={{opacity: (this.state.isTraining || this.state.isCreating || !isDataLoaded ) ? 1:0, width: (this.state.isTraining || this.state.isCreating || !isDataLoaded)  ?  "34px": "0px"  }} >
                             <Loading
                                 className=" "
                                 active={true}
@@ -1166,6 +1180,7 @@ class Train extends Component {
 
                 {(this.state.showAdvanced) &&
                     <div className=" modelconfigdiv p10 "> 
+                        { !isDataLoaded &&  loadingText}
 
                         <div className="flex flexwrap ">
                             <div className="flexwrapitem">
