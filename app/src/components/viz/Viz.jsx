@@ -493,7 +493,8 @@ class Viz extends Component {
                 </div>
 
 
-                <div className="mediumdesc pb5 "> Select a data source</div>
+                {!this.state.showDrawData && < div className="mediumdesc pb10 "> <strong>Click</strong> on a data sample below to see the prediction of a trained autoencoder. </div>}
+                {this.state.showDrawData &&  <div className="mediumdesc pb10 "> <strong>Draw</strong> a signal and view the autoencoders prediction. What types of signal shapes is it sensitive to? </div>}
 
                 <div className="mb10 lowerbar">
                     <div onClick={this.setDatasetECG.bind(this)} className={"datasettab clickable iblock mr5 " + (this.state.showDrawData ? "" : " active")}> ECG5000 Dataset</div>
@@ -617,7 +618,7 @@ class Viz extends Component {
                                     <div className="pb5 boldtext"> Data Transformation  </div>
                                     Prior to training the autoencoder, we first apply a minmax scaling transform to the input data 
                                     which converts it from its original range (-5 to 2) to a range of  (0 to 1)  
-                                    This is done for two main reasons. First, existing research suggests that neural networks in general train better when input values  
+                                    This is done for two main reasons. First, <a href="https://www.jeremyjordan.me/batch-normalization/" target="_blank" rel="noopener noreferrer">existing   research</a>  suggests that neural networks in general train better when input values  
                                      lie between 0 and 1 (or have zero mean and unit variance).  Secondly, scaling the data supports the learning objective 
                                     for the autoencoder (minimizing reconstruction error) and makes the results more interpretable. 
                                     In general, the range of output values from the autoencoder is dependent on the type of activation function used in the output layer.
