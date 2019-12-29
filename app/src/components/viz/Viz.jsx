@@ -69,6 +69,7 @@ class Viz extends Component {
             histPlaying: false ,
         }
 
+        this.currentEpoch = 0
         // Hashmap storing test data legend metadata
         this.chartColorMap = {
             0: { color: "white", colornorm: "grey", name: "All" },
@@ -154,7 +155,7 @@ class Viz extends Component {
          
         this.componentLoadedTime = (new Date()).getTime()
 
-        this.replayHistInterval = 800
+        this.replayHistInterval = 200
     }
 
     myStringify(data) {
@@ -323,12 +324,31 @@ class Viz extends Component {
     }
  
 
-    updateTrainVizEpoch(e) { 
-        this.setState({ trainVizEpoch: e.value })
-        this.setState({vizThresold: this.trainMse["threshold"][e.value]})
+    updateTrainVizEpoch(e) {
+        this.setState({ trainVizEpoch: e.value, vizThresold: this.trainMse["threshold"][e.value] })
+    }
+
+    replayUpdater() {
+        setTimeout(() => {
+            // this.currentEpoch  =  (this.currentEpoch + 1) % 49
+            // console.log(this.state.trainVizEpoch);
+            
+            if (this.state.histPlaying && this.state.trainVizEpoch < 49) {
+                this.setState({ trainVizEpoch: this.state.trainVizEpoch +1 , vizThresold: this.trainMse["threshold"][this.state.trainVizEpoch +1]   })
+                this.replayUpdater()
+            } else {
+                this.setState({ histPlaying:false  })
+            }
+        }, this.replayHistInterval);
     }
 
     toggleVizHistPlaying(e) {
+        if (!this.state.histPlaying) {
+            this.setState({trainVizEpoch:0}, () =>{
+                this.replayUpdater()
+            })
+           
+        }
         this.setState({histPlaying: !this.state.histPlaying})
     }
 
@@ -757,7 +777,7 @@ class Viz extends Component {
                                             data: this.trainMse["mse"][this.state.trainVizEpoch],
                                             chartWidth: 380,
                                             chartHeight: 240,
-                                            epoch: 2 + this.state.showBeforeTrainingHistogram,
+                                            epoch: 2 + this.state.trainVizEpoch,
                                             threshold: this.state.vizThresold
                                         }}
                                     ></HistogramChart>}
