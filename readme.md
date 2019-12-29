@@ -14,6 +14,18 @@ Screenshot above shows the _train a model_ interface that allows you to specify 
 <img width="100%" src="app/public/images/inference.gif">
 Screenshot above shows the _introduction_ interface where you can perform inference using a trained autoencoder implemented in Tensorflow js. The user can either run inference on a test data sample or draw an ECG signal as input and observe the model's behaviour. 
 
+## Why Anomagram
+
+Machine learning models can be complex to both understand and apply effectively. As ML becomes increasingly relevant to many business problems, it is important to create accessible interfaces that enable non-ML experts (citizen data scientists, software developers, designers etc) to experiment with ML models, and with as little overhead as possible. Anomagram is designed as part of a growing area interactive visualizations (see Neural Network Playground [3], ConvNet Playground, GANLab, GAN dissection, etc) that help communicate technical insights on how deep learning models work. It is entirely browser based, implemented in Tensorflow.js, no installations required. Importantly, Anomagram moves beyond the user of toy/synthetic data and situates learning within the context of a concrete task (anomaly detection for ECG data). The overall user experience goals for Anomagram are summarized as follows.
+
+- Provide an introduction to Autoencoders and how they can be applied to the task of anomaly detection. This involves providing definitions of concepts (reconstruction error, thresholds etc) and interactive visualizations that demonstrate concepts (e.g. an interactive visualization for inference on test data, a visualization of the structure of an autoencoder, visualization of error histograms as training progresses, etc).
+
+- Provide an interactive, accessible experience with explanations that support learning by doing. This involves providing a direct manipulation interface that allows the user to specify a model (add/remove layers and units within layers), modify model parameters (training steps, batchsize, learning rate, regularizer, optimizer, etc), modify training/test data parameters (data size, data composition), train the model, and  evaluate model performance (visualization of accuracy, precision, recall, false positive, false negative, ROC etc metrics) as each parameter is changed.
+
+
+> **Who should use Anomagram**? Anyone interested in an accessible way to learn about autoencoders and anomaly detection . Useful for educators (tool to support guided discussion of the topic), entry level data scientists, and non-ML experts (citizen data scientists, software developers, designers etc).
+
+To achieve these goals, the prototype has two main modules (shown in the screenshots above) - an introduction module that provides discussions of concepts, paired with interactive visualizations, and a train a model module where users can build, train and evaluate an autoencoder from scratch.  
 
 
 ## Repository Structure
