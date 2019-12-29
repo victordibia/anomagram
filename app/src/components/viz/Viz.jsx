@@ -9,6 +9,7 @@
 
 import React, { Component } from 'react'
 import { Loading, Button, Slider } from 'carbon-components-react'; 
+import {PlayFilledAlt16, PauseFilled16 } from '@carbon/icons-react';
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
 import SmallLineChart from "../linechart/SmallLineChart"
@@ -64,7 +65,8 @@ class Viz extends Component {
             bestMetric: { acc: 0, fpr: 0, fnr: 0, tnr: 0, tpr: 0, threshold: 0, precision: 0, recall: 0 },
             minThreshold: 0,
             maxThreshold: 1,
-            vizThresold:this.trainMse["threshold"][0],
+            vizThresold: this.trainMse["threshold"][0],
+            histPlaying: false ,
         }
 
         // Hashmap storing test data legend metadata
@@ -151,6 +153,8 @@ class Viz extends Component {
         this.computeAccuracyMetrics(this.trainMse["mse"][49]) 
          
         this.componentLoadedTime = (new Date()).getTime()
+
+        this.replayHistInterval = 800
     }
 
     myStringify(data) {
@@ -263,7 +267,9 @@ class Viz extends Component {
         this.setState({ vizThresold: threshVal })
         
         if (this.state.trainVizEpoch !== 49) {
-            this.setState({trainVizEpoch:49})
+
+            this.setState({ trainVizEpoch: 49 , histPlaying:false})
+            
         }
 
     }
@@ -320,6 +326,10 @@ class Viz extends Component {
     updateTrainVizEpoch(e) { 
         this.setState({ trainVizEpoch: e.value })
         this.setState({vizThresold: this.trainMse["threshold"][e.value]})
+    }
+
+    toggleVizHistPlaying(e) {
+        this.setState({histPlaying: !this.state.histPlaying})
     }
 
     render() {
@@ -701,28 +711,40 @@ class Viz extends Component {
 
                                     <div className="flex">  
                                         <div className="flexfull">
-                                            <div className="greyhighlight pl10 mb10 pt10 pb10"> 
-                                                <div  className="mediumdesc w380 mb5 lhmedium touchnoscroll " >Example below shows histogram of errors during training.</div>
+                                           <div  className="mediumdesc w380 mb5 lhmedium touchnoscroll " >Example below shows the histogram of errors during training.</div>
                                                 
-                                                <Slider
-                                                className="touchnoscroll border"
-                                                min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
-                                                max={49}//{(this.state.maxThreshold.toFixed(4) * 1)}
-                                                step={1}
-                                                minLabel={""}
-                                                maxLabel={""}
-                                                value={this.state.trainVizEpoch}
-                                                stepMuliplier={10}
-                                                // disabled={this.state.isTraining ? true : false}
-                                                labelText={"Move slider to view mse histogram at each epoch. "}
-                                                hideTextInput={true}
-                                                onChange={this.updateTrainVizEpoch.bind(this)}
-                                                />
-                                                <div className="mediumdesc w380 mt10  lhmedium" > 
+                                            <div className="greyhighlight pl10 mb10 pt10 flex pb5"> 
+                                                
+                                                <div className=" iblock ">
+                                                    <div
+                                                        onClick={this.toggleVizHistPlaying.bind(this)}
+                                                        className={("iblock circlelarge circlebutton ml10 mr5 flexcolumn flex flexjustifycenter clickable ") }>
+                                                        {!this.state.histPlaying && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
+                                                        {this.state.histPlaying && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
+                                                    </div>
+                                                    <div className="smalldesc textaligncenter pt10 pb5 ">  {this.state.histPlaying ? "Pause Replay" : "Replay Training"} </div>
+                                                </div>
+                                                    
+                                                    <Slider
+                                                    className="flexfull touchnoscroll border"
+                                                    min={0} //{(this.state.minThreshold.toFixed(4) * 1)}
+                                                    max={49}//{(this.state.maxThreshold.toFixed(4) * 1)}
+                                                    step={1}
+                                                    minLabel={""}
+                                                    maxLabel={""}
+                                                    value={this.state.trainVizEpoch}
+                                                    stepMuliplier={10}
+                                                    // disabled={this.state.isTraining ? true : false}
+                                                    labelText={"Move slider to view mse histogram at each epoch. "}
+                                                    hideTextInput={true}
+                                                    onChange={this.updateTrainVizEpoch.bind(this)}
+                                                    />
+                                                
+                                            </div>
+                                            <div className="mediumdesc w380 mt10  lhmedium" > 
                                                     <span className="boldtext">Epoch {this.state.trainVizEpoch}</span>
                                                     <span ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
                                                 </div>
-                                            </div>
                                              
                                         </div>
 
