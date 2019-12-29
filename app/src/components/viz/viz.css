@@ -141,3 +141,18 @@ black
 }
 
 
+.circlemedium{
+    width: 38px;
+    height: 38px;
+}
+
+.replaylabelbox{
+    width: 75px;
+    /* border: 1px solid pink; */
+    text-align: left;
+}
+.epochvalue{
+    font-size: 3.5em;
+    /* border: 1px solid pink; */
+    width: 66px;
+}

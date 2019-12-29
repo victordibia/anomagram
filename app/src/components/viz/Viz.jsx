@@ -61,7 +61,7 @@ class Viz extends Component {
             showMseViz:true,
             isDataTransormed: false,
             showBeforeTrainingHistogram: false,
-            trainVizEpoch: 2,
+            trainVizEpoch: 0,
             bestMetric: { acc: 0, fpr: 0, fnr: 0, tnr: 0, tpr: 0, threshold: 0, precision: 0, recall: 0 },
             minThreshold: 0,
             maxThreshold: 1,
@@ -90,8 +90,8 @@ class Viz extends Component {
        
 
         this.mseExplanations = {}
-        this.mseExplanations["0"] = "Model is untrained, both normal and abnormal data have similar, overlapping distributions."
-        this.mseExplanations["2"] = "Model is untrained, both normal and abnormal data have similar, overlapping distributions."
+        this.mseExplanations["0"] = "Model is untrained, both normal and abnormal data have similar value range and overlapping distributions."
+        this.mseExplanations["2"] = "Model is untrained, both normal and abnormal data have similar value range and overlapping distributions."
         this.mseExplanations["5"] = "Model is getting better at reconstructing normal data resulting in smaller MSE for normal data points."
         this.mseExplanations["25"] = "Both distributions are now separate. We can set a clear threshold that separates normal from abnormal data."
         
@@ -729,20 +729,38 @@ class Viz extends Component {
                                 {this.state.showMseViz &&
                                     <div className="  pl10 flexwrapitem8  floatright">
 
-                                    <div className="flex">  
-                                        <div className="flexfull">
-                                           <div  className="mediumdesc w380 mb5 lhmedium touchnoscroll " >Example below shows the histogram of errors during training.</div>
-                                                
+                                    <div className="flex ">  
+                                        <div className="flexfull"> 
+                                            <div className="flex mb10">
+                                                <div className=" mr5"> 
+                                                    <div className="epochvalue textaligncenter">
+                                                     {this.state.trainVizEpoch}
+                                                    </div>
+                                                    <div className="textaligncenter smalldesc">
+                                                        Epoch
+                                                    </div>
+
+                                                </div>
+                                                <div className="flexfull ">
+                                                    <div className="mediumdesc w350   lhmedium" > 
+                                                            <span> Example below shows the histogram of errors during training epochs. At</span>
+                                                            <span className="boldtext"> Epoch {this.state.trainVizEpoch}</span>, 
+                                                            <span className="italics" ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            
                                             <div className="greyhighlight pl10 mb10 pt10 flex pb5"> 
                                                 
                                                 <div className=" iblock ">
                                                     <div
                                                         onClick={this.toggleVizHistPlaying.bind(this)}
-                                                        className={("iblock circlelarge circlebutton ml10 mr5 flexcolumn flex flexjustifycenter clickable ") }>
+                                                        className={("iblock circlemedium circlebutton ml10 mr5 flexcolumn flex flexjustifycenter clickable ") }>
                                                         {!this.state.histPlaying && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
                                                         {this.state.histPlaying && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
                                                     </div>
-                                                    <div className="smalldesc textaligncenter pt10 pb5 ">  {this.state.histPlaying ? "Pause Replay" : "Replay Training"} </div>
+                                                    <div className="smalldesc textaligncenter pt10 pb5 replaylabelbox">  {this.state.histPlaying ? "Pause Replay" : "Replay Training"} </div>
                                                 </div>
                                                     
                                                     <Slider
@@ -761,10 +779,7 @@ class Viz extends Component {
                                                     />
                                                 
                                             </div>
-                                            <div className="mediumdesc w380 mt10  lhmedium" > 
-                                                    <span className="boldtext">Epoch {this.state.trainVizEpoch}</span>
-                                                    <span ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
-                                                </div>
+                                           
                                              
                                         </div>
 
