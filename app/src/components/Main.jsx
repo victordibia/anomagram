@@ -22,7 +22,6 @@ import AppHeader from "./header/AppHeader";
 import Footer from "./footer/Footer";
 import Viz from "./viz/Viz";
 import Train from "./train/Train"
-import ComposeModel from "./composemodel/ComposeModel"
 
 import { createBrowserHistory } from 'history';
 
@@ -81,16 +80,7 @@ class Main extends Component {
 
 
     render() {
-        const Composer = (props) => {
-            return (
-                <ComposeModel
-                    hiddenDims={[6, 5, 4, 3]}
-                    latentDim={[4]}
-                    isTraining={false}
 
-                />
-            );
-        }
 
         return (
             <HashRouter>

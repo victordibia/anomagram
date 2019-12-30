@@ -595,8 +595,11 @@ class Viz extends Component {
                                     </div>
                                     
                                     While autoencoder models have been widely applied for dimensionality reduction (similar to techniques such as PCA), 
-                                    they can also be used for anomaly detection.
-                                    If we train the model on normal data (or data with very few abnormal samples), it learns a reconstruction function that works 
+                                    they can also be used for anomaly detection[3]. In fact, a few deep learning models that are comprised of encoders and decoders
+                                    (e.g. Sequence to Sequence Models[5] , Variational Autoencoders[2], Bidirectional GANs[4]), with some modifications, also work well for this task!
+                                    So, how is this all achieved?
+                                    If we train the model on normal data (or data with very few abnormal samples), it (the encoder and decoder) learns a 
+                                    reconstruction function that works 
                                     well for <span className="italics"> normal looking data  </span>(low reconstruction error)
                                     and works poorly for abnormal data (high reconstruction error).
                                     We can then use reconstruction error as a signal for anomaly detection.
@@ -945,7 +948,7 @@ class Viz extends Component {
                         </div>
 
 
-                        <div className="sectiontitle mt10 mb5"> Closing Notes </div>
+                        <div id="references" className="sectiontitle mt10 mb5"> Closing Notes </div>
                         <div className="">
                             <div className="flex">
                                 <div className="flexfull lh10 mb10 pr10">
@@ -974,10 +977,24 @@ class Viz extends Component {
                         </div>
 
                         <div className="sectiontitle mt10 mb5"> Further Reading </div>
-                        <div className="flex">
-                                <div className=" lh10 mb10 pr10">
+                        <div className="">
+                                <div className=" lh10 mb2  pr10">
                                  [1] Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. MIT Press 2016 <a href="http://www.deeplearningbook.org/contents/autoencoders.html" target="_blank" rel="noopener noreferrer">Deep learning. Chapter 14, Autoencoders</a>  
-                                </div> 
+                            </div> 
+                            <div className=" lh10 mb2 pr10">
+                                 [2] An, J., & Cho, S. (2015). Variational autoencoder based anomaly detection using reconstruction probability. Special Lecture on IE, 2(1).
+                            </div> 
+                            <div className=" lh10 mb2 pr10">
+                                [3] Zhou, Chong, and Randy C. Paffenroth. "Anomaly detection with robust deep autoencoders." Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining. ACM, 2017.
+                            </div>
+                            <div className=" lh10 mb2 pr10">
+                                [4] Di Mattia, Federico, et al. "A Survey on GANs for Anomaly Detection." arXiv preprint arXiv:1906.11632 (2019).
+                            </div>
+                            <div className=" lh10 mb2 pr10">
+                                [5] Malhotra, Pankaj, et al. "LSTM-based encoder-decoder for multi-sensor anomaly detection." arXiv preprint arXiv:1607.00148 (2016).
+                            </div>
+                            
+                            
                         </div>
 
 
