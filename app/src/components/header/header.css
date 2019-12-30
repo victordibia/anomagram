@@ -35,3 +35,11 @@
     background-color: rgb(199, 29, 29);
     border: 10px solid green;
 } */
+
+.headermain{
+    background:  #161616 ;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 5000;
+}

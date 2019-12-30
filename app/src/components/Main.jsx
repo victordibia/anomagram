@@ -14,8 +14,6 @@ import {
 
 } from "react-router-dom";
 import ReactGA from 'react-ga';
-// import { InlineNotification } from 'carbon-components-react';
-
 
 import "./template.css"
 
@@ -101,12 +99,7 @@ class Main extends Component {
                 <div className="container-fluid p10">
                     <Route exact path="/" component={Viz} />
                     <Route exact path="/train" component={Train} />
-                    <Route exact path="/compose" component={Composer} />
-                    {/* <Route exact path="/faq" component={Faq} /> */}
 
-                    <div id="notificatiionbox" className="notificationtopright p5  ">
-
-                    </div>
                 </div>
                 <div id="footer"> <Footer /> </div>
             </HashRouter>

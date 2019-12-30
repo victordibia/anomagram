@@ -182,14 +182,12 @@ class Train extends Component {
 
 
         // load test and train data
-        this.fetchData(this.trainDataPath).then((trainData) => {
-            console.log("train data loaded"); 
+        this.fetchData(this.trainDataPath).then((trainData) => { 
             this.trainData = trainData
             this.setState({trainLoaded: true})
         });
         
-        this.fetchData(this.testDataPath).then((testData) => {
-            console.log("test data loaded"); 
+        this.fetchData(this.testDataPath).then((testData) => { 
             this.testData = testData
             this.setState({testLoaded: true})
         }); 
@@ -908,7 +906,7 @@ class Train extends Component {
                                 isTraining={this.state.isTraining}
                                 isUpdatable={true}
                                         updateModelDims={this.updateModelDims}
-                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction.toString() + chartState + this.firstEncode + "-" + compBoxSize  +"-" }
+                                        adv={this.state.showAdvanced + "b" + this.state.showIntroduction.toString() + chartState + this.firstEncode + "-" + compBoxSize  +"-"+ isDataLoaded }
                                     />
                                 </div>
                             </div>

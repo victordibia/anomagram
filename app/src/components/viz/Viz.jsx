@@ -9,14 +9,14 @@
 
 import React, { Component } from 'react'
 import { Loading, Button, Slider } from 'carbon-components-react'; 
-import {PlayFilledAlt16, PauseFilled16 } from '@carbon/icons-react';
+import {PlayFilledAlt16, PauseFilled16} from '@carbon/icons-react';
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
 import SmallLineChart from "../linechart/SmallLineChart"
 import DrawSignal from "../drawsignal/DrawSignal"
 import ComposeModel from "../composemodel/ComposeModel"
 import HistogramChart from "../histogram/HistogramChart"
-import { registerGAEvent, computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions" 
+import {registerGAEvent, computeAccuracyGivenThreshold, percentToRGB } from "../helperfunctions/HelperFunctions" 
 import * as _ from "lodash"
 import * as tf from '@tensorflow/tfjs';
 import * as d3 from "d3"
@@ -109,8 +109,7 @@ class Viz extends Component {
         this.smallChartyScale = d3.scaleLinear()
             .domain([d3.min(this.testData[0].data), d3.max(this.testData[0].data)]) // input 
             .range([0, this.smallChartHeight]); // output
-        
-        
+         
     }
 
 

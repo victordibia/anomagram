@@ -8,9 +8,6 @@
 
 import React, { Component } from "react";
 import {
-    Header,
-} from 'carbon-components-react/lib/components/UIShell';
-import {
     NavLink
 } from "react-router-dom";
 
@@ -28,7 +25,7 @@ class AppHeader extends Component {
     render() {
         return (
             <div>
-                <Header aria-label={this.appDescription}>
+                <div className="headermain" aria-label={this.appDescription}>
 
                     <div className="container-fluid w100 headerrow pl10 ">
 
@@ -51,7 +48,7 @@ class AppHeader extends Component {
                         </div>
 
                     </div>
-                </Header>
+                </div>
                 <div></div>
                 <div className="headerboost">  </div>
             </div>
