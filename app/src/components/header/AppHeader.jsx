@@ -31,7 +31,7 @@ class AppHeader extends Component {
 
                         <div className="flex    h100">
                             <div className="h100   flex flexjustifycenter mr10 ">
-                                <a href="/#">
+                                <a href={process.env.PUBLIC_URL + "/#"}>
                                     <img className="headericon" src="images/icon.png" alt="anomagram logo" />
 
                                 </a>
