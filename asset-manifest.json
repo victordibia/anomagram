@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/anomagram/static/css/main.83fc1838.chunk.css",
-    "main.js": "/anomagram/static/js/main.13fd4e05.chunk.js",
-    "main.js.map": "/anomagram/static/js/main.13fd4e05.chunk.js.map",
+    "main.css": "/anomagram/static/css/main.ea59a77b.chunk.css",
+    "main.js": "/anomagram/static/js/main.cbc6eb5e.chunk.js",
+    "main.js.map": "/anomagram/static/js/main.cbc6eb5e.chunk.js.map",
     "runtime-main.js": "/anomagram/static/js/runtime-main.3157e794.js",
     "runtime-main.js.map": "/anomagram/static/js/runtime-main.3157e794.js.map",
-    "static/js/2.58511f9f.chunk.js": "/anomagram/static/js/2.58511f9f.chunk.js",
-    "static/js/2.58511f9f.chunk.js.map": "/anomagram/static/js/2.58511f9f.chunk.js.map",
+    "static/js/2.7fd84e42.chunk.js": "/anomagram/static/js/2.7fd84e42.chunk.js",
+    "static/js/2.7fd84e42.chunk.js.map": "/anomagram/static/js/2.7fd84e42.chunk.js.map",
     "index.html": "/anomagram/index.html",
-    "precache-manifest.fb086a784b2b46dabd3235754dcb9ddf.js": "/anomagram/precache-manifest.fb086a784b2b46dabd3235754dcb9ddf.js",
+    "precache-manifest.900a1f7a9613fafe41447287fd932ff2.js": "/anomagram/precache-manifest.900a1f7a9613fafe41447287fd932ff2.js",
     "service-worker.js": "/anomagram/service-worker.js",
-    "static/css/main.83fc1838.chunk.css.map": "/anomagram/static/css/main.83fc1838.chunk.css.map"
+    "static/css/main.ea59a77b.chunk.css.map": "/anomagram/static/css/main.ea59a77b.chunk.css.map"
   },
   "entrypoints": [
     "static/js/runtime-main.3157e794.js",
-    "static/js/2.58511f9f.chunk.js",
-    "static/css/main.83fc1838.chunk.css",
-    "static/js/main.13fd4e05.chunk.js"
+    "static/js/2.7fd84e42.chunk.js",
+    "static/css/main.ea59a77b.chunk.css",
+    "static/js/main.cbc6eb5e.chunk.js"
   ]
 }
