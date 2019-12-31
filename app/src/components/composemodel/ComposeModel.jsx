@@ -436,7 +436,7 @@ class ComposeModel extends Component {
                 {/* Encoder, bottleneck, Decoder  */}
                 <div className="flex">
                     <div className="iotextdata unselectable mr10 p5  ">
-                        input [140 units]
+                        input <span className="smalldesc">[140 units]</span>
                     </div>
                     <div id="mainencoderdiv" ref="encoderbox" className="encoder greyhighlight  pl5 flex5 mr10 ">
                         <div className="layerbar flex  flexjustifycenter pb10 pt10">
@@ -456,7 +456,7 @@ class ComposeModel extends Component {
                     </div>
 
                     <div className="iotextdata unselectable ml10 p5  ">
-                        output [140 units]
+                        output <span className="smalldesc">[140 units]</span>
                     </div>
 
                 </div>

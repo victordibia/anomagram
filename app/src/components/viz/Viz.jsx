@@ -598,7 +598,8 @@ class Viz extends Component {
                                     they can also be used for anomaly detection[3]. In fact, a few deep learning models that are comprised of encoders and decoders
                                     (e.g. Sequence to Sequence Models[5] , Variational Autoencoders[2], Bidirectional GANs[4]), with some modifications, also work well for this task!
                                     So, how is this all achieved?
-                                    If we train the model on normal data (or data with very few abnormal samples), it (the encoder and decoder) learns a 
+                                    <br/>
+                                    It turns out that if  we train the model on normal data (or data with very few abnormal samples), it  learns a 
                                     reconstruction function that works 
                                     well for <span className="italics"> normal looking data  </span>(low reconstruction error)
                                     and works poorly for abnormal data (high reconstruction error).
@@ -689,9 +690,11 @@ class Viz extends Component {
                             <div className="flex flexwrap8">
                                 <div className="flex40 flexwrapitem8 lh10 mb10 ">
                                   The autoencoder in this prototype (visualized above) has two layers in its encoder and decoder respectively.
-                                  It is implemented using the <a href="https://www.tensorflow.org/js/guide/layers_for_keras_users" target="_blank" rel="noopener noreferrer">Tensorflow.js layers api </a> (similar to the keras api). The encoder/decoder are specified 
-                                    using dense layers, relu activation function, and the Adam optimizer (lr = 0.01) is used for training.  
-                                      
+                                  It is implemented using the <a href="https://www.tensorflow.org/js/guide/layers_for_keras_users" target="_blank" rel="noopener noreferrer">Tensorflow.js layers api </a> (similar to the keras api). 
+                                     The encoder/decoder are specified   using dense layers, relu activation function, and 
+                                     the Adam optimizer (lr = 0.01) is used for training. Given that each ECG data sample is comprised of 140 values, 
+                                     both the encoder input vector  and decoder output layer are of size 140.
+                                        
                                   <div className=" mt10 mb10 lh10  lightbluehightlight maxh16  mb10">
                                     Tensorflow.js code for <a href="https://github.com/victordibia/anomagram/blob/master/app/src/components/train/models/ae.jsx" target="_blank" rel="noopener noreferrer">specifying the autoencoder</a> can be found in the project repository on <a href="https://github.com/victordibia/anomagram/" target="_blank" rel="noopener noreferrer">Github</a>. 
                                   </div>
@@ -706,7 +709,7 @@ class Viz extends Component {
                                     becomes smaller for normal samples leading to a distinct distribution for normal compared to abnormal data.
 
                                     As both distributions <span className="italics">diverge</span>, we can set a threshold or cutoff point; any data point 
-                                    with error above this threshold is termed an anomaly and any point below this is termed normal. 
+                                    with error above this threshold is termed an anomaly and any data point below this is termed normal. 
                                     Using labelled test data (and some domain expertise), we can automatically determine this threshold as the point that yields the best 
                                     anomaly classification accuracy. 
                                     {/* For example, in the visualization on the right, the threshold is automatically set as the point */}
@@ -940,7 +943,8 @@ class Viz extends Component {
                                     training the autoencoder model. We see that with <strong>0%</strong> abnormal data, the model AUC is <strong>~96%</strong>.
                                    At <strong>30%</strong> abnormal sample composition, AUC drops to <strong>~93%</strong>. 
                                     At 50% abnormal datapoints, there is just not enough information in the data 
-                                    that allows the model learn a pattern of normal behaviour. It essentially learns to reconstruct normal and abnormal data well and mse is no longer a good measure of anomaly.
+                                    that allows the model learn a pattern of normal behaviour. It essentially learns to reconstruct normal and abnormal 
+                                    data equally well and mse is no longer a good measure of anomaly.
                                     At this point, model performance is only slightly above random chance (AUC of 56%).
  
                                 </div>
@@ -961,7 +965,7 @@ class Viz extends Component {
                                     <br />
                                     <strong className="greycolor"> Note</strong>: A deep learning model
                                     is not always the best tool for the job. Particularly, for univariate data (and low dimension data ) , autoregressive linear models 
-                                    (linear regression, ARIMA family of models for time series), Clustering (PCA etc, KMeans), Nearest Neighbour (KNNs) can be very effective. 
+                                    (linear regression, ARIMA family of models for time series, etc), Clustering (PCA, KMeans, etc), Nearest Neighbour (KNNs) can be very fast and effective. 
                                     It is also important to note that the data used here is stationary (mean and variance do not change with time), and has been 
                                     discretized (a typical ECG time series chunked into <span className="italics">slices</span> of 140 readings, where each slice constitutes
                                     a sample in the dataset).
