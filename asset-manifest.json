@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/anomagram/static/css/main.3c6c47a0.chunk.css",
-    "main.js": "/anomagram/static/js/main.4d17d320.chunk.js",
-    "main.js.map": "/anomagram/static/js/main.4d17d320.chunk.js.map",
+    "main.js": "/anomagram/static/js/main.e6baf4ea.chunk.js",
+    "main.js.map": "/anomagram/static/js/main.e6baf4ea.chunk.js.map",
     "runtime-main.js": "/anomagram/static/js/runtime-main.3157e794.js",
     "runtime-main.js.map": "/anomagram/static/js/runtime-main.3157e794.js.map",
     "static/js/2.1fdf87eb.chunk.js": "/anomagram/static/js/2.1fdf87eb.chunk.js",
     "static/js/2.1fdf87eb.chunk.js.map": "/anomagram/static/js/2.1fdf87eb.chunk.js.map",
     "index.html": "/anomagram/index.html",
-    "precache-manifest.a5b93f020e37f4c52c92ef561b0c3346.js": "/anomagram/precache-manifest.a5b93f020e37f4c52c92ef561b0c3346.js",
+    "precache-manifest.97ecfb42621abc7ccf5501eac09874c7.js": "/anomagram/precache-manifest.97ecfb42621abc7ccf5501eac09874c7.js",
     "service-worker.js": "/anomagram/service-worker.js",
     "static/css/main.3c6c47a0.chunk.css.map": "/anomagram/static/css/main.3c6c47a0.chunk.css.map"
   },
@@ -16,6 +16,6 @@
     "static/js/runtime-main.3157e794.js",
     "static/js/2.1fdf87eb.chunk.js",
     "static/css/main.3c6c47a0.chunk.css",
-    "static/js/main.4d17d320.chunk.js"
+    "static/js/main.e6baf4ea.chunk.js"
   ]
 }
