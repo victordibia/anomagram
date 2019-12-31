@@ -104,6 +104,9 @@
 .whitetext{
     color: white;
 }
+.whitefill{
+    fill: white;
+}
 .greentext{
     color: green;
 }

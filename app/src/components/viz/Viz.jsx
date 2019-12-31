@@ -695,8 +695,9 @@ class Viz extends Component {
                                      the Adam optimizer (lr = 0.01) is used for training. Given that each ECG data sample is comprised of 140 values, 
                                      both the encoder input vector  and decoder output layer are of size 140.
                                         
-                                  <div className=" mt10 mb10 lh10  lightbluehightlight maxh16  mb10">
-                                    Tensorflow.js code for <a href="https://github.com/victordibia/anomagram/blob/master/app/src/components/train/models/ae.jsx" target="_blank" rel="noopener noreferrer">specifying the autoencoder</a> can be found in the project repository on <a href="https://github.com/victordibia/anomagram/" target="_blank" rel="noopener noreferrer">Github</a>. 
+                                  <div className=" mt10 mb10 lh10  lightbluehightlight maxh16   mb10">
+                                     Tensorflow.js code for <a href="https://github.com/victordibia/anomagram/blob/master/app/src/components/train/models/ae.jsx" target="_blank" rel="noopener noreferrer">specifying the autoencoder</a> can
+                                    be found in the project repository on <a href="https://github.com/victordibia/anomagram/" target="_blank" rel="noopener noreferrer">Github</a>. 
                                   </div>
                                       As training progresses, the model's weights are updated to minimize the difference between the encoder input 
                                       and decoder output for the training data (normal samples).  
