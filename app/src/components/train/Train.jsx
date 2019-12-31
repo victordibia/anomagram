@@ -726,7 +726,7 @@ class Train extends Component {
                             <div className="">
                                 <div
                                     onClick={this.resetModelButtonClick.bind(this)}
-                                    className={" circlesmall circlebutton mr5 flex flexjustifycenter clickable " + (this.state.isTraining ? "  disabled" : "") + " " + (this.state.modelStale ? " pulse" : "")}>
+                                    className={" circlesmall circlebutton mr5 flex flexjustifycenter clickable " + (this.state.isTraining || !isDataLoaded ? "  disabled" : "") + " " + (this.state.modelStale ? " pulse" : "")}>
                                     <Reset16 style={{ fill: "white" }} className="unselectable unclickable" />
 
                                 </div>
@@ -740,7 +740,7 @@ class Train extends Component {
                     <div className=" iblock ">
                         <div
                             onClick={this.trainButtonClick.bind(this)}
-                            className={("iblock circlelarge circlebutton mr5 flexcolumn flex flexjustifycenter clickable ") + (this.state.modelStale ? " disabled" : "")}>
+                            className={("iblock circlelarge circlebutton mr5 flexcolumn flex flexjustifycenter clickable ") + (this.state.modelStale || !isDataLoaded ? " disabled" : "")}>
                             {!this.state.isTraining && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
                             {this.state.isTraining && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
                         </div>
@@ -765,7 +765,7 @@ class Train extends Component {
             </div>
         )
         let configBar = (
-            <div ref="modelconfigbar" style={{ zIndex: 100 }} className="w100   unselectable greyhighlight  flex flexjustifyleft flexjustifycenter modelconfigbar  ">
+            <div ref="modelconfigbar" style={{ zIndex: 100 }} className={"w100   unselectable greyhighlight  flex flexjustifyleft flexjustifycenter modelconfigbar  " + (!isDataLoaded ? " divdisabled" : "")}>
                 <div className="pl10 pt10 pr10 pb5  iblock">
                     <div className="iblock mr10">
                         <div className="mediumdesc pb7 pt5"> Steps <span className="boldtext"> {this.state.numSteps} </span>  - {this.state.CumulativeSteps}  </div>

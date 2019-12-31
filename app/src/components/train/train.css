@@ -104,6 +104,11 @@
     border:grey;
 }
 
+.divdisabled{
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .metricvalue{
     font-size: 1.99em;
     /* padding-top: 0.28em; */

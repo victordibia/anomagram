@@ -49,7 +49,7 @@ class AppHeader extends Component {
                             <div className="h100   flex flexjustifycenter   navbarlinks mr10">
                                 <a className=" dispalyblock h100  " href="https://github.com/victordibia/anomagram/" target="_blank" rel="noopener noreferrer">
                                     <LogoGithub16 className=" whitefill gitlogo  "></LogoGithub16>
-                                    <span className="gitlogotext apptitle">Github</span>
+                                    <span className="gitlogotext">Git</span><span className=" apptitle">hub</span>
                                 </a>
                             </div>
                         </div>
