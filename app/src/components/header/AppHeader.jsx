@@ -44,12 +44,12 @@ class AppHeader extends Component {
                                 <NavLink exact to="/"> Introduction </NavLink>
                             </div>
                             <div className="h100   flex flexjustifycenter  navbarlinks mr10">
-                                <NavLink exact to="/train"> Train a Model </NavLink>
+                                <NavLink exact to="/train"> Train <span className="apptitle"> a Model </span></NavLink>
                             </div>
                             <div className="h100   flex flexjustifycenter   navbarlinks mr10">
-                                <a className=" positionrelative pt10" href="https://github.com/victordibia/anomagram/" target="_blank" rel="noopener noreferrer">
-                                    <LogoGithub16 className="mt10 whitefill gitlogo  "></LogoGithub16>
-                                    <span className="gitlogotext">Github</span>
+                                <a className=" dispalyblock h100  " href="https://github.com/victordibia/anomagram/" target="_blank" rel="noopener noreferrer">
+                                    <LogoGithub16 className=" whitefill gitlogo  "></LogoGithub16>
+                                    <span className="gitlogotext apptitle">Github</span>
                                 </a>
                             </div>
                         </div>

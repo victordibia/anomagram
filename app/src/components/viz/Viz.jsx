@@ -9,7 +9,7 @@
 
 import React, { Component } from 'react'
 import { Loading, Button, Slider } from 'carbon-components-react'; 
-import {PlayFilledAlt16, PauseFilled16} from '@carbon/icons-react';
+import {StopFilledAlt16, PlayFilledAlt16} from '@carbon/icons-react';
 import "./viz.css"
 import LineChart from "../linechart/LineChart"
 import SmallLineChart from "../linechart/SmallLineChart"
@@ -751,9 +751,9 @@ class Viz extends Component {
                                                         onClick={this.toggleVizHistPlaying.bind(this)}
                                                         className={("iblock circlemedium circlebutton ml10 mr5 flexcolumn flex flexjustifycenter clickable ") }>
                                                         {!this.state.histPlaying && <PlayFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
-                                                        {this.state.histPlaying && <PauseFilled16 style={{ fill: "white" }} className="unselectable unclickable" />}
+                                                        {this.state.histPlaying && <StopFilledAlt16 style={{ fill: "white" }} className="unselectable unclickable" />}
                                                     </div>
-                                                    <div className="smalldesc textaligncenter pt10 pb5 replaylabelbox">  {this.state.histPlaying ? "Pause Replay" : "Replay Training"} </div>
+                                                    <div className="smalldesc textaligncenter pt10 pb5 replaylabelbox">  {this.state.histPlaying ? "Stop Replay" : "Replay Training"} </div>
                                                 </div>
                                                     
                                                     <Slider

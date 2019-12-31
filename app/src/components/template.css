@@ -404,7 +404,7 @@
     .flexwrapitem:nth-child(n+2) { flex-basis: 100%; margin-bottom: 5px; }  
 }
 
-@media screen and (max-width:400px) { 
+@media screen and (max-width:500px) { 
     .apptitle { display: none; }  
 }
 
