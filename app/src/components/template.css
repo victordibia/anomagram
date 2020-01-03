@@ -422,6 +422,10 @@
     .smallshow { display: none;}
 }
 
+.errordiv{
+    border: 1px solid red;
+    border-left: 4px solid red;
+}
 
 .flexfull {
     flex: 1;

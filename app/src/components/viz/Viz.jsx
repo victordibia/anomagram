@@ -68,7 +68,9 @@ class Viz extends Component {
             minThreshold: 0,
             maxThreshold: 1,
             vizThresold: this.trainMse["threshold"][0],
-            histPlaying: false ,
+            histPlaying: false,
+            showError: false,
+            errorMsg: "An error has occured."
         }
 
         this.currentEpoch = 0
@@ -182,10 +184,20 @@ class Viz extends Component {
         this.setState({ isLoading: true }) 
         setTimeout(() => {
             let modelPath = process.env.PUBLIC_URL + "/webmodel/ecg/model.json"
-            tf.loadLayersModel(modelPath).then((model) => {
-                this.loadedModel = model
-                this.setState({ modelLoaded: true, isLoading: false })
-                this.getPrediction(this.state.selectedData)
+            tf.loadLayersModel(modelPath)
+                .catch(() => {
+                    console.log("Failed to loadmodel");
+                    this.setState({showError:true, errorMsg: "Error fetching model. Please check internet connection and reload page."}) 
+                })
+                .then((model) => {
+                if (model) {
+                    this.loadedModel = model
+                    this.setState({ modelLoaded: true, isLoading: false, showError: false })
+                    this.getPrediction(this.state.selectedData)
+                } else {
+                   
+                }
+               
             });
         }, 700);
     }
@@ -507,6 +519,10 @@ class Viz extends Component {
                         and is not intended for use in any medical setting.
                     </div>
                 </div>
+
+                {this.state.showError && <div className="errordiv p10 mb10"> 
+                    {this.state.errorMsg}
+                </div>}
 
 
                 {!this.state.showDrawData && < div className="mediumdesc pb10 "> <strong>Click</strong> on a data sample below to see the prediction of a trained autoencoder. </div>}

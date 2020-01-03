@@ -143,6 +143,8 @@ class Train extends Component {
             floatCapable: false,
             floatEnabled: false,
             isCreating: false,
+            showError: false,
+            errorMsg: "An error has occured."
  
         }
 
@@ -182,22 +184,39 @@ class Train extends Component {
 
 
         // load test and train data
-        this.fetchData(this.trainDataPath).then((trainData) => { 
-            this.trainData = trainData
-            this.setState({trainLoaded: true})
+        this.fetchData(this.trainDataPath).then((trainData) => {  
+                this.trainData = trainData
+                this.setState({trainLoaded: true}) 
+           
+        }).catch((error) => {
+            this.handleDataLoadError()
+            
         });
         
-        this.fetchData(this.testDataPath).then((testData) => { 
-            this.testData = testData
-            this.setState({testLoaded: true})
-        }); 
+        this.fetchData(this.testDataPath).then((testData) => {  
+                this.testData = testData
+                this.setState({testLoaded: true})
+            
+        }).catch((error) => {
+            this.handleDataLoadError()
+            
+        });
 
     }
 
+    handleDataLoadError() {
+        // console.log("Failed to test data");
+        this.setState({showError:true, errorMsg: "Error fetching data. Please check internet connection and reload page. "}) 
+    }
+
     fetchData(dataPath) {
-       return fetch(dataPath)
-        .then((response) => {
-            return response.json();
+        return fetch(dataPath)
+            .catch(() => {
+               
+           })
+            .then((response) => {
+                return response.json()
+            
         })  
     }
 
@@ -1154,6 +1173,12 @@ class Train extends Component {
 
                     </div>}
 
+                
+                {(this.state.showError && !(this.state.testLoaded && this.state.trainLoaded ))&&
+                    <div className="errordiv p10 mb10"> 
+                        {this.state.errorMsg}
+                    </div>
+                }
                 {/* show advanced options pannel */}
                 <div style={{ zIndex: 100 }} onClick={this.toggleAdvancedDrawer.bind(this)} className="unselectable mt10 p10 clickable  flex greymoreinfo">
                     <div className="iblock flexfull minwidth485">
