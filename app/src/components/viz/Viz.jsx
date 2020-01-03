@@ -946,6 +946,7 @@ class Viz extends Component {
 
                             </div>
 
+                            
                            
 
                             <div className="flex20 flexwrapitem  mr10">
@@ -968,11 +969,40 @@ class Viz extends Component {
                             </div>
                         </div>
 
+                        
+                        <div id="references" className="sectiontitle mt10 mb5"> Ok .. The Road to Production? </div>
+                        <div className="flexfull lh10 mb10 pr10">
+                                There are a few important properties of the current dataset and approach that make the autoencoder approach possible.
+                            First, while ECG is  <span className="italics">time series</span>, the current dataset has been
+                            discretized i.e. chunked into fixed-size <span className="italics">slices</span> of 140 values, where each slice constitutes
+                            a sample in the dataset. This discretization is performed using some domain knowledge (each set of 140 values corresponds to a heartbeat),
+                            making each sample comparable or identical. Next, we can also observe that the data is stationary - i.e. its mean and variance do not change with time. This way, it is more likely that 
+                            the values being predicted at test time lie in the same range (distribution) as values seen during training.
+
+                            In order to move to production with your own data using the autoencoder approach discussed above, it is important that stationarity 
+                            is handled (if it exists) and the dataset is constructed such that each sample is identical. 
+
+                            <div className="pb5 boldtext mt10  "> Model Serving </div> 
+                            <div className="mb10">
+                            For production purposes, there are two options. First, we can integrate our 
+                            Tensorflow.js model code <span className="italics">as is</span> into a Node.js web server application.
+                            However, we will be using either the <a href="https://www.tensorflow.org/js/guide/nodejs#tensorflow_cpu" target="_blank" rel="noopener noreferrer">Tensorflow.js CPU</a> backend
+                            which accelerates computation via the Tensorflow C binary, or the <a href="https://www.tensorflow.org/js/guide/nodejs#tensorflow_gpu" target="_blank" rel="noopener noreferrer">Tensorflow.js GPU</a>  backend 
+                            which accelerates computation via an available CUDA enabled GPU. 
+                            Our second option is to rewrite our model using Keras API. The good part is that the Tensorflow.js api 
+                            has an almost 1:1 mapping with the Keras API, making rewrites easy. A keras model can be served in 
+                            production using Tensorflow serving.
+
+                            </div>
+                            
+ 
+
+                                
+                        </div> 
+                        
 
                         <div id="references" className="sectiontitle mt10 mb5"> Closing Notes </div>
-                        <div className="">
-                            <div className="flex">
-                                <div className="flexfull lh10 mb10 pr10">
+                        <div className="flexfull lh10 mb10 pr10">
                                     In this prototype, we have considered the task of detecting anomalies in ECG data.
                                     We used an autoencoder and demonstrate some fairly good results with minimal tuning. 
                                     We have also explored how and why it works. This and other 
@@ -983,19 +1013,12 @@ class Viz extends Component {
                                     <strong className="greycolor"> Note</strong>: A deep learning model
                                     is not always the best tool for the job. Particularly, for univariate data (and low dimension data ) , autoregressive linear models 
                                     (linear regression, ARIMA family of models for time series, etc), Clustering (PCA, KMeans, etc), Nearest Neighbour (KNNs) can be very fast and effective. 
-                                    It is also important to note that the data used here is stationary (mean and variance do not change with time), and has been 
-                                    discretized (a typical ECG time series chunked into <span className="italics">slices</span> of 140 readings, where each slice constitutes
-                                    a sample in the dataset).
-                                    To apply an autoencoder (and other deep learning models) for anomaly detection it is often
-                                     necessary  to first handle stationarity (if it exists) and construct an appropriate dataset based on domain knowledge (chunk/discretize your data).
+                                    
                                     Interested in learning more about other deep learning approaches to anomaly detection? My colleagues and I cover additional details on this
                                     topic in the upcoming <a href="http://experiments.fastforwardlabs.com/" target="_blank" rel="noopener noreferrer">Fast Forward Labs</a>  2020 report
                                      on <a href="https://www.cloudera.com/products/fast-forward-labs-research.html" target="_blank" rel="noopener noreferrer"> Deep Learning for Anomaly Detection.</a>  
                                     
                             </div> 
-                            </div>
-
-                        </div>
 
                         <div className="sectiontitle mt10 mb5"> Further Reading </div>
                         <div className="">
