@@ -978,14 +978,14 @@ class Viz extends Component {
                         <div id="references" className="sectiontitle mt10 mb5"> Ok .. The Road to Production? </div>
                         <div className="flexfull lh10 mb10 pr10">
                                 There are a few important properties of the current dataset that make the autoencoder approach possible.
-                            First, while ECG is  <span className="italics">time series</span>, the current dataset has been
+                            First, while ECG is  <span className="italics">time series</span> data, the current dataset has been
                             discretized i.e. chunked into fixed-size <span className="italics">slices</span> of 140 values, where each slice constitutes
-                            a sample in the dataset. This discretization is performed using some domain knowledge (each set of 140 values corresponds to a heartbeat),
+                            a sample in the dataset. This discretization is performed using some domain knowledge (each set of 140 values corresponds to a heartbeat!),
                             making each sample comparable or identical. Next, we can also observe that the data is stationary - i.e. its mean and variance do not change with time. This way, it is more likely that 
                             the values being predicted at test time lie in the same range (distribution) as values seen during training.
 
                             In order to move to production with your own data using the autoencoder approach discussed above, it is important that similar conditions are met - stationarity 
-                            is handled (if it exists) and the dataset is constructed such that each sample is identical. 
+                            is handled (if it exists) and the dataset is constructed such that each sample is identical as well as independent. 
                             {/* In some cases, it is also necessary that each sample is independent. */}
 
                             <div className="pb5 boldtext mt10  "> Model Serving </div> 
@@ -996,7 +996,7 @@ class Viz extends Component {
                             which accelerates computation via the Tensorflow C binary, or the <a href="https://www.tensorflow.org/js/guide/nodejs#tensorflow_gpu" target="_blank" rel="noopener noreferrer">Tensorflow.js GPU</a>  backend 
                             which accelerates computation via an available CUDA enabled GPU. This option makes sense for teams already heavily invested in the Nodejs stack.
                             Our second option is to rewrite the model using the Keras API. The good part is that the Tensorflow.js (layers) api 
-                            has an  <a href="https://www.tensorflow.org/js/guide/layers_for_keras_users" target="_blank" rel="noopener noreferrer">almost 1:1almost 1:1</a>   mapping with the Keras API, making rewrites easy. A keras model can be served in 
+                            has an  <a href="https://www.tensorflow.org/js/guide/layers_for_keras_users" target="_blank" rel="noopener noreferrer">almost 1:1</a>   mapping with the Keras API, making rewrites easy. A keras model can be served in 
                             production using <a href="https://www.tensorflow.org/tfx/tutorials/serving/rest_simple" target="_blank" rel="noopener noreferrer">Tensorflow serving</a>  .
 
                             </div>
