@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "84bd0029d8623a8509f0c5c8755cd536",
+    "revision": "a14cb185b677a986338c8ee2de0ce1e7",
     "url": "/anomagram/index.html"
   },
   {
-    "revision": "1801542af82c8c481542",
+    "revision": "fa71018cf7f35f22e52c",
     "url": "/anomagram/static/css/main.5a6361d9.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/anomagram/static/js/2.1fdf87eb.chunk.js"
   },
   {
-    "revision": "1801542af82c8c481542",
-    "url": "/anomagram/static/js/main.7e695b2e.chunk.js"
+    "revision": "fa71018cf7f35f22e52c",
+    "url": "/anomagram/static/js/main.2e518fef.chunk.js"
   },
   {
     "revision": "39b4941054589d12068d",
