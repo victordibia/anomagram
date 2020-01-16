@@ -513,7 +513,7 @@ class Viz extends Component {
                     <div className="boldtext mb5">  A Gentle Introduction to Anomaly Detection with Autoencoders</div>
                     {this.state.apptitle} is an interactive visualization tool for exploring
                     how a deep learning model can be applied to the task of anomaly detection (on stationary data).
-                    Given an ECG signal sample, an autoencoder model (running live in your browser) can predict if it is
+                    Given an  <a href="https://en.wikipedia.org/wiki/Electrocardiography" target="_blank" rel="noopener noreferrer">ECG</a>  signal sample, an autoencoder model (running live in your browser) can predict if it is
                      normal or abnormal. To try it out, <strong>click</strong> any of the test ECG signals from the ECG5000 dataset below,
                     or better still, draw a signal to see the model's prediction!
                     <div className=" mediumdesc boldtext">
@@ -737,9 +737,9 @@ class Viz extends Component {
                                     Using labelled validation data (and some domain expertise), we can automatically determine this threshold. While existing ressearch
                                     has proposed several threshold selection methods, a simple approach (used in this prototype) is to try all possible values within the 
                                     range of mse errors for a given validation dataset, 
-                                    and select the point that yields the highest accuracy.
+                                    and select the point that yields the highest accuracy
                                     {/* For example, in the visualization on the right, the threshold is automatically set as the point */}
-                                    But is accuracy enough?
+                                    . But is accuracy enough?
                                   
                               
                             </div>
@@ -986,11 +986,12 @@ class Viz extends Component {
 
                         <div className="boldtext  pt5"> Why Use An Autoencoder? </div>
                         <div className="lh10 pb10 pt5">
-                        Why is an autoencoder (or other related deep learning models)  a good candidate for anomaly detection problems.
+                        Why is an autoencoder (or any other related deep learning model)  a good candidate for anomaly detection problems?
                                     First, this approach allows us to train the model with mostly unlabelled data, after which we can evaluate and tune our threshold using  
-                                    a small amount of labelled data. 
+                                    a small amount of labelled data. This alleviates the burden/cost associated with amassing a large amount of labelled training data.
                                     Next, by using an anomaly threshold, the model is more likely to detect 
-                                    new anomalies that have previously been unseen (unknown unknowns), but differ from normal samples (try drawing a really squiqqly line and see the model's output).
+                                    new anomalies that have previously been unseen (unknown unknowns). To explore this, try drawing a really 
+                                    squiqqly line that is really unrepresentative of what an ECG signal could be and see the model's output.
                                     On the other hand, if we cast this problem as a classic classificatioin problem (assuming labels exist), we are less likely to detect unknown unknowns.
                                     Finally, deep learning models work well in approximating complex non-linear functions (also ... watchout for overfitting!); they can corrrectly model non-linear patterns that 
                                     make up normal samples and can do this with minimal tuning compared to other methods. 
@@ -1053,13 +1054,14 @@ class Viz extends Component {
                                     We used an autoencoder and demonstrate some fairly good results with minimal tuning. 
                                     We have also explored how and why it works. This and other 
                                     neural approaches (Sequence to Sequence Models, Variational Autoencoders, BiGANs etc) can be particularly 
-                                    effective for anomaly detection with multivariate or high dimensional datasets 
-                                    such as images (think convolutional layers instead of dense layers).
+                                    effective for the task of anomaly detection on multivariate or high dimensional datasets 
+                                    such as images (think convolutional layers instead of dense layers), multivariate time series, time series with multiple external regressors.
                                     <br />
                                     <strong className="greycolor"> Note</strong>: A deep learning model
-                                    is not always the best tool for the job. Particularly, for univariate data (and low dimension data ) , autoregressive linear models 
-                                    (linear regression, ARIMA family of models for time series, etc), Clustering (PCA, KMeans, etc), Nearest Neighbour (KNNs) can be very fast and effective. 
+                                    is  not always  the best tool for the job. Particularly, for univariate data (and low dimension data), autoregressive linear models 
+                                    (linear regression, ARIMA family of models for time series [6], etc), Clustering (PCA, KMeans, etc), Nearest Neighbour (KNNs) can be very fast and effective. 
                                     
+                                     
                                     Interested in learning more about other deep learning approaches to anomaly detection? My colleagues and I cover additional details on this
                                     topic in the upcoming <a href="http://experiments.fastforwardlabs.com/" target="_blank" rel="noopener noreferrer">Fast Forward Labs</a>  2020 report
                                      on <a href="https://www.cloudera.com/products/fast-forward-labs-research.html" target="_blank" rel="noopener noreferrer"> Deep Learning for Anomaly Detection.</a>  
@@ -1082,6 +1084,9 @@ class Viz extends Component {
                             </div>
                             <div className=" lh10 mb2 pr10">
                                 [5] Malhotra, Pankaj, et al. "LSTM-based encoder-decoder for multi-sensor anomaly detection." arXiv preprint arXiv:1607.00148 (2016).
+                            </div>
+                            <div className=" lh10 mb2 pr10">
+                                [6] Rob Hyndman 2018. A brief history of time series forecasting competitions. https://robjhyndman.com/hyndsight/forecasting-competitions/
                             </div>
                             
                             

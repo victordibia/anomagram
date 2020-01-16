@@ -1166,7 +1166,7 @@ class Train extends Component {
                         <div className="circlenumber iblock textaligncenter"> 3 </div>  <span className="boldtext"> Evaluate. </span> 
                         At each training step, visualize the reconstruction error (mse) generated for each sample in the test dataset. Observe that mse is higher
                         for abnormal samples compared to abnormal samples. We can select a threshold and flag samples with an mse > threshold as anomalies. 
-                        Model performance can then be evaluated using metrics such has AUC, TPR, FPR; also observe how these metrics vary with different
+                        Model performance can then be evaluated using metrics such has AUC, Precision, Recall, TPR, TNR, FPR, FNR ; also observe how these metrics vary with different
                         choices of threshold.
          
                      </div>
