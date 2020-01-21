@@ -770,7 +770,7 @@ class Viz extends Component {
                                                 </div>
                                                 <div className="flexfull ">
                                                     <div className="mediumdesc w350   lhmedium" > 
-                                                            <span> Example below shows the histogram of errors during training epochs. At</span>
+                                                            <span> Example below shows the histogram of errors for <span className="boldtext">500</span> test data points during training epochs. At</span>
                                                             <span className="boldtext"> Epoch {this.state.trainVizEpoch}</span>, 
                                                             <span className="italics" ref="mseexplanation"> {this.mseExplanations[this.state.trainVizEpoch + ""] ? this.mseExplanations[this.state.trainVizEpoch + ""] : this.refs["mseexplanation"].textContent}</span>
                                                     </div>
@@ -991,7 +991,7 @@ class Viz extends Component {
                         </div>
 
                         
-                        <div id="references" className="sectiontitle mt10 mb5"> Ok .. The Road to Production? </div>
+                        <div   className="sectiontitle mt10 mb5"> Ok .. The Road to Production? </div>
 
                         <div className="boldtext  pt5"> Why Use An Autoencoder? </div>
                         <div className="lh10 pb10 pt5">
@@ -1057,7 +1057,7 @@ class Viz extends Component {
                        
                         
 
-                        <div id="references" className="sectiontitle mt10 mb5"> Closing Notes </div>
+                        <div  className="sectiontitle mt10 mb5"> Closing Notes </div>
                         <div className="flexfull lh10 mb10 pr10">
                                     In this prototype, we have considered the task of detecting anomalies in ECG data.
                                     We used an autoencoder and demonstrate some fairly good results with minimal tuning. 
