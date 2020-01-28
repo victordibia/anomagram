@@ -349,7 +349,9 @@ class Viz extends Component {
             })
            
         }
-        this.setState({histPlaying: !this.state.histPlaying})
+        this.setState({ histPlaying: !this.state.histPlaying })
+        registerGAEvent("introduction", "playtrainingviz",  this.state.histPlaying, this.componentLoadedTime)
+ 
     }
 
     render() {
@@ -464,7 +466,7 @@ class Viz extends Component {
                                         {this.state.predictedMse > this.state.threshold ? "ABNORMAL" : "NORMAL"}
                                             </div>
 
-                                        <div className="pt5 mediumdesc">  Explanation:   [mse = {this.state.predictedMse.toFixed(3)}]  is 
+                                        <div className="pt5 mediumdesc">  Explanation:   [mse = <strong>{this.state.predictedMse.toFixed(3)}</strong> ]  is 
                                         <strong>{this.state.predictedMse > this.state.threshold ? " above " : " below"}</strong> the <strong> {this.state.threshold.toFixed(3)}</strong> threshold 
                                     </div>
                                     </div>

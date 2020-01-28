@@ -86,11 +86,11 @@ class Main extends Component {
             <HashRouter>
                 <AppHeader></AppHeader>
 
-                <div className="container-fluid p10">
+                <main className="container-fluid p10">
                     <Route exact path="/" component={Viz} />
                     <Route exact path="/train" component={Train} />
 
-                </div>
+                </main>
                 <div id="footer"> <Footer /> </div>
             </HashRouter>
 
