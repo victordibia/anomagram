@@ -13,7 +13,7 @@ class Footer extends Component {
     render() {
         return (
             <div style={{ zIndex: 999000 }}>
-                Made with <span className="redcolor">&#9829;</span> by <a href="https://twitter.com/vykthur" target="blank">Victor Dibia</a>.
+                Made with <span className="redcolor">&#9829;</span> at <a href="https://experiments.fastforwardlabs.com/" target="blank">Cloudera Fast Forward Labs</a>.
             </div>
         );
     }

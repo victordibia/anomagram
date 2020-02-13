@@ -14,7 +14,7 @@
         "react-router-dom": "^5.1.2",
         "react-scripts": "3.2.0"
     },
-    "homepage": "http://anomagram.fastforwardlabs.com",
+    "homepage": "https://anomagram.fastforwardlabs.com",
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
