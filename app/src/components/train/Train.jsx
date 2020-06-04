@@ -15,7 +15,7 @@ import {registerGAEvent, computeAccuracyGivenThreshold, percentToRGB } from "../
 import ROCChart from "../rocchart/ROCChart"
 // custom charts 
 import HistogramChart from "../histogram/HistogramChart"
-import ScatterPlot from "../scatterplot/ScatterPlot"
+import ScatterPlot from "../ScatterPlot/ScatterPlot"
 import LossChart from "../losschart/LossChart"
 import ComposeModel from "../composemodel/ComposeModel"
 
