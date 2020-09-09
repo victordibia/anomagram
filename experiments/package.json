@@ -5,7 +5,7 @@
         "carbon-components-react": "^7.7.1",
         "carbon-icons": "^7.0.7",
         "history": "^4.10.1",
-        "lodash": "^4.17.15",
+        "lodash": "^4.17.19",
         "node-sass": "^4.13.1",
         "react-router-dom": "^5.1.2"
     }
